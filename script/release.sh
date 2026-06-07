@@ -34,17 +34,30 @@ if ! gh auth status &> /dev/null; then
     exit 1
 fi
 
-# Ensure compiled font asset exists
-EXPECTED_FILE="$TTF_DIR/MamboFont_v${VERSION}.ttf"
-if [ ! -f "$EXPECTED_FILE" ]; then
-    echo -e "${RED}[!] Error: Asset not found: MamboFont_v${VERSION}.ttf${NC}" >&2
+# Collect all variant TTF files matching the provided version
+mapfile -t VARIANT_FILES < <(find "$TTF_DIR" -maxdepth 1 -name "MamboFont-*_v${VERSION}.ttf" | sort)
+
+if [ ${#VARIANT_FILES[@]} -eq 0 ]; then
+    echo -e "${RED}[!] Error: No variant assets found for version v${VERSION} in $TTF_DIR${NC}" >&2
     exit 1
 fi
 
+# Build the zip archive
+ZIP_NAME="MamboFont_v${VERSION}.zip"
+ZIP_PATH="$TTF_DIR/$ZIP_NAME"
+
 echo -e "${BLUE}------------------------------------------${NC}"
 echo -e " Target:   ${GREEN}$TAG_NAME${NC}"
-echo -e " Asset:    MamboFont_v${VERSION}.ttf"
+echo -e " Variants found:"
+for f in "${VARIANT_FILES[@]}"; do
+    echo -e "   ${GREEN}+${NC} $(basename "$f")"
+done
+echo -e " Archive:  $ZIP_NAME"
 echo -e "${BLUE}------------------------------------------${NC}"
+
+# Remove stale zip if it exists, then repack
+rm -f "$ZIP_PATH"
+zip -j "$ZIP_PATH" "${VARIANT_FILES[@]}"
 
 # Create and push git tag
 echo -e "${BLUE}[*] Tagging commit: $TAG_NAME...${NC}"
@@ -58,7 +71,6 @@ trap 'rm -f "$NOTES_FILE"' EXIT
 
 # Seed the file with a comment hint (stripped if user leaves it)
 cat > "$NOTES_FILE" << EOF
-
 # Write your release notes above. Lines starting with # are ignored.
 # Leave empty to auto-generate.
 EOF
@@ -73,9 +85,9 @@ if [ -z "$NOTES" ]; then
     echo -e "${BLUE}[i] No notes provided — using auto-generated message.${NC}"
 fi
 
-# Deploy GitHub Release and upload asset
+# Deploy GitHub Release — upload each variant TTF and the zip
 echo -e "${BLUE}[*] Publishing release to GitHub...${NC}"
-gh release create "$TAG_NAME" "$EXPECTED_FILE" \
+gh release create "$TAG_NAME" "${VARIANT_FILES[@]}" "$ZIP_PATH" \
     --title "$RELEASE_TITLE" \
     --notes "$NOTES"
 
