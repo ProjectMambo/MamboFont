@@ -39,7 +39,10 @@ WEIGHTS = [
 SCAN_SUBDIRS = [
     "alphabetupper",
     "alphabetlower",
+    "number",
+    "punctuation",
     "control",
+    "symbol",
 ]
 
 ICON_SUBDIRS = [
@@ -47,8 +50,8 @@ ICON_SUBDIRS = [
 ]
 
 # ----------------------------------------------------------------
-# Named ASCII glyphs — maps stem name (case-insensitive) to
-# its Unicode codepoint.
+# Named ASCII & Extended ASCII (Latin-1 Supplement) glyphs — 
+# maps stem name (case-insensitive) to its Unicode codepoint.
 # ----------------------------------------------------------------
 ASCII_NAME_MAP = {
     # Whitespace / control
@@ -63,6 +66,7 @@ ASCII_NAME_MAP = {
     "del":          0x007F,
     "backspace":    0x0008,
     "null":         0x0000,
+    
     # Punctuation / symbols
     "exclam":       0x0021,
     "exclamation":  0x0021,
@@ -117,6 +121,142 @@ ASCII_NAME_MAP = {
     "pipe":         0x007C,
     "verticalbar":  0x007C,
     "tilde":        0x007E,
+
+    # ------------------------------------------------------------
+    # Extended ASCII / Latin-1 Supplement (0x0080 - 0x00FF)
+    # ------------------------------------------------------------
+    # C1 Control Characters (0x0080 - 0x009F) commonly used as symbols
+    "euro":           0x20AC, # Often mapped from 0x80 in Windows-1252
+    "bullet":         0x2022, # Often mapped from 0x95 in Windows-1252
+    "trademark":      0x2122, # Often mapped from 0x99 in Windows-1252
+    "tm":             0x2122,
+
+    # Symbols & Punctuation (0x00A1 - 0x00BF)
+    "exclamdown":     0x00A1,
+    "cent":           0x00A2,
+    "sterling":       0x00A3,
+    "pound":          0x00A3,
+    "currency":       0x00A4,
+    "yen":            0x00A5,
+    "brokenbar":      0x00A6,
+    "section":        0x00A7,
+    "dieresis":       0x00A8,
+    "umlaut":         0x00A8,
+    "copyright":      0x00A9,
+    "copy":           0x00A9,
+    "ordfeminine":    0x00AA,
+    "guillemotleft":  0x00AB,
+    "guilsinglleft": 0x00AB,
+    "not":            0x00AC,
+    "softhyphen":     0x00AD,
+    "registered":     0x00AE,
+    "reg":            0x00AE,
+    "macron":         0x00AF,
+    "degree":         0x00B0,
+    "deg":            0x00B0,
+    "plusminus":      0x00B1,
+    "twosuperior":    0x00B2,
+    "threesuperior":  0x00B3,
+    "acute":          0x00B4,
+    "micro":          0x00B5,
+    "paragraph":      0x00B6,
+    "pilcrow":        0x00B6,
+    "periodcentered": 0x00B7,
+    "middot":         0x00B7,
+    "cedilla":        0x00B8,
+    "onesuperior":    0x00B9,
+    "ordmasculine":   0x00BA,
+    "guillemotright": 0x00BB,
+    "guilsinglright":0x00BB,
+    "onequarter":     0x00BC,
+    "onehalf":        0x00BD,
+    "threequarters":  0x00BE,
+    "questiondown":   0x00BF,
+
+    # Uppercase Accented Letters (0x00C0 - 0x00D6)
+    "agrave":         0x00C0,
+    "aacute":         0x00C1,
+    "acircumflex":    0x00C2,
+    "atilde":         0x00C3,
+    "adieresis":      0x00C4,
+    "aumlaut":        0x00C4,
+    "aring":          0x00C5,
+    "ae":             0x00C6,
+    "ccedilla":       0x00C7,
+    "egrave":         0x00C8,
+    "eacute":         0x00C9,
+    "ecircumflex":    0x00CA,
+    "edieresis":      0x00CB,
+    "eumlaut":        0x00CB,
+    "igrave":         0x00CC,
+    "italic":         0x00CD, # 'italic' alias or 'iacute'
+    "iacute":         0x00CD,
+    "icircumflex":    0x00CE,
+    "idieresis":      0x00CF,
+    "iumlaut":        0x00CF,
+    "eth":            0x00D0,
+    "ntilde":         0x00D1,
+    "ograve":         0x00D2,
+    "oacute":         0x00D3,
+    "ocircumflex":    0x00D4,
+    "otilde":         0x00D5,
+    "odieresis":      0x00D6,
+    "oumlaut":        0x00D6,
+
+    # Mathematical / Special (0x00D7 - 0x00DF)
+    "multiply":       0x00D7,
+    "times":          0x00D7,
+    "oslash":         0x00D8,
+    "ugrave":         0x00D9,
+    "uacute":         0x00DA,
+    "ucircumflex":    0x00DB,
+    "udieresis":      0x00DC,
+    "uumlaut":        0x00DC,
+    "yacute":         0x00DD,
+    "thorn":          0x00DE,
+    "germandbls":     0x00DF,
+    "ss":             0x00DF,
+
+    # Lowercase Accented Letters & Math (0x00E0 - 0x00FF)
+    "agrave_lc":      0x00E0,
+    "aacute_lc":      0x00E1,
+    "acircumflex_lc": 0x00E2,
+    "atilde_lc":      0x00E3,
+    "adieresis_lc":   0x00E4,
+    "aumlaut_lc":     0x00E4,
+    "aring_lc":       0x00E5,
+    "ae_lc":          0x00E6,
+    "ccedilla_lc":    0x00E7,
+    "egrave_lc":      0x00E8,
+    "eacute_lc":      0x00E9,
+    "ecircumflex_lc": 0x00EA,
+    "edieresis_lc":   0x00EB,
+    "eumlaut_lc":     0x00EB,
+    "igrave_lc":      0x00EC,
+    "iacute_lc":      0x00ED,
+    "icircumflex_lc": 0x00EE,
+    "idieresis_lc":   0x00EF,
+    "iumlaut_lc":     0x00EF,
+    "eth_lc":         0x00F0,
+    "ntilde_lc":      0x00F1,
+    "ograve_lc":      0x00F2,
+    "oacute_lc":      0x00F3,
+    "ocircumflex_lc": 0x00F4,
+    "otilde_lc":      0x00F5,
+    "odieresis_lc":   0x00F6,
+    "oumlaut_lc":     0x00F6,
+    "divide":         0x00F7,
+    "div":            0x00F7,
+    "oslash_lc":      0x00F8,
+    "ugrave_lc":      0x00F9,
+    "uacute_lc":      0x00FA,
+    "ucircumflex_lc": 0x00FB,
+    "udieresis_lc":   0x00FC,
+    "uumlaut_lc":     0x00FC,
+    "yacute_lc":      0x00FD,
+    "thorn_lc":       0x00FE,
+    "ydieresis":      0x00FF,
+    "yumlaut":        0x00FF,
 }
 
 
@@ -207,7 +347,7 @@ def make_glyph(font, codepoint, stem):
 
 
 def build_weight(weight_dir, style_name, os2_weight, version, output_dir, project_root):
-    """Compile one TTF for a single weight folder."""
+    """Compile TTF and WOFF2 files for a single weight folder."""
 
     # ---- font metadata ----
     font = fontforge.font()
@@ -229,12 +369,14 @@ def build_weight(weight_dir, style_name, os2_weight, version, output_dir, projec
     font.descent = 200
 
     safe_style = style_name.replace(" ", "")
-    output_ttf = output_dir / f"MamboFont-{safe_style}_v{version}.ttf"
+    output_ttf   = output_dir / f"MamboFont-{safe_style}_v{version}.ttf"
+    output_woff2 = output_dir / f"MamboFont-{safe_style}_v{version}.woff2"
 
     print(f"\n{BLUE}=========================================={NC}")
     print(f" Weight:  {GREEN}{style_name}{NC}  (OS/2 {os2_weight})")
     print(f" Source:  {weight_dir.relative_to(project_root)}")
-    print(f" Output:  {output_ttf.relative_to(project_root)}")
+    print(f" Outputs: {output_ttf.relative_to(project_root)}")
+    print(f"          {output_woff2.relative_to(project_root)}")
     print(f"{BLUE}=========================================={NC}")
 
     pua_counter = 0xE000
@@ -303,8 +445,13 @@ def build_weight(weight_dir, style_name, os2_weight, version, output_dir, projec
     if pua_used:
         print(f"\n{BLUE}[i] PUA slots used:{NC} {pua_used}  (U+E000 – U+{pua_counter - 1:04X})")
 
+    # Generate TTF copy
     font.generate(str(output_ttf))
-    print(f"\n{GREEN}[+] Generated:{NC} {output_ttf.name}")
+    print(f"\n{GREEN}[+] Generated TTF:{NC} {output_ttf.name}")
+    
+    # Generate WOFF2 copy
+    font.generate(str(output_woff2))
+    print(f"{GREEN}[+] Generated WOFF2:{NC} {output_woff2.name}")
 
 
 def main():
@@ -334,7 +481,7 @@ def main():
         build_weight(weight_dir, style_name, os2_weight, version, output_dir, project_root)
 
     print(f"\n{BLUE}------------------------------------------{NC}")
-    print(f"{GREEN}[+] All weights compiled successfully!{NC}")
+    print(f"{GREEN}[+] All weights compiled successfully (TTF & WOFF2)!{NC}")
     print(f"{BLUE}------------------------------------------{NC}")
 
 if __name__ == "__main__":

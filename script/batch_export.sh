@@ -13,6 +13,13 @@ DEST_DIR="$SVG_DIR/exported"
 SOURCE="$SVG_DIR/drawing.svg"
 
 # ----------------------------------------------------------------
+# Optional filter: only export layers whose names match these args
+# e.g. ./batch_export.sh symbol icons
+# If no args, export everything (original behaviour)
+# ----------------------------------------------------------------
+FILTER_LAYERS=("$@")
+
+# ----------------------------------------------------------------
 # Root layers to skip entirely (Family is handled separately)
 # ----------------------------------------------------------------
 SKIP_LAYERS=("Base")
@@ -52,6 +59,29 @@ if [[ -z "$ROOT_LAYERS" ]]; then
     echo -e "${RED}[!] Error: No root layers found in $SOURCE${NC}" >&2
     exit 1
 fi
+
+# ----------------------------------------------------------------
+# Helper: check if a layer name matches the filter list
+# Case-insensitive, partial match supported (symbol matches "Symbols")
+# ----------------------------------------------------------------
+matches_filter() {
+    local name
+    name=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+
+    if [[ ${#FILTER_LAYERS[@]} -eq 0 ]]; then
+        return 0
+    fi
+
+    for f in "${FILTER_LAYERS[@]}"; do
+        local f_lower
+        f_lower=$(echo "$f" | tr '[:upper:]' '[:lower:]')
+        if [[ "$name" == *"$f_lower"* ]]; then
+            return 0
+        fi
+    done
+
+    return 1
+}
 
 # ----------------------------------------------------------------
 # export_paths_from_layer <layer_id> <dest_dir>
@@ -169,7 +199,6 @@ export_paths_from_layer() {
 
 # ----------------------------------------------------------------
 # Pass 1 — collect Family layer categories into FAMILY_CATS
-# Use process substitution (not pipe) so the array stays in scope
 # ----------------------------------------------------------------
 FAMILY_ID=$(xmlstarlet sel \
     -t -v "//*[$IS_LAYER][$LABEL='Family']/@id" \
@@ -193,8 +222,17 @@ if [[ -n "$FAMILY_ID" ]]; then
 fi
 
 # ----------------------------------------------------------------
+# Print filter summary if args were provided
+# ----------------------------------------------------------------
+if [[ ${#FILTER_LAYERS[@]} -gt 0 ]]; then
+    echo -e "\n${BLUE}[*] Filter active — targeting layers:${NC}"
+    for f in "${FILTER_LAYERS[@]}"; do
+        echo -e "   ${GREEN}+${NC} $f"
+    done
+fi
+
+# ----------------------------------------------------------------
 # Pass 2 — process weight layers
-# Use process substitution so FAMILY_CATS is visible inside
 # ----------------------------------------------------------------
 echo -e "\n${BLUE}[*] Processing weight layers${NC}"
 echo -e "${BLUE}------------------------------------------${NC}"
@@ -229,6 +267,13 @@ while IFS='|' read -r root_id root_name; do
     while IFS='|' read -r child_id child_name; do
         [[ -z "$child_id" || -z "$child_name" ]] && continue
         child_folder=$(echo "$child_name" | xargs | tr '[:upper:]' '[:lower:]' | sed 's/^-*//' | tr -d ' ')
+
+        # Skip child layers that don't match the filter
+        if ! matches_filter "$child_folder"; then
+            echo -e "\n  ${YELLOW}[~] Filtered out:${NC} $child_folder"
+            continue
+        fi
+
         echo -e "\n  ${BLUE}[>] $child_folder${NC} (weight-specific, overrides Family)"
         export_paths_from_layer "$child_id" "$ROOT_DEST/$child_folder"
     done < <(xmlstarlet sel \

@@ -34,33 +34,58 @@ if ! gh auth status &> /dev/null; then
     exit 1
 fi
 
-# Collect all variant TTF files matching the provided version
-mapfile -t VARIANT_FILES < <(find "$TTF_DIR" -maxdepth 1 -name "MamboFont-*_v${VERSION}.ttf" | sort)
+# Collect TTF and WOFF2 files separately
+mapfile -t TTF_FILES   < <(find "$TTF_DIR" -maxdepth 1 -name "MamboFont-*_v${VERSION}.ttf"   | sort)
+mapfile -t WOFF2_FILES < <(find "$TTF_DIR" -maxdepth 1 -name "MamboFont-*_v${VERSION}.woff2" | sort)
 
-if [ ${#VARIANT_FILES[@]} -eq 0 ]; then
-    echo -e "${RED}[!] Error: No variant assets found for version v${VERSION} in $TTF_DIR${NC}" >&2
+if [ ${#TTF_FILES[@]} -eq 0 ] && [ ${#WOFF2_FILES[@]} -eq 0 ]; then
+    echo -e "${RED}[!] Error: No font assets found for version v${VERSION} in $TTF_DIR${NC}" >&2
     exit 1
 fi
 
-# Build the zip archive
-ZIP_NAME="MamboFont_v${VERSION}.zip"
-ZIP_PATH="$TTF_DIR/$ZIP_NAME"
-
 echo -e "${BLUE}------------------------------------------${NC}"
 echo -e " Target:   ${GREEN}$TAG_NAME${NC}"
-echo -e " Variants found:"
-for f in "${VARIANT_FILES[@]}"; do
-    echo -e "   ${GREEN}+${NC} $(basename "$f")"
-done
-echo -e " Archive:  $ZIP_NAME"
+
+if [ ${#TTF_FILES[@]} -gt 0 ]; then
+    echo -e " TTF Files:"
+    for f in "${TTF_FILES[@]}"; do
+        echo -e "   ${GREEN}+${NC} $(basename "$f")"
+    done
+fi
+
+if [ ${#WOFF2_FILES[@]} -gt 0 ]; then
+    echo -e " WOFF2 Files:"
+    for f in "${WOFF2_FILES[@]}"; do
+        echo -e "   ${GREEN}+${NC} $(basename "$f")"
+    done
+fi
+
 echo -e "${BLUE}------------------------------------------${NC}"
 
-# Remove stale zip if it exists, then repack
-rm -f "$ZIP_PATH"
-zip -j "$ZIP_PATH" "${VARIANT_FILES[@]}"
+# Build one zip per format
+ZIP_FILES=()
+
+if [ ${#TTF_FILES[@]} -gt 0 ]; then
+    TTF_ZIP="$TTF_DIR/MamboFont_v${VERSION}_ttf.zip"
+    rm -f "$TTF_ZIP"
+    zip -j -q "$TTF_ZIP" "${TTF_FILES[@]}"
+    ZIP_FILES+=("$TTF_ZIP")
+    echo -e " -> Created Archive: $(basename "$TTF_ZIP")"
+fi
+
+if [ ${#WOFF2_FILES[@]} -gt 0 ]; then
+    WOFF2_ZIP="$TTF_DIR/MamboFont_v${VERSION}_woff2.zip"
+    rm -f "$WOFF2_ZIP"
+    zip -j -q "$WOFF2_ZIP" "${WOFF2_FILES[@]}"
+    ZIP_FILES+=("$WOFF2_ZIP")
+    echo -e " -> Created Archive: $(basename "$WOFF2_ZIP")"
+fi
+
+# Combine everything into one release payload: raw files + zips
+RELEASE_ASSETS=("${TTF_FILES[@]}" "${WOFF2_FILES[@]}" "${ZIP_FILES[@]}")
 
 # Create and push git tag
-echo -e "${BLUE}[*] Tagging commit: $TAG_NAME...${NC}"
+echo -e "\n${BLUE}[*] Tagging commit: $TAG_NAME...${NC}"
 git tag -a "$TAG_NAME" -m "Mambo Font release version $VERSION"
 git push origin "$TAG_NAME" >/dev/null 2>&1
 
@@ -85,9 +110,9 @@ if [ -z "$NOTES" ]; then
     echo -e "${BLUE}[i] No notes provided — using auto-generated message.${NC}"
 fi
 
-# Deploy GitHub Release — upload each variant TTF and the zip
-echo -e "${BLUE}[*] Publishing release to GitHub...${NC}"
-gh release create "$TAG_NAME" "${VARIANT_FILES[@]}" "$ZIP_PATH" \
+# Deploy GitHub Release — raw TTFs, raw WOFF2s, and both zips
+echo -e "${BLUE}[*] Publishing release to GitHub (${#RELEASE_ASSETS[@]} files)...${NC}"
+gh release create "$TAG_NAME" "${RELEASE_ASSETS[@]}" \
     --title "$RELEASE_TITLE" \
     --notes "$NOTES"
 

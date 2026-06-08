@@ -154,12 +154,13 @@
     </linearGradient>
   </defs>
   <g
-     id="layer8">
+     id="layer8"
+     style="">
     <g
        id="g154"
        style="display:inline">
       <path
-         style=";fill:#000000;baseline-shift:baseline;overflow:visible;opacity:1;vector-effect:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+         style="baseline-shift:baseline;;overflow:visible;opacity:1;vector-effect:none;fill:#000000;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
          d="M 690,300 V 417.82812 L 498.3418,580 H 690 V 700 H 310 V 582.17187 L 501.6582,420 H 310 V 300 Z"
          id="path264" />
     </g>
