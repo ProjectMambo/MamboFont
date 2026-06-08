@@ -155,11 +155,11 @@
   </defs>
   <g
      id="layer10"
-     style="">
+     style="display:inline">
     <g
        id="layer15">
       <path
-         style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+         style="baseline-shift:baseline;;overflow:visible;opacity:1;vector-effect:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
          d="m 388.5918,260 -60,90 H 310 v 80 h 61.4082 L 427.90625,345.25391 525.2793,540 h 88.46679 l 60,-110 H 690 V 350 H 626.25391 L 570.67187,451.90039 474.7207,260 Z"
          id="path133" />
     </g>

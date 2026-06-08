@@ -160,7 +160,7 @@
        id="g171"
        style="display:inline">
       <path
-         style="display:inline;fill:#000000;baseline-shift:baseline;overflow:visible;opacity:1;vector-effect:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+         style="baseline-shift:baseline;;overflow:visible;opacity:1;vector-effect:none;fill:#000000;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
          d="m 350,100 v 140 h -40 v 120 h 40 v 80 h -40 v 120 h 40 V 700 H 470 V 560 h 60 V 700 H 650 V 560 h 40 V 440 h -40 v -80 h 40 V 240 H 650 V 100 H 530 V 240 H 470 V 100 Z m 120,260 h 60 v 80 h -60 z"
          id="path188" />
     </g>

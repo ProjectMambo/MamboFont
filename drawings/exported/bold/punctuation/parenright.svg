@@ -160,7 +160,7 @@
        id="g171"
        style="display:inline">
       <path
-         style="display:inline;fill:#000000;baseline-shift:baseline;overflow:visible;opacity:1;vector-effect:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+         style="baseline-shift:baseline;;overflow:visible;opacity:1;vector-effect:none;fill:#000000;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
          d="m 350,100 v 120 h 20.26367 L 440,243.24609 V 556.75391 L 370.26367,580 H 350 v 120 h 39.73633 L 560,643.24609 V 156.75391 L 389.73633,100 Z"
          id="path203" />
     </g>

@@ -160,7 +160,7 @@
        id="g171"
        style="display:inline">
       <path
-         style="display:inline;fill:#000000;opacity:1;baseline-shift:baseline;overflow:visible;vector-effect:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+         style="baseline-shift:baseline;;overflow:visible;opacity:1;vector-effect:none;fill:#000000;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
          d="M 610.26367,100 440,156.75391 V 288 l -30,72 h -60 v 120 h 66.74609 L 440,517.20703 V 643.24609 L 610.26367,700 H 650 V 580 H 629.73633 L 560,556.75391 V 482.79297 L 517.30078,414.47656 560,312 V 243.24609 L 629.73633,220 H 650 V 100 Z"
          id="path267" />
     </g>

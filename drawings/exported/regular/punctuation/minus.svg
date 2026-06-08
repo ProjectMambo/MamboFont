@@ -155,12 +155,12 @@
   </defs>
   <g
      id="layer10"
-     style="">
+     style="display:inline">
     <g
        id="layer15">
       <path
-         style="baseline-shift:baseline;;overflow:visible;opacity:1;vector-effect:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
-         d="m 310,350 v 80 h 380 v -80 z"
+         style="baseline-shift:baseline;;overflow:visible;opacity:1;vector-effect:none;stroke-width:0.760886;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+         d="m 390,350 v 80 h 220 v -80 z"
          id="path102" />
     </g>
   </g>

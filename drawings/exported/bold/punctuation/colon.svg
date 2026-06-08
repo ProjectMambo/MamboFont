@@ -161,7 +161,7 @@
        style="display:inline">
       <path
          id="path236"
-         style=";fill:#000000;baseline-shift:baseline;overflow:visible;opacity:1;vector-effect:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+         style="baseline-shift:baseline;;overflow:visible;opacity:1;vector-effect:none;fill:#000000;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
          d="M 420,440 V 600 H 580 V 440 Z m 0,-240 V 360 H 580 V 200 Z" />
     </g>
   </g>

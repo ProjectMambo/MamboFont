@@ -160,9 +160,9 @@
        id="g171"
        style="display:inline">
       <path
-         id="path274"
-         style="display:inline;fill:#000000;baseline-shift:baseline;overflow:visible;opacity:1;vector-effect:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
-         d="M 310,240 V 360 H 690 V 240 Z m 0,200 V 560 H 690 V 440 Z" />
+         id="path292"
+         style="baseline-shift:baseline;;overflow:visible;opacity:1;vector-effect:none;fill:#000000;stroke-width:1.16774;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+         d="M 350,240 V 360 H 650 V 240 Z m 0,200 V 560 H 650 V 440 Z" />
     </g>
   </g>
 </svg>

@@ -155,13 +155,13 @@
   </defs>
   <g
      id="layer10"
-     style="">
+     style="display:inline">
     <g
        id="layer15">
       <path
-         id="path98"
-         style="baseline-shift:baseline;;overflow:visible;opacity:1;vector-effect:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
-         d="m 310,460 v 80 h 380 v -80 z m 0,-200 v 80 h 380 v -80 z" />
+         id="path297"
+         style="baseline-shift:baseline;;overflow:visible;opacity:1;vector-effect:none;stroke-width:0.760886;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+         d="m 390,260 v 80 h 220 v -80 z m 0,200 v 80 h 220 v -80 z" />
     </g>
   </g>
 </svg>
