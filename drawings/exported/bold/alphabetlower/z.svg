@@ -155,14 +155,14 @@
   </defs>
   <g
      id="layer8"
-     style="">
+     style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
     <g
-       id="g154"
-       style="display:inline">
+       id="g512"
+       style=";fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
       <path
-         style="baseline-shift:baseline;;overflow:visible;opacity:1;vector-effect:none;fill:#000000;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
-         d="M 690,300 V 417.82812 L 498.3418,580 H 690 V 700 H 310 V 582.17187 L 501.6582,420 H 310 V 300 Z"
-         id="path264" />
+         style=";fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:120;stroke-dasharray:none;stroke-opacity:1"
+         d="m 310,360 h 320 v 30 L 370,610 v 30 H 690 370 V 610 L 630,390 v -30 z"
+         id="path584" />
     </g>
   </g>
 </svg>

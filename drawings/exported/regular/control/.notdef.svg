@@ -154,14 +154,15 @@
     </linearGradient>
   </defs>
   <g
-     id="layer13">
+     id="layer13"
+     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
     <g
        id="layer9"
-       style="">
+       style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
       <path
-         id="path312-3"
-         style="baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;fill:#000000;stroke:none;enable-background:accumulate;stop-color:#000000"
-         d="M 300 200 L 300 800 L 680 800 L 680 200 L 300 200 z M 417.52148 280 L 562.47852 280 L 490 415.29492 L 417.52148 280 z M 380 379.37305 L 444.62109 500 L 380 620.62695 L 380 379.37305 z M 600 379.37305 L 600 620.62695 L 535.37891 500 L 600 379.37305 z M 490 584.70508 L 562.47852 720 L 417.52148 720 L 490 584.70508 z " />
+         style=";fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:80;stroke-dasharray:none;stroke-opacity:1"
+         d="M 300,240 H 640 V 760 H 620 L 360,240 h -20 20 l 260,520 h 20 -300 20 L 620,240 h 20 -20 L 360,760 H 340 V 280 760 H 640 V 240 Z"
+         id="path572" />
     </g>
   </g>
 </svg>

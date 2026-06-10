@@ -155,16 +155,16 @@
   </defs>
   <g
      id="layer10"
-     style="">
+     style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
     <g
        id="layer1"
-       style=";opacity:1">
+       style=";opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
       <g
          id="layer6"
-         style=";opacity:1">
+         style=";opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
         <path
            id="path210"
-           style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+           style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;enable-background:accumulate;stop-color:#000000;stop-opacity:1;stroke-opacity:1"
            d="M 404.50391,129.43945 269.44336,264.49609 c -0.0237,63.66601 0.0306,127.33205 -0.008,190.99805 43.06706,43.06843 86.13533,86.13685 129.20312,129.20508 v 0.002 V 870 h 202.7168 V 584.70117 c 43.19252,-42.93026 85.94371,-86.30503 129.20117,-129.16992 l 0.004,-191.02734 -135.05664,-135.06055 z m 8.2832,20 174.43164,0.004 112.5918,112.5918 L 490,300.29688 v 102.70507 l -200.56055,36.12891 0.004,-166.34961 z m 5.85156,441.11719 162.7168,0.004 V 815 h -162.7168 z" />
       </g>
     </g>

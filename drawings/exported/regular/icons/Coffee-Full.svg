@@ -155,17 +155,17 @@
   </defs>
   <g
      id="layer10"
-     style="">
+     style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
     <g
        id="layer1"
-       style=";opacity:1">
+       style=";opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
       <g
          id="layer23"
-         style=";opacity:1"
+         style=";opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1"
          transform="translate(0,-5)">
         <path
            id="path55"
-           style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-opacity:1;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+           style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-opacity:1;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
            d="M 230,230 V 673.25195 L 314.9082,790 H 685.0918 L 770,673.25195 V 550 h 64.37891 L 900,478.91016 V 356.19727 L 854.49023,305 H 770 v -75 z m 20,20 h 500 v 75 L 250,460.84766 Z m 520,75 h 75.50977 L 880,363.80273 V 471.08984 L 825.62109,530 H 770 Z M 225,810 v 20 h 550 v -20 z" />
       </g>
     </g>
