@@ -158,10 +158,10 @@
      style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
     <g
        id="layer1"
-       style=";opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+       style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
       <path
          id="path63"
-         style="baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;enable-background:accumulate;stop-color:#000000;stroke-opacity:1"
+         style="baseline-shift:baseline;;overflow:visible;vector-effect:none;fill:#a93622;fill-opacity:1;stroke:#000000;stroke-opacity:1;enable-background:accumulate;stop-color:#000000"
          d="M 379.56055,115 350,213.5332 V 215 H 250 v 595 h 149.27734 l -2.5,-20 H 270 V 235 H 730 V 790 H 600.81445 l -0.8457,9.87695 L 608.70312,810 H 750 V 215 H 650 v -1.51953 L 619.36133,115 H 579.56055 L 550,213.5332 V 215 H 450 v -1.51953 L 419.36133,115 Z m 14.8789,20 h 10.19922 l 24.88867,80 h -59.08789 z m 200,0 h 10.19922 l 24.88867,80 H 570.43945 Z M 350,345 V 445 H 450 V 345 Z m 200,0 V 445 H 650 V 345 Z m -70,173.90625 v 155 h -22.12109 l -52.4961,23.67187 15.41407,123.32813 56.17968,23.39648 L 500.86914,915 629.83789,865.11523 579.32227,806.5625 588.67773,697.31445 520,678.91406 V 518.90625 Z M 380,555 v 110 h 80 v -20 h -60 v -70 h 60 v -20 z m 160,5 v 20 h 60 v 70 h -60 v 20 h 80 V 560 Z m -79.87891,133.90625 h 23.3086 0.002 v 0.002 l 38.90234,40.2793 -3.89648,8.71875 -39.10742,-24.82227 5.70117,43.81055 -23.5,-15.65625 z m 55.4961,4.53711 51.70508,13.85547 -4.33399,50.60742 -54.89844,111 -11.31836,-33.49609 49.33399,-110.39844 z m -66.72266,63.41016 47.0625,31.35546 -14.06641,31.47657 -42.6875,-17.7793 -4.72265,-37.7793 z" />
     </g>
   </g>

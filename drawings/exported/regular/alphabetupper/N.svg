@@ -160,7 +160,7 @@
        id="layer7"
        style=";fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
       <path
-         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:80;stroke-dasharray:none;stroke-opacity:1"
+         style=";fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:80;stroke-dasharray:none;stroke-opacity:1"
          d="M 350,700 V 140 h 20 l 260,520 h 20 V 100 660 H 630 L 370,140 h -20 z"
          id="path443" />
     </g>

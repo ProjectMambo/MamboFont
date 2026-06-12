@@ -158,14 +158,14 @@
      style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
     <g
        id="layer1"
-       style=";opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+       style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
       <g
          id="layer33"
          transform="matrix(2,0,0,2,-500,-575)"
-         style=";opacity:1;stroke-width:10;stroke-dasharray:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+         style=";opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:10;stroke-dasharray:none;stroke-opacity:1">
         <path
            id="path7"
-           style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke-width:10;stroke-dasharray:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1;stroke:#000000;stroke-opacity:1"
+           style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:10;stroke-dasharray:none;stroke-opacity:1;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
            d="M 335,405 V 526.5 H 310 V 675 H 690 V 476.5 H 665 V 405 Z m 39.57031,30 H 625.42969 L 635,444.57031 V 476.5 h -41.17969 l -50,25 h -90 l -50,25 H 365 v -81.92969 z m 221.60938,51.5 H 680 V 665 H 320 V 536.5 h 86.17969 l 50,-25 h 90 z M 640,500 v 20 h 20 v -20 z m -95,30 v 15.90039 l -115,23 V 555 h -90 v 90 h 90 v -15 h 115 v 15 H 660 V 530 Z" />
       </g>
     </g>

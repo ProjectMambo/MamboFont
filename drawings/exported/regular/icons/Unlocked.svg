@@ -158,13 +158,13 @@
      style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
     <g
        id="layer1"
-       style=";opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+       style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
       <g
          id="layer30"
          style=";opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
         <path
            id="path69"
-           style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;enable-background:accumulate;stop-color:#000000;stop-opacity:1;stroke-opacity:1"
+           style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-opacity:1;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
            d="m 275.02148,120 0.47461,482.74609 H 225 V 890 H 775 V 410 h -0.0215 -45.82032 V 316.24414 L 385.73047,120 Z m 20.01954,20 h 85.3789 L 709.1582,327.85156 V 410 h -39.48632 -0.0215 L 332.34375,602.74609 H 295.49609 Z M 674.96094,430 H 755 V 531.33984 L 245,822.76953 V 622.74609 h 92.65625 z" />
       </g>
     </g>

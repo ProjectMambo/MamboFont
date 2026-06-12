@@ -158,9 +158,9 @@
      style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
     <g
        id="layer1"
-       style=";opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+       style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
       <path
-         style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0;stroke-dasharray:none;enable-background:accumulate;stop-color:#000000;stroke-opacity:1"
+         style="baseline-shift:baseline;;overflow:visible;opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0;stroke-dasharray:none;stroke-opacity:1;enable-background:accumulate;stop-color:#000000"
          d="m 340,119.7207 v 120 H 240 V 347.74414 L 120,639.74609 v 19.97461 h 120 v 100 h 108.02344 l 292.00195,120 H 660 v -120 H 760 V 651.69726 L 880,359.69531 V 339.7207 H 760 v -100 H 651.97656 l -292.00195,-120 z m 20,21.63281 80,32.87891 v 65.48828 h -80 z m 185,76.02735 54.35937,22.33984 H 545 Z M 260,259.7207 h 265 v 84.44141 L 347.14453,454.7207 H 260 Z m 285,0 h 195 v 265 H 655.55859 L 545,346.86523 Z m 215,100 h 98.36719 l -32.87891,80 H 760 Z m -520,40.64062 v 54.35938 h -22.33984 z m 20,74.35938 h 84.44141 L 455,652.57617 V 739.7207 H 260 Z m 392.85547,70 H 740 v 195 H 475 v -84.44141 z m 107.14453,0 h 22.33984 L 760,599.08007 Z m -585.48828,15 H 240 v 80 h -98.36719 z m 226.1289,200 H 455 v 22.33984 z m 159.35938,0 h 80 v 98.36719 l -80,-32.87891 z"
          id="path109" />
     </g>
