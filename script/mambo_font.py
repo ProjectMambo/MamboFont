@@ -3,17 +3,20 @@
 mambo_font.py — export SVG layers and/or compile font weights.
 
 Modes:
-  export   Export processed SVGs to disk (stroke→path, simplified, written all at once)
-  compile  Export in-memory only, then compile TTF + WOFF2 without touching disk SVGs
+  export    Export processed SVGs to disk (stroke→path, all written at once)
+  compile   Export in-memory, compile TTF + WOFF2 (filtered: merges with disk cache)
+  release   Full compile in-memory + publish GitHub release (no filter)
+  unrelease Delete a GitHub release and its tag (local + remote)
 
 Usage:
   python mambo_font.py export [layer_filter ...]
   python mambo_font.py compile <version> [layer_filter ...]
+  python mambo_font.py release <version>
+  python mambo_font.py unrelease <version>
 """
 
 import argparse
 import io
-import os
 import subprocess
 import sys
 import tempfile
@@ -319,7 +322,7 @@ UNICODE_NAME_MAP = {
     "option":                  0x2325,
     "command":                 0x2318,
     "enter":                   0x2386,
-    "delete2":                 0x2326,
+    "delete2":                 0x2421,  # ␡ DELETE symbol
     "escape2":                 0x238B,
     "hourglassempty":          0x29D6,
     "hourglass":               0x231B,
@@ -416,7 +419,7 @@ UNICODE_NAME_MAP = {
     "snowman":                 0x2603,
     "comet":                   0x2604,
     "moon":                    0x263D,
-    "moonstar":                0x2604,
+    "moonstar":                0x1F31F,  # 🌟 (nearest Unicode moon+star)
     "earth":                   0x2641,
     "phone":                   0x260E,
     "phonehandset":            0x2121,
@@ -565,18 +568,6 @@ def has_visible_outlines(svg_bytes: bytes) -> bool:
         pass
     return False
 
-
-def inkscape_run(args: list[str], stdin_data: Optional[bytes] = None) -> bytes:
-    """Run inkscape and return stdout bytes.  stdin_data fed via pipe if given."""
-    result = subprocess.run(
-        ["inkscape"] + args,
-        input=stdin_data,
-        capture_output=True,
-    )
-    if result.returncode != 0:
-        # non-fatal — return empty so callers can degrade gracefully
-        return b""
-    return result.stdout
 
 
 def process_svg_bytes(raw_svg: bytes) -> bytes:
@@ -886,25 +877,43 @@ def collect_all_svgs(filter_layers: list[str]) -> dict[str, bytes]:
 # Export mode — write all SVGs to disk in one pass
 # ────────────────────────────────────────────────────────────────────────────
 
-def cmd_export(filter_layers: list[str]) -> None:
+def cmd_export(filter_layers: list[str], dest_dir: Optional[Path] = None) -> None:
+    out_dir = dest_dir or DEST_DIR
     svgs = collect_all_svgs(filter_layers)
 
-    # ---- clean up old exported SVGs before writing new ones ----
-    if DEST_DIR.exists():
-        import shutil
-        print(f"\n{YELLOW}[~] Removing old exports:{NC} {DEST_DIR}")
-        shutil.rmtree(DEST_DIR)
-    DEST_DIR.mkdir(parents=True, exist_ok=True)
+    import shutil
+    # ---- clean up old exports before writing new ones ----
+    if not filter_layers:
+        # Full export: wipe everything
+        if out_dir.exists():
+            print(f"\n{YELLOW}[~] Removing old exports:{NC} {out_dir}")
+            shutil.rmtree(out_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+    else:
+        # Filtered export: only remove subdirs that are about to be overwritten
+        # so unrelated layers on disk are preserved
+        affected_subdirs = set()
+        for rel_path in svgs:
+            parts = rel_path.split("/")
+            if len(parts) >= 2:
+                # e.g. "regular/symbol/arrow.svg" -> "regular/symbol"
+                affected_subdirs.add("/".join(parts[:2]))
+        for subdir in affected_subdirs:
+            target = out_dir / subdir
+            if target.exists():
+                print(f"\n{YELLOW}[~] Removing filtered subdir:{NC} {target}")
+                shutil.rmtree(target)
+        out_dir.mkdir(parents=True, exist_ok=True)
 
     print(f"\n{BLUE}[*] Writing {len(svgs)} SVG(s) to disk…{NC}")
     for rel_path, data in svgs.items():
-        dest = DEST_DIR / rel_path
+        dest = out_dir / rel_path
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(data)
 
     print(f"\n{BLUE}------------------------------------------{NC}")
     print(f"{GREEN}[+] Export complete!{NC}")
-    print(f"    {DEST_DIR}")
+    print(f"    {out_dir}")
     print(f"{BLUE}------------------------------------------{NC}")
 
 
@@ -986,7 +995,7 @@ def _sorted_svgs_from_dict(
     prefix: str,            # e.g. "regular/symbol"
 ) -> list[tuple[str, bytes]]:
     """Return (stem, bytes) pairs sorted alphabetically for a given prefix."""
-    matches = [(k, v) for k, v in svgs.items() if k.startswith(prefix + "/")]
+    matches = [(k, v) for k, v in svgs.items() if k.startswith(prefix + "/") and k.count("/") == prefix.count("/") + 1]
     matches.sort(key=lambda x: Path(x[0]).stem.lower())
     return [(Path(k).stem, v) for k, v in matches]
 
@@ -998,11 +1007,12 @@ def build_weight_from_memory(
     os2_weight: int,
     version: str,
     write_to_disk: bool = True,
+    ttf_out: Optional[Path] = None,
 ) -> tuple[bytes, bytes]:
     """
     Compile one font weight from in-memory SVGs.
     Always returns (ttf_bytes, woff2_bytes).
-    Also writes TTF+WOFF2 to TTF_DIR when write_to_disk=True.
+    Also writes TTF+WOFF2 to ttf_out (defaults to TTF_DIR) when write_to_disk=True.
     """
     ff = _ff
     font = ff.font()
@@ -1136,9 +1146,10 @@ def build_weight_from_memory(
         Path(tmp_woff2).unlink(missing_ok=True)
 
     if write_to_disk:
-        TTF_DIR.mkdir(exist_ok=True)
-        (TTF_DIR / ttf_filename).write_bytes(ttf_bytes)
-        (TTF_DIR / woff2_filename).write_bytes(woff2_bytes)
+        out_path = ttf_out or TTF_DIR
+        out_path.mkdir(parents=True, exist_ok=True)
+        (out_path / ttf_filename).write_bytes(ttf_bytes)
+        (out_path / woff2_filename).write_bytes(woff2_bytes)
         print(f"\n{GREEN}[+] Generated TTF:{NC}   {ttf_filename}")
         print(f"{GREEN}[+] Generated WOFF2:{NC} {woff2_filename}")
     else:
@@ -1152,30 +1163,43 @@ def build_weight_from_memory(
 # Compile mode
 # ────────────────────────────────────────────────────────────────────────────
 
-def _load_disk_svgs(folder_name: str) -> dict[str, bytes]:
+def _load_disk_svgs(folder_name: str, svg_dir: Optional[Path] = None) -> dict[str, bytes]:
     """
-    Load all SVGs from DEST_DIR/<folder_name>/ into a dict keyed by rel_path.
+    Load all SVGs from <svg_dir>/<folder_name>/ into a dict keyed by rel_path.
+    Falls back to DEST_DIR when svg_dir is not provided.
     Returns empty dict if the folder doesn't exist.
     """
-    base = DEST_DIR / folder_name
+    base_dir = svg_dir or DEST_DIR
+    base = base_dir / folder_name
     if not base.exists():
         return {}
     result: dict[str, bytes] = {}
     for svg_file in base.rglob("*.svg"):
-        rel = svg_file.relative_to(DEST_DIR)
-        result[str(rel)] = svg_file.read_bytes()
+        rel = svg_file.relative_to(base_dir)
+        result[rel.as_posix()] = svg_file.read_bytes()
     return result
 
 
-def cmd_compile(version: str, filter_layers: list[str]) -> None:
+def cmd_compile(
+    version: str,
+    filter_layers: list[str],
+    svg_dir: Optional[Path] = None,
+    out_dir: Optional[Path] = None,
+) -> None:
+    """
+    svg_dir: where to load cached SVGs from (fallback for filtered compile). Defaults to DEST_DIR.
+    out_dir: where to write TTF/WOFF2 files. Defaults to TTF_DIR.
+    """
     if _ff is None:
         print(f"{RED}[!] Error: FontForge Python bindings not found.{NC}")
         print("    Please run: 'sudo pacman -S fontforge'")
         sys.exit(1)
 
+    ttf_out = out_dir or TTF_DIR
+
     # When a filter is active:
     #   1. Export only the filtered layers fresh (in-memory, no disk write).
-    #   2. Load the rest from disk (DEST_DIR) as the base.
+    #   2. Load the rest from svg_dir (or DEST_DIR) as the base.
     #   3. Overlay the fresh SVGs on top so filtered layers always win.
     # When no filter: export everything fresh as before.
     fresh_svgs = collect_all_svgs(filter_layers)
@@ -1184,7 +1208,7 @@ def cmd_compile(version: str, filter_layers: list[str]) -> None:
         print(f"\n{BLUE}[*] Merging fresh SVGs with disk cache for unfiltered layers{NC}")
         merged: dict[str, bytes] = {}
         for folder_name, _, _ in WEIGHTS:
-            disk = _load_disk_svgs(folder_name)
+            disk = _load_disk_svgs(folder_name, svg_dir)
             if not disk:
                 print(f"  {YELLOW}[~] No disk cache for weight '{folder_name}' — only fresh data will be used{NC}")
             merged.update(disk)          # disk first (lower priority)
@@ -1198,13 +1222,15 @@ def cmd_compile(version: str, filter_layers: list[str]) -> None:
     print(f" Family:  {GREEN}{FAMILY_NAME}{NC}")
     print(f" Version: {GREEN}{version}{NC}")
     print(f" Weights: {GREEN}{', '.join(w[1] for w in WEIGHTS)}{NC}")
+    if out_dir:
+        print(f" Output:  {GREEN}{ttf_out}{NC}")
     print(f"{BLUE}------------------------------------------{NC}")
 
     for folder_name, style_name, os2_weight in WEIGHTS:
         if not any(k.startswith(f"{folder_name}/") for k in svgs):
             print(f"\n{RED}[!] No SVGs found for weight '{folder_name}', skipping{NC}")
             continue
-        build_weight_from_memory(svgs, folder_name, style_name, os2_weight, version)
+        build_weight_from_memory(svgs, folder_name, style_name, os2_weight, version, ttf_out=ttf_out)
 
     print(f"\n{BLUE}------------------------------------------{NC}")
     print(f"{GREEN}[+] All weights compiled successfully (TTF & WOFF2)!{NC}")
@@ -1469,6 +1495,10 @@ def main() -> None:
     # export sub-command
     p_export = sub.add_parser("export", help="Export processed SVGs to disk")
     p_export.add_argument(
+        "-o", "--out", metavar="DIR",
+        help="Destination folder for exported SVGs (default: drawings/exported/)",
+    )
+    p_export.add_argument(
         "filters", nargs="*",
         help="Optional layer name filters (case-insensitive, partial match)",
     )
@@ -1479,6 +1509,14 @@ def main() -> None:
         help="Compile font weights (export in-memory, no SVGs written to disk)",
     )
     p_compile.add_argument("version", help="Font version string, e.g. 1.0")
+    p_compile.add_argument(
+        "-o", "--out", metavar="DIR",
+        help="Destination folder for TTF/WOFF2 files (default: ttf/)",
+    )
+    p_compile.add_argument(
+        "--svg-cache", metavar="DIR",
+        help="Folder to load cached SVGs from when using filters (default: drawings/exported/)",
+    )
     p_compile.add_argument(
         "filters", nargs="*",
         help="Optional layer name filters (case-insensitive, partial match)",
@@ -1501,9 +1539,14 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.mode == "export":
-        cmd_export(args.filters)
+        cmd_export(args.filters, dest_dir=Path(args.out).resolve() if args.out else None)
     elif args.mode == "compile":
-        cmd_compile(args.version, args.filters)
+        cmd_compile(
+            args.version,
+            args.filters,
+            svg_dir=Path(args.svg_cache).resolve() if args.svg_cache else None,
+            out_dir=Path(args.out).resolve() if args.out else None,
+        )
     elif args.mode == "release":
         cmd_release(args.version)
     elif args.mode == "unrelease":
