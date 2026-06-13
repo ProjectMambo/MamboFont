@@ -28,16 +28,16 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      showgrid="true"
-     showguides="false"
-     inkscape:zoom="0.45254834"
-     inkscape:cx="70.710678"
-     inkscape:cy="520.3864"
+     showguides="true"
+     inkscape:zoom="0.90509668"
+     inkscape:cx="399.95727"
+     inkscape:cy="407.13883"
      inkscape:window-width="1906"
      inkscape:window-height="1025"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer8"
+     inkscape:current-layer="g356"
      inkscape:export-bgcolor="#ffffffff">
     <inkscape:grid
        id="grid1"
@@ -221,7 +221,8 @@
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="Base"
-     style="display:inline;fill:#000000">
+     style="display:inline;fill:#000000"
+     sodipodi:insensitive="true">
     <g
        inkscape:groupmode="layer"
        id="layer39"
@@ -728,7 +729,7 @@
          sodipodi:nodetypes="cccccccccccccccc"
          inkscape:label="k" />
       <path
-         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:120;stroke-dasharray:none;stroke-opacity:1"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:120;stroke-dasharray:none;stroke-opacity:1"
          d="M 310,360 H 690 570 V 840 H 370 v -90 90 H 570 V 360 Z M 480,260 V 160 h 40 V 260 160 h -40 z"
          id="path503"
          sodipodi:nodetypes="ccccccccccccccccc"
@@ -746,7 +747,7 @@
          inkscape:label="h"
          sodipodi:nodetypes="cccccccc" />
       <path
-         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:120;stroke-dasharray:none;stroke-opacity:1"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:120;stroke-dasharray:none;stroke-opacity:1"
          d="M 310,360 H 630 V 840 H 370 v -90 90 H 630 V 640 H 370 V 420 640 H 630 V 360 Z"
          id="path506"
          inkscape:label="g"
@@ -1075,7 +1076,7 @@
          sodipodi:nodetypes="ccccccc" />
       <path
          id="path555"
-         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:120;stroke-dasharray:none;stroke-opacity:1"
+         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:120;stroke-dasharray:none;stroke-opacity:1"
          d="M 370,270 V 160 H 630 V 300 L 500,450 v 30 -30 L 630,300 V 160 H 370 Z M 480,700 V 600 h 40 V 700 600 h -40 z"
          inkscape:label="question"
          sodipodi:nodetypes="cccccccccccccccccc" />
@@ -1165,7 +1166,7 @@
          inkscape:label="quotesingle" />
       <path
          style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:120;stroke-dasharray:none;stroke-opacity:1"
-         d="m 650,440 v 60 L 500,640 H 370 V 500 L 560,300 V 160 H 370 v 140 l 280,340 v 60 -60 L 370,300 V 160 H 560 V 300 L 370,500 V 640 H 500 L 650,500 Z"
+         d="m 630,440 v 60 L 500,640 H 370 V 500 L 560,300 V 160 H 370 v 140 l 260,340 v 60 -60 L 370,300 V 160 H 560 V 300 L 370,500 V 640 H 500 L 630,500 Z"
          id="path607"
          sodipodi:nodetypes="ccccccccccccccccccccc"
          inkscape:label="ampersand" />
@@ -1177,11 +1178,12 @@
       <path
          id="path619"
          style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:120;stroke-dasharray:none;stroke-opacity:1"
-         d="M 560,20 V 160 L 430,640 V 780 640 L 560,160 Z M 690,160 H 370 V 420 H 630 V 640 H 310 630 V 420 H 370 V 160 Z"
-         inkscape:label="dollar" />
+         d="M 560,100 V 240 L 430,560 V 700 560 L 560,240 Z M 690,240 H 370 V 420 H 630 V 560 H 310 630 V 420 H 370 V 240 Z"
+         inkscape:label="dollar"
+         sodipodi:nodetypes="cccccccccccccccccc" />
       <path
          id="path569"
-         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:120;stroke-dasharray:none;stroke-opacity:1"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:120;stroke-dasharray:none;stroke-opacity:1"
          d="M 590,100 V 700 M 410,100 V 700 M 310,500 H 690 M 310,300 h 380"
          inkscape:label="hash"
          sodipodi:nodetypes="cccccccc" />
@@ -1193,8 +1195,1253 @@
          sodipodi:nodetypes="cccc" />
       <path
          id="path571"
-         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:120;stroke-dasharray:none;stroke-opacity:1"
-         d="M 500,100 V 470 Z M 480,700 V 600 h 40 V 700 600 h -40 z"
+         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:120;stroke-dasharray:none;stroke-opacity:1"
+         d="M 500,100 V 480 Z M 480,700 V 600 h 40 V 700 600 h -40 z"
+         inkscape:label="exclam"
+         sodipodi:nodetypes="cccccccccc" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="g887"
+     inkscape:label="SemiBold"
+     style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+    <g
+       inkscape:groupmode="layer"
+       id="g794"
+       inkscape:label="Unicode"
+       style="display:none">
+      <path
+         id="path789"
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="arrowupdown"
+         d="M 500,900 V 155 h 40 l 160,120 h 40 -40 L 540,155 H 460 L 300,275 h -40 40 L 460,155 h 40 z m 0,-800 v 745 h 40 L 700,725 h 40 -40 L 540,845 H 460 L 300,725 h -40 40 l 160,120 h 40 z"
+         sodipodi:nodetypes="cccccccccccccccccccccccccccc" />
+      <path
+         id="path790"
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="arrowleftright"
+         d="M 900,500 H 155 V 460 L 275,300 v -40 40 L 155,460 v 80 l 120,160 v 40 -40 L 155,540 v -40 z m -800,0 H 845 V 460 L 725,300 v -40 40 l 120,160 v 80 L 725,700 v 40 -40 L 845,540 v -40 z"
+         sodipodi:nodetypes="cccccccccccccccccccccccccccc" />
+      <path
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 500,100 v 745 h 40 L 700,725 h 40 -40 L 540,845 H 460 L 300,725 h -40 40 l 160,120 h 40 z"
+         id="path791"
+         sodipodi:nodetypes="cccccccccccccc"
+         inkscape:label="arrowdown" />
+      <path
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 500,900 V 155 h 40 l 160,120 h 40 -40 L 540,155 H 460 L 300,275 h -40 40 L 460,155 h 40 z"
+         id="path792"
+         sodipodi:nodetypes="cccccccccccccc"
+         inkscape:label="arrowup" />
+      <path
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 100,500 H 845 V 460 L 725,300 v -40 40 l 120,160 v 80 L 725,700 v 40 -40 L 845,540 v -40 z"
+         id="path793"
+         sodipodi:nodetypes="cccccccccccccc"
+         inkscape:label="arrowright" />
+      <path
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 900,500 H 155 V 460 L 275,300 v -40 40 L 155,460 v 80 l 120,160 v 40 -40 L 155,540 v -40 z"
+         id="path794"
+         sodipodi:nodetypes="cccccccccccccc"
+         inkscape:label="arrowleft" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="g820"
+       inkscape:label="AlphabetLower"
+       style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 310,355 h 325 v 30 L 365,615 v 30 H 690 365 V 615 L 635,385 v -30 z"
+         id="path795"
+         inkscape:label="z"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,300 V 645 H 635 V 300 845 H 365 v -85 85 H 635 V 645 H 365 Z"
+         id="path796"
+         inkscape:label="y"
+         sodipodi:nodetypes="cccccccccccc" />
+      <path
+         id="path797"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 635,300 v 30 L 365,670 v 30 -30 L 635,330 Z m -270,0 v 30 l 270,340 v 30 -30 L 365,330 Z"
+         inkscape:label="x"
+         sodipodi:nodetypes="cccccccccccccc" />
+      <path
+         id="path798"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 420,580 H 580 M 365,300 v 345 h 30 l 75,-65 h 60 l 75,65 h 30 V 300 645 h -30 l -75,-65 h -60 l -75,65 h -30 z"
+         inkscape:label="w"
+         sodipodi:nodetypes="ccccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 365,300 v 30 l 105,315 h 60 L 635,330 v -30 30 L 530,645 H 470 L 365,330 Z"
+         id="path799"
+         inkscape:label="v"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,300 V 645 H 635 V 300 645 H 365 Z"
+         id="path800"
+         inkscape:label="u"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,355 H 500 690 500 V 100 700 355 Z"
+         id="path801"
+         inkscape:label="t"
+         sodipodi:nodetypes="cccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,355 H 365 v 30 l 270,230 v 30 H 310 635 V 615 L 365,385 v -30 z"
+         id="path802"
+         inkscape:label="s"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,700 V 355 H 635 V 480 355 H 365 Z"
+         id="path803"
+         inkscape:label="r"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,355 H 635 V 845 H 515 635 V 645 H 365 V 410 645 H 635 V 355 Z"
+         id="path804"
+         inkscape:label="q"
+         sodipodi:nodetypes="cccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,355 H 635 V 645 H 365 V 410 900 645 H 635 V 355 Z"
+         id="path805"
+         inkscape:label="p"
+         sodipodi:nodetypes="cccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,355 H 635 V 645 H 365 V 410 645 H 635 V 355 Z"
+         id="path806"
+         inkscape:label="o"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,700 V 355 h 30 l 210,290 h 30 V 300 645 H 605 L 395,355 h -30 z"
+         id="path807"
+         inkscape:label="n"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         id="path808"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 420,460 H 580 M 365,700 V 355 h 30 l 75,105 h 60 l 75,-105 h 30 V 700 355 H 605 L 530,460 H 470 L 395,355 h -30 z"
+         inkscape:label="m"
+         sodipodi:nodetypes="ccccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 500,100 V 645 H 690 500 Z"
+         id="path809"
+         inkscape:label="l"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,100 V 700 450 h 60 L 635,350 v -50 50 L 425,450 h -60 90 l 180,210 v 40 -40 L 455,450 h -90 z"
+         id="path810"
+         sodipodi:nodetypes="cccccccccccccccc"
+         inkscape:label="k" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,355 H 690 570 V 845 H 365 v -85 85 H 570 V 355 Z M 480,260 V 160 h 40 V 260 160 h -40 z"
+         id="path811"
+         sodipodi:nodetypes="ccccccccccccccccc"
+         inkscape:label="j" />
+      <path
+         id="path812"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="i"
+         d="M 480,260 V 160 h 40 V 260 160 H 480 Z M 310,355 H 690 500 V 645 H 310 690 500 V 355 Z"
+         sodipodi:nodetypes="cccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,100 V 700 355 H 635 V 700 355 H 365 Z"
+         id="path813"
+         inkscape:label="h"
+         sodipodi:nodetypes="cccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,355 H 635 V 845 H 365 v -85 85 H 635 V 645 H 365 V 410 645 H 635 V 355 Z"
+         id="path814"
+         inkscape:label="g"
+         sodipodi:nodetypes="cccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,155 H 500 V 700 355 H 310 690 500 V 155 Z"
+         id="path815"
+         inkscape:label="f"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,645 H 365 V 355 H 635 V 460 L 395,645 635,460 V 355 H 365 v 290 z"
+         id="path816"
+         sodipodi:nodetypes="ccccccccccc"
+         inkscape:label="e" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 635,100 V 645 H 365 V 355 H 580 365 v 290 h 270 z"
+         id="path817"
+         inkscape:label="d"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,355 H 365 V 645 H 690 365 V 355 Z"
+         id="path818"
+         inkscape:label="c"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,100 V 645 H 635 V 355 H 420 635 V 645 H 365 Z"
+         id="path819"
+         inkscape:label="b"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,355 H 635 V 645 H 365 V 540 L 605,355 365,540 V 645 H 635 V 355 Z"
+         id="path820"
+         sodipodi:nodetypes="ccccccccccc"
+         inkscape:label="a" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="g846"
+       inkscape:label="AlphabetUpper"
+       style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 310,155 h 325 v 30 L 365,615 v 30 H 690 365 V 615 L 635,185 v -30 z"
+         id="path821"
+         inkscape:label="Z"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,100 V 420 H 635 V 100 420 H 500 V 700 420 H 365 Z"
+         id="path822"
+         inkscape:label="Y"
+         sodipodi:nodetypes="cccccccccc" />
+      <path
+         id="path823"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="X"
+         d="m 635,100 v 30 L 365,670 v 30 -30 L 635,130 Z m -270,0 v 30 l 270,540 v 30 -30 L 365,130 Z"
+         sodipodi:nodetypes="cccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 365,100 v 545 h 30 l 75,-255 h 60 l 75,255 h 30 V 100 645 H 605 L 530,390 h -60 l -75,255 h -30 z"
+         id="path824"
+         inkscape:label="W"
+         sodipodi:nodetypes="ccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 365,100 v 30 l 105,515 h 60 L 635,130 v -30 30 L 530,645 H 470 L 365,130 Z"
+         id="path825"
+         inkscape:label="V"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,100 V 645 H 635 V 100 645 H 365 Z"
+         id="path826"
+         inkscape:label="U"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,155 H 690 500 V 700 155 Z"
+         id="path827"
+         inkscape:label="T"
+         sodipodi:nodetypes="cccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,155 H 365 V 420 H 635 V 645 H 310 635 V 420 H 365 V 155 Z"
+         id="path828"
+         sodipodi:nodetypes="ccccccccccc"
+         inkscape:label="S" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,155 H 635 V 420 H 365 V 210 700 420 h 125 l 145,250 v 30 -30 L 490,420 H 365 635 V 155 Z"
+         id="path829"
+         inkscape:label="R"
+         sodipodi:nodetypes="cccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,155 H 635 V 645 615 L 500,450 v -30 30 l 135,165 v 30 H 365 V 210 645 H 635 V 155 Z"
+         id="path830"
+         inkscape:label="Q"
+         sodipodi:nodetypes="ccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,155 H 635 V 420 H 365 V 210 700 420 H 635 V 155 Z"
+         id="path831"
+         inkscape:label="P"
+         sodipodi:nodetypes="cccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,155 H 635 V 645 H 365 V 210 645 H 635 V 155 Z"
+         id="path832"
+         inkscape:label="O"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,700 V 155 h 30 l 210,490 h 30 V 100 645 H 605 L 395,155 h -30 z"
+         id="path833"
+         inkscape:label="N"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,700 V 155 h 30 l 75,265 h 60 l 75,-265 h 30 V 700 155 H 605 L 530,420 H 470 L 395,155 h -30 z"
+         id="path834"
+         inkscape:label="M"
+         sodipodi:nodetypes="ccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,100 V 645 H 690 365 Z"
+         id="path835"
+         inkscape:label="L"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 365,100 v 290 h 60 L 635,140 v -40 40 L 425,390 h -60 90 l 180,280 v 30 -30 L 455,390 h -90 v 310 z"
+         id="path836"
+         inkscape:label="K"
+         sodipodi:nodetypes="cccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,155 H 690 570 V 645 H 310 570 v 0 -490 z"
+         id="path837"
+         inkscape:label="J"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,155 H 690 500 V 645 H 310 690 500 V 155 Z"
+         id="path838"
+         inkscape:label="I"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,100 V 700 420 H 635 V 100 700 420 H 365 Z"
+         id="path839"
+         inkscape:label="H"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,155 H 365 V 645 H 635 V 420 H 500 635 V 645 H 365 V 155 Z"
+         id="path840"
+         inkscape:label="G"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,155 H 365 V 420 H 690 365 v 280 0 0 -545 z"
+         id="path841"
+         inkscape:label="F"
+         sodipodi:nodetypes="cccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,155 H 365 V 420 H 690 365 V 645 H 690 365 V 155 Z"
+         id="path842"
+         inkscape:label="E"
+         sodipodi:nodetypes="cccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 310,155 h 260 l 65,265 V 645 H 365 V 210 645 H 635 V 420 L 570,155 Z"
+         id="path843"
+         inkscape:label="D"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,155 H 365 V 645 H 690 365 V 155 Z"
+         id="path844"
+         inkscape:label="C"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,155 H 570 V 420 H 385 635 V 645 H 365 V 210 645 H 635 V 420 H 570 V 155 Z"
+         id="path845"
+         inkscape:label="B"
+         sodipodi:nodetypes="cccccccccccccc" />
+      <path
+         id="path846"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,420 H 310 m 55,280 V 670 L 470,155 h 60 l 105,515 v 30 -30 L 530,155 H 470 L 365,670 Z"
+         inkscape:label="A"
+         sodipodi:nodetypes="ccccccccccccc" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="g856"
+       inkscape:label="Number"
+       style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+      <path
+         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,155 H 635 V 420 H 365 V 210 420 H 635 V 645 H 310 635 V 155 Z"
+         id="path847"
+         inkscape:label="9"
+         sodipodi:nodetypes="cccccccccccc" />
+      <path
+         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,155 H 635 V 420 H 365 V 210 420 H 635 V 645 H 365 V 470 645 H 635 V 155 Z"
+         id="path848"
+         inkscape:label="8"
+         sodipodi:nodetypes="cccccccccccccc" />
+      <path
+         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 310,155 h 325 v 30 L 500,670 v 30 -30 L 635,185 v -30 z"
+         id="path849"
+         inkscape:label="7"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,155 H 365 V 645 H 635 V 420 H 420 635 V 645 H 365 V 155 Z"
+         id="path850"
+         inkscape:label="6"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,155 H 365 v 265 h 270 v 30 L 500,645 H 310 500 L 635,450 V 420 H 365 V 155 Z"
+         id="path851"
+         inkscape:label="5"
+         sodipodi:nodetypes="ccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,100 V 420 H 690 570 V 100 700 420 H 365 Z"
+         id="path852"
+         inkscape:label="4"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,155 H 635 V 420 H 310 635 V 645 H 310 635 V 155 Z"
+         id="path853"
+         inkscape:label="3"
+         sodipodi:nodetypes="cccccccccc" />
+      <path
+         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,155 H 635 V 365 L 365,615 v 30 H 690 365 V 615 L 635,365 V 155 Z"
+         id="path854"
+         inkscape:label="2"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,155 H 500 V 645 H 310 690 500 V 155 Z"
+         id="path855"
+         inkscape:label="1"
+         sodipodi:nodetypes="cccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,155 H 635 V 645 615 L 365,185 v -30 30 l 270,430 v 30 H 365 V 210 645 H 635 V 155 Z"
+         id="path856"
+         inkscape:label="0"
+         sodipodi:nodetypes="ccccccccccccccc" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="g886"
+       inkscape:label="Punctuation"
+       style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 310,390 h 60 l 40,-90 h 60 l 60,200 h 60 l 40,-110 h 60 -60 L 590,500 H 530 L 470,300 h -60 l -40,90 z"
+         id="path857"
+         inkscape:label="tilde"
+         sodipodi:nodetypes="ccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 350,155 h 30 l 120,40 v 105 l 50,120 H 650 550 l -50,80 v 105 l -120,40 h -30 30 L 500,605 V 500 l 50,-80 H 650 550 L 500,300 V 195 L 380,155 Z"
+         id="path858"
+         inkscape:label="braceright"
+         sodipodi:nodetypes="ccccccccccccccccccccc" />
+      <path
+         style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 500,100 V 700"
+         id="path859"
+         inkscape:label="pipe" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 650,155 H 620 L 500,195 V 300 L 450,420 H 350 450 l 50,80 v 105 l 120,40 h 30 -30 L 500,605 V 500 L 450,420 H 350 450 L 500,300 V 195 l 120,-40 z"
+         id="path860"
+         inkscape:label="braceleft"
+         sodipodi:nodetypes="ccccccccccccccccccccc" />
+      <path
+         style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 470,100 v 30 l 60,140 v 30 -30 L 470,130 Z"
+         id="path861"
+         inkscape:label="grave" />
+      <path
+         id="path862"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,645 H 690"
+         inkscape:label="underscore"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 350,645 H 500 V 155 H 350 500 v 490 z"
+         id="path863"
+         inkscape:label="bracketright"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 410,100 v 30 l 180,540 v 30 -30 L 410,130 Z"
+         id="path864"
+         inkscape:label="backslash"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 650,645 H 500 V 155 H 650 500 v 490 z"
+         id="path865"
+         inkscape:label="bracketleft"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         id="path866"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,270 V 155 H 635 V 300 L 500,450 v 30 -30 L 635,300 V 155 H 365 Z M 480,700 V 600 h 40 V 700 600 h -40 z"
+         inkscape:label="question"
+         sodipodi:nodetypes="cccccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 350,240 h 60 l 140,180 h 60 -60 L 410,600 h -60 60 L 550,420 h 60 -60 L 410,240 Z"
+         id="path867"
+         inkscape:label="greater"
+         sodipodi:nodetypes="ccccccccccccc" />
+      <path
+         id="path868"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 350,555 H 650 M 350,355 h 300"
+         inkscape:label="equal"
+         sodipodi:nodetypes="cccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 610,240 H 550 L 410,420 h -60 60 l 140,180 h 60 -60 L 410,420 h -60 60 L 550,240 Z"
+         id="path869"
+         inkscape:label="less"
+         sodipodi:nodetypes="ccccccccccccc" />
+      <path
+         id="path870"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="semicolon"
+         d="m 480,600 v -95 h 40 v 65 l -40,150 v 30 -30 l 40,-150 v -65 h -40 z m 0,-240 v -95 h 40 v 95 -95 h -40 z"
+         sodipodi:nodetypes="cccccccccccccccccc" />
+      <path
+         id="path871"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="colon"
+         d="m 480,600 v -95 h 40 v 95 -95 h -40 z m 0,-240 v -95 h 40 v 95 -95 h -40 z"
+         sodipodi:nodetypes="cccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 590,100 v 30 L 410,670 v 30 -30 L 590,130 Z"
+         id="path872"
+         inkscape:label="slash"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 480,700 v -95 h 40 v 95 -95 h -40 z"
+         id="path873"
+         sodipodi:nodetypes="ccccccc"
+         inkscape:label="period" />
+      <path
+         id="path874"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 350,355 H 650"
+         inkscape:label="minus"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 480,700 v -95 h 40 v 65 l -40,150 v 30 -30 l 40,-150 v -65 h -40 z"
+         id="path875"
+         sodipodi:nodetypes="ccccccccccc"
+         inkscape:label="comma" />
+      <path
+         id="path876"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="plus"
+         d="M 500,600 V 300 M 350,450 h 300"
+         sodipodi:nodetypes="cccc" />
+      <path
+         id="path877"
+         style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,180 H 630 L 370,400 h -60 60 L 630,180 Z m -380,0 h 60 l 260,220 h 60 -60 L 370,180 Z m 190,-80 v 380"
+         sodipodi:nodetypes="cccccccccccccccc"
+         inkscape:label="asterisk" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 350,155 h 30 l 120,40 v 410 l -120,40 h -30 30 L 500,605 V 195 L 380,155 Z"
+         id="path878"
+         inkscape:label="parenright"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 650,155 h -30 l -120,40 v 410 l 120,40 h 30 -30 L 500,605 V 195 l 120,-40 z"
+         id="path879"
+         inkscape:label="parenleft"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 500,100 V 300"
+         id="path880"
+         sodipodi:nodetypes="cc"
+         inkscape:label="quotesingle" />
+      <path
+         style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="m 635,445 v 55 L 500,645 H 365 V 500 L 560,300 V 155 H 365 v 145 l 270,340 v 60 -60 L 365,300 V 155 H 560 V 300 L 365,500 V 645 H 500 L 635,500 Z"
+         id="path881"
+         sodipodi:nodetypes="ccccccccccccccccccccc"
+         inkscape:label="ampersand" />
+      <path
+         id="path882"
+         style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 365,255 V 100 m 0,195 v -40 l 60,-115 v -40 40 l -60,115 z m 270,250 v 155 m 0,-195 v 40 l -60,115 v 40 -40 l 60,-115 z m 0,-405 v 40 L 365,660 v 40 -40 L 635,140 Z"
+         inkscape:label="percent"
+         sodipodi:nodetypes="ccccccccccccccccccccccccc" />
+      <path
+         id="path883"
+         style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 560,100 V 240 L 430,560 V 700 560 L 560,240 Z M 690,240 H 365 V 420 H 635 V 560 H 310 635 V 420 H 365 V 240 Z"
+         inkscape:label="dollar"
+         sodipodi:nodetypes="cccccccccccccccccc" />
+      <path
+         id="path884"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 590,100 V 700 M 410,100 V 700 M 310,500 H 690 M 310,300 h 380"
+         inkscape:label="hash"
+         sodipodi:nodetypes="cccccccc" />
+      <path
+         id="path885"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="quote"
+         d="M 590,100 V 300 M 410,100 v 200"
+         sodipodi:nodetypes="cccc" />
+      <path
+         id="path886"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:110;stroke-dasharray:none;stroke-opacity:1"
+         d="M 500,100 V 480 Z M 480,700 V 600 h 40 V 700 600 h -40 z"
+         inkscape:label="exclam"
+         sodipodi:nodetypes="cccccccccc" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="g985"
+     inkscape:label="Medium"
+     style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+    <g
+       inkscape:groupmode="layer"
+       id="g892"
+       inkscape:label="Unicode"
+       style="display:none">
+      <path
+         id="path887"
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="arrowupdown"
+         d="M 500,900 V 150 h 40 l 160,120 h 40 -40 L 540,150 H 460 L 300,270 h -40 40 L 460,150 h 40 z m 0,-800 v 750 h 40 L 700,730 h 40 -40 L 540,850 H 460 L 300,730 h -40 40 l 160,120 h 40 z"
+         sodipodi:nodetypes="cccccccccccccccccccccccccccc" />
+      <path
+         id="path888"
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="arrowleftright"
+         d="M 900,500 H 150 V 460 L 270,300 v -40 40 L 150,460 v 80 l 120,160 v 40 -40 L 150,540 v -40 z m -800,0 H 850 V 460 L 730,300 v -40 40 l 120,160 v 80 L 730,700 v 40 -40 L 850,540 v -40 z"
+         sodipodi:nodetypes="cccccccccccccccccccccccccccc" />
+      <path
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 500,100 v 750 h 40 L 700,730 h 40 -40 L 540,850 H 460 L 300,730 h -40 40 l 160,120 h 40 z"
+         id="path889"
+         sodipodi:nodetypes="cccccccccccccc"
+         inkscape:label="arrowdown" />
+      <path
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 500,900 V 150 h 40 l 160,120 h 40 -40 L 540,150 H 460 L 300,270 h -40 40 L 460,150 h 40 z"
+         id="path890"
+         sodipodi:nodetypes="cccccccccccccc"
+         inkscape:label="arrowup" />
+      <path
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 100,500 H 850 V 460 L 730,300 v -40 40 l 120,160 v 80 L 730,700 v 40 -40 L 850,540 v -40 z"
+         id="path891"
+         sodipodi:nodetypes="cccccccccccccc"
+         inkscape:label="arrowright" />
+      <path
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 900,500 H 150 V 460 L 270,300 v -40 40 L 150,460 v 80 l 120,160 v 40 -40 L 150,540 v -40 z"
+         id="path892"
+         sodipodi:nodetypes="cccccccccccccc"
+         inkscape:label="arrowleft" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="g918"
+       inkscape:label="AlphabetLower"
+       style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 310,350 h 330 v 25 L 360,625 v 25 H 690 360 V 625 L 640,375 v -25 z"
+         id="path893"
+         inkscape:label="z"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,300 V 650 H 640 V 300 850 H 360 V 750 850 H 640 V 650 H 360 Z"
+         id="path894"
+         inkscape:label="y"
+         sodipodi:nodetypes="cccccccccccc" />
+      <path
+         id="path895"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 635,300 v 25 L 365,675 v 25 -25 L 635,325 Z m -270,0 v 25 l 270,350 v 25 -25 L 365,325 Z"
+         inkscape:label="x"
+         sodipodi:nodetypes="cccccccccccccc" />
+      <path
+         id="path896"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 415,580 H 585 M 365,300 v 350 h 25 l 85,-70 h 50 l 85,70 h 25 V 300 650 h -25 l -85,-70 h -50 l -85,70 h -25 z"
+         inkscape:label="w"
+         sodipodi:nodetypes="ccccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 365,300 v 25 l 110,325 h 50 L 635,325 v -25 25 L 525,650 H 475 L 365,325 Z"
+         id="path897"
+         inkscape:label="v"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,300 V 650 H 640 V 300 650 H 360 Z"
+         id="path898"
+         inkscape:label="u"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,350 H 500 690 500 V 100 700 350 Z"
+         id="path899"
+         inkscape:label="t"
+         sodipodi:nodetypes="cccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,350 H 360 v 25 l 280,250 v 25 H 310 640 V 625 L 360,375 v -25 z"
+         id="path900"
+         inkscape:label="s"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,700 V 350 H 640 V 480 350 H 360 Z"
+         id="path901"
+         inkscape:label="r"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,350 H 640 V 850 H 515 640 V 650 H 360 V 400 650 H 640 V 350 Z"
+         id="path902"
+         inkscape:label="q"
+         sodipodi:nodetypes="cccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,350 H 640 V 650 H 360 V 400 900 650 H 640 V 350 Z"
+         id="path903"
+         inkscape:label="p"
+         sodipodi:nodetypes="cccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,350 H 640 V 650 H 360 V 400 650 H 640 V 350 Z"
+         id="path904"
+         inkscape:label="o"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,700 V 350 h 25 l 230,300 h 25 V 300 650 H 615 L 385,350 h -25 z"
+         id="path905"
+         inkscape:label="n"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         id="path906"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 410,460 H 590 M 360,700 V 350 h 25 l 90,110 h 50 l 90,-110 h 25 V 700 350 H 615 L 525,460 H 475 L 385,350 h -25 z"
+         inkscape:label="m"
+         sodipodi:nodetypes="ccccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 500,100 V 650 H 690 500 Z"
+         id="path907"
+         inkscape:label="l"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,100 V 700 450 h 50 L 640,345 v -45 45 L 410,450 h -50 75 l 205,215 v 35 -35 L 435,450 h -75 z"
+         id="path908"
+         sodipodi:nodetypes="cccccccccccccccc"
+         inkscape:label="k" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,350 H 690 570 V 850 H 360 V 750 850 H 570 V 350 Z M 480,260 V 160 h 40 V 260 160 h -40 z"
+         id="path909"
+         sodipodi:nodetypes="ccccccccccccccccc"
+         inkscape:label="j" />
+      <path
+         id="path910"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="i"
+         d="M 480,260 V 160 h 40 V 260 160 H 480 Z M 310,350 H 690 500 V 645 H 310 690 500 V 350 Z"
+         sodipodi:nodetypes="cccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,100 V 700 350 H 640 V 700 350 H 360 Z"
+         id="path911"
+         inkscape:label="h"
+         sodipodi:nodetypes="cccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,350 H 640 V 850 H 360 V 750 850 H 640 V 650 H 360 V 400 650 H 640 V 350 Z"
+         id="path912"
+         inkscape:label="g"
+         sodipodi:nodetypes="cccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,150 H 500 V 700 350 H 310 690 500 V 150 Z"
+         id="path913"
+         inkscape:label="f"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,650 H 360 V 350 H 640 V 460 L 385,650 640,460 V 350 H 360 v 300 z"
+         id="path914"
+         sodipodi:nodetypes="ccccccccccc"
+         inkscape:label="e" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 640,100 V 650 H 360 V 350 H 590 360 v 300 h 280 z"
+         id="path915"
+         inkscape:label="d"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,350 H 360 V 650 H 690 360 V 350 Z"
+         id="path916"
+         inkscape:label="c"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,100 V 650 H 640 V 350 H 410 640 V 650 H 360 Z"
+         id="path917"
+         inkscape:label="b"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,350 H 640 V 650 H 360 V 540 L 615,350 360,540 V 650 H 640 V 350 Z"
+         id="path918"
+         sodipodi:nodetypes="ccccccccccc"
+         inkscape:label="a" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="g944"
+       inkscape:label="AlphabetUpper"
+       style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+      <path
+         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 310,150 h 330 v 25 L 360,625 v 25 H 690 360 V 625 L 640,175 v -25 z"
+         id="path919"
+         inkscape:label="Z"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,100 V 420 H 640 V 100 420 H 500 V 700 420 H 360 Z"
+         id="path920"
+         inkscape:label="Y"
+         sodipodi:nodetypes="cccccccccc" />
+      <path
+         id="path921"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="X"
+         d="m 640,100 v 25 L 360,675 v 25 -25 L 640,125 Z m -280,0 v 25 l 280,550 v 25 -25 L 360,125 Z"
+         sodipodi:nodetypes="cccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 360,100 v 550 h 25 l 90,-260 h 50 l 90,260 h 25 V 100 650 H 615 L 525,390 h -50 l -90,260 h -25 z"
+         id="path922"
+         inkscape:label="W"
+         sodipodi:nodetypes="ccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 360,100 v 25 l 115,525 h 50 L 640,125 v -25 25 L 525,650 H 475 L 360,125 Z"
+         id="path923"
+         inkscape:label="V"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,100 V 650 H 640 V 100 650 H 360 Z"
+         id="path924"
+         inkscape:label="U"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,150 H 690 500 V 700 150 Z"
+         id="path925"
+         inkscape:label="T"
+         sodipodi:nodetypes="cccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,150 H 360 V 420 H 640 V 650 H 310 640 V 420 H 360 V 150 Z"
+         id="path926"
+         sodipodi:nodetypes="ccccccccccc"
+         inkscape:label="S" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,150 H 640 V 420 H 360 V 200 700 420 h 130 l 150,255 v 25 -25 L 490,420 H 360 640 V 150 Z"
+         id="path927"
+         inkscape:label="R"
+         sodipodi:nodetypes="cccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,150 H 640 V 650 625 L 500,445 v -25 25 l 140,180 v 25 H 360 V 200 650 H 640 V 150 Z"
+         id="path928"
+         inkscape:label="Q"
+         sodipodi:nodetypes="ccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,150 H 640 V 420 H 360 V 200 700 420 H 640 V 150 Z"
+         id="path929"
+         inkscape:label="P"
+         sodipodi:nodetypes="cccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,150 H 640 V 650 H 360 V 200 650 H 640 V 150 Z"
+         id="path930"
+         inkscape:label="O"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,700 V 150 h 25 l 230,500 h 25 V 100 650 H 615 L 385,150 h -25 z"
+         id="path931"
+         inkscape:label="N"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,700 V 150 h 25 l 90,270 h 50 l 90,-270 h 25 V 700 150 H 615 L 525,420 H 475 L 385,150 h -25 z"
+         id="path932"
+         inkscape:label="M"
+         sodipodi:nodetypes="ccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,100 V 650 H 690 360 Z"
+         id="path933"
+         inkscape:label="L"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 360,100 v 290 h 50 L 640,135 v -35 35 L 410,390 h -50 75 l 205,280 v 30 -30 L 435,390 h -75 v 310 z"
+         id="path934"
+         inkscape:label="K"
+         sodipodi:nodetypes="cccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,150 H 690 570 V 650 H 310 570 v 0 -500 z"
+         id="path935"
+         inkscape:label="J"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,150 H 690 500 V 650 H 310 690 500 V 150 Z"
+         id="path936"
+         inkscape:label="I"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,100 V 700 420 H 640 V 100 700 420 H 360 Z"
+         id="path937"
+         inkscape:label="H"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,150 H 360 V 650 H 640 V 420 H 500 640 V 650 H 360 V 150 Z"
+         id="path938"
+         inkscape:label="G"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,150 H 360 V 420 H 690 360 v 280 0 0 -550 z"
+         id="path939"
+         inkscape:label="F"
+         sodipodi:nodetypes="cccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,150 H 360 V 420 H 690 360 V 650 H 690 360 V 150 Z"
+         id="path940"
+         inkscape:label="E"
+         sodipodi:nodetypes="cccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 310,150 h 260 l 70,270 V 650 H 360 V 200 650 H 640 V 420 L 570,150 Z"
+         id="path941"
+         inkscape:label="D"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,150 H 360 V 650 H 690 360 V 150 Z"
+         id="path942"
+         inkscape:label="C"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,150 H 570 V 420 H 380 640 V 650 H 360 V 200 650 H 640 V 420 H 570 V 150 Z"
+         id="path943"
+         inkscape:label="B"
+         sodipodi:nodetypes="cccccccccccccc" />
+      <path
+         id="path944"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,420 H 310 m 50,280 V 675 L 475,150 h 50 l 115,525 v 25 -25 L 525,150 H 475 L 360,675 Z"
+         inkscape:label="A"
+         sodipodi:nodetypes="ccccccccccccc" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="g954"
+       inkscape:label="Number"
+       style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,150 H 640 V 420 H 360 V 200 420 H 640 V 645 H 310 640 V 150 Z"
+         id="path945"
+         inkscape:label="9"
+         sodipodi:nodetypes="cccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,150 H 640 V 420 H 360 V 200 420 H 640 V 645 H 360 V 470 645 H 640 V 150 Z"
+         id="path946"
+         inkscape:label="8"
+         sodipodi:nodetypes="cccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 310,150 h 330 v 25 L 500,675 v 25 -25 L 640,175 v -25 z"
+         id="path947"
+         inkscape:label="7"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,150 H 360 V 650 H 640 V 420 H 410 640 V 650 H 360 V 150 Z"
+         id="path948"
+         inkscape:label="6"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,150 H 360 v 270 h 280 v 25 L 500,650 H 310 500 L 640,445 V 420 H 360 V 150 Z"
+         id="path949"
+         inkscape:label="5"
+         sodipodi:nodetypes="ccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,100 V 420 H 690 570 V 100 700 420 H 360 Z"
+         id="path950"
+         inkscape:label="4"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,150 H 640 V 420 H 310 640 V 650 H 310 640 V 150 Z"
+         id="path951"
+         inkscape:label="3"
+         sodipodi:nodetypes="cccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,150 H 640 V 370 L 360,625 v 25 H 690 360 V 625 L 640,370 V 150 Z"
+         id="path952"
+         inkscape:label="2"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,150 H 500 V 650 H 310 690 500 V 150 Z"
+         id="path953"
+         inkscape:label="1"
+         sodipodi:nodetypes="cccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,150 H 640 V 650 625 L 360,175 v -25 25 l 280,450 v 25 H 360 V 200 650 H 640 V 150 Z"
+         id="path954"
+         inkscape:label="0"
+         sodipodi:nodetypes="ccccccccccccccc" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="g984"
+       inkscape:label="Punctuation"
+       style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 310,390 h 60 l 40,-90 h 60 l 60,200 h 60 l 40,-110 h 60 -60 L 590,500 H 530 L 470,300 h -60 l -40,90 z"
+         id="path955"
+         inkscape:label="tilde"
+         sodipodi:nodetypes="ccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 350,155 h 25 l 125,40 v 105 l 50,120 H 650 550 l -50,80 v 105 l -125,40 h -25 25 L 500,605 V 500 l 50,-80 H 650 550 L 500,300 V 195 L 375,155 Z"
+         id="path956"
+         inkscape:label="braceright"
+         sodipodi:nodetypes="ccccccccccccccccccccc" />
+      <path
+         style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 500,100 V 700"
+         id="path957"
+         inkscape:label="pipe" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 650,155 H 625 L 500,195 V 300 L 450,420 H 350 450 l 50,80 v 105 l 125,40 h 25 -25 L 500,605 V 500 L 450,420 H 350 450 L 500,300 V 195 l 125,-40 z"
+         id="path958"
+         inkscape:label="braceleft"
+         sodipodi:nodetypes="ccccccccccccccccccccc" />
+      <path
+         style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 470,100 v 25 l 60,150 v 25 -25 L 470,125 Z"
+         id="path959"
+         inkscape:label="grave"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         id="path960"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 310,650 H 690"
+         inkscape:label="underscore"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 350,645 H 500 V 155 H 350 500 v 490 z"
+         id="path961"
+         inkscape:label="bracketright"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 410,100 v 25 l 180,550 v 25 -25 L 410,125 Z"
+         id="path962"
+         inkscape:label="backslash"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 650,645 H 500 V 155 H 650 500 v 490 z"
+         id="path963"
+         inkscape:label="bracketleft"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         id="path964"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,270 V 150 H 640 V 300 L 500,475 v 25 -25 L 640,300 V 150 H 360 Z M 480,700 V 600 h 40 V 700 600 h -40 z"
+         inkscape:label="question"
+         sodipodi:nodetypes="cccccccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 350,240 h 60 l 140,180 h 60 -60 L 410,600 h -60 60 L 550,420 h 60 -60 L 410,240 Z"
+         id="path965"
+         inkscape:label="greater"
+         sodipodi:nodetypes="ccccccccccccc" />
+      <path
+         id="path966"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 350,550 H 650 M 350,350 h 300"
+         inkscape:label="equal"
+         sodipodi:nodetypes="cccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 610,240 H 550 L 410,420 h -60 60 l 140,180 h 60 -60 L 410,420 h -60 60 L 550,240 Z"
+         id="path967"
+         inkscape:label="less"
+         sodipodi:nodetypes="ccccccccccccc" />
+      <path
+         id="path968"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="semicolon"
+         d="m 480,600 v -90.00002 h 40 V 570 l -40,150 v 30 -30 l 40,-150 v -60.00002 h -40 z m 0,-240 v -90 h 40 v 90 -90 h -40 z"
+         sodipodi:nodetypes="cccccccccccccccccc" />
+      <path
+         id="path969"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="colon"
+         d="m 480,600 v -90.00002 h 40 V 600 509.99998 h -40 z m 0,-240 v -90 h 40 v 90 -90 h -40 z"
+         sodipodi:nodetypes="cccccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 590,100 v 25 L 410,675 v 25 -25 L 590,125 Z"
+         id="path970"
+         inkscape:label="slash"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 480,700 v -90 h 40 v 90 -90 h -40 z"
+         id="path971"
+         sodipodi:nodetypes="ccccccc"
+         inkscape:label="period" />
+      <path
+         id="path972"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 350,350 H 650"
+         inkscape:label="minus"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 480,700 v -90 h 40 v 60 l -40,150 v 30 -30 l 40,-150 v -60 h -40 z"
+         id="path973"
+         sodipodi:nodetypes="ccccccccccc"
+         inkscape:label="comma" />
+      <path
+         id="path974"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="plus"
+         d="M 500,600 V 300 M 350,450 h 300"
+         sodipodi:nodetypes="cccc" />
+      <path
+         id="path975"
+         style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 690,180 H 630 L 370,400 h -60 60 L 630,180 Z m -380,0 h 60 l 260,220 h 60 -60 L 370,180 Z m 190,-80 v 380"
+         sodipodi:nodetypes="cccccccccccccccc"
+         inkscape:label="asterisk" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 355,150 h 25 l 120,40 v 420 l -120,40 h -25 25 L 500,610 V 190 L 380,150 Z"
+         id="path976"
+         inkscape:label="parenright"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 645,150 h -25 l -120,40 v 420 l 120,40 h 25 -25 L 500,610 V 190 l 120,-40 z"
+         id="path977"
+         inkscape:label="parenleft"
+         sodipodi:nodetypes="ccccccccccc" />
+      <path
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 500,100 V 300"
+         id="path978"
+         sodipodi:nodetypes="cc"
+         inkscape:label="quotesingle" />
+      <path
+         style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="m 640,445 v 55 L 500,650 H 360 V 500 L 560,300 V 150 H 360 v 150 l 280,340 v 60 -60 L 360,300 V 150 H 560 V 300 L 360,500 V 650 H 500 L 640,500 Z"
+         id="path979"
+         sodipodi:nodetypes="ccccccccccccccccccccc"
+         inkscape:label="ampersand" />
+      <path
+         id="path980"
+         style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 360,255 V 100 m 0,195 v -40 l 60,-115 v -40 40 l -60,115 z m 280,250 v 155 m 0,-195 v 40 l -60,115 v 40 -40 l 60,-115 z m 0,-405 v 40 L 360,660 v 40 -40 L 640,140 Z"
+         inkscape:label="percent"
+         sodipodi:nodetypes="ccccccccccccccccccccccccc" />
+      <path
+         id="path981"
+         style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 560,100 V 240 L 430,560 V 700 560 L 560,240 Z M 690,240 H 360 V 420 H 640 V 560 H 310 640 V 420 H 360 V 240 Z"
+         inkscape:label="dollar"
+         sodipodi:nodetypes="cccccccccccccccccc" />
+      <path
+         id="path982"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 590,100 V 700 M 410,100 V 700 M 310,500 H 690 M 310,300 h 380"
+         inkscape:label="hash"
+         sodipodi:nodetypes="cccccccc" />
+      <path
+         id="path983"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="quote"
+         d="M 590,100 V 300 M 410,100 v 200"
+         sodipodi:nodetypes="cccc" />
+      <path
+         id="path984"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:100;stroke-dasharray:none;stroke-opacity:1"
+         d="M 500,100 V 500 Z M 480,700 V 600 h 40 V 700 600 h -40 z"
          inkscape:label="exclam"
          sodipodi:nodetypes="cccccccccc" />
     </g>
@@ -1493,7 +2740,7 @@
        inkscape:groupmode="layer"
        id="g56"
        inkscape:label="AlphabetLower"
-       style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
+       style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1">
       <path
          style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:80;stroke-dasharray:none;stroke-opacity:1"
          d="m 310,340 h 340 v 20 L 350,640 v 20 H 690 350 V 640 L 650,360 v -20 z"
@@ -1594,7 +2841,7 @@
          id="path465"
          inkscape:label="h" />
       <path
-         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:80;stroke-dasharray:none;stroke-opacity:1"
+         style="display:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:80;stroke-dasharray:none;stroke-opacity:1"
          d="M 310,340 H 650 V 860 H 350 v -80 80 H 650 V 660 H 350 V 380 660 H 650 V 340 Z"
          id="path464"
          inkscape:label="g" />
@@ -1983,10 +3230,9 @@
          d="M 350,250 V 100 m 0,201.33332 v -40 L 420,140 v -40 40 L 350,261.33333 Z M 650,550 v 150 m 0,-201.33333 v 40 L 580,660 v 40 -40 L 650,538.66667 Z M 650,100 v 40 L 350,660 v 40 -40 L 650,140 Z"
          inkscape:label="percent" />
       <path
-         id="path617"
-         style="display:none;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:80;stroke-dasharray:none;stroke-opacity:1"
-         d="M 540,100 V 220 L 460,580 V 700 M 690,220 H 350 V 390 H 650 V 580 H 310 650 V 390 H 350 V 220 Z"
-         sodipodi:nodetypes="ccccccccccccccc"
+         id="path989"
+         style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1;opacity:1;stroke-width:80;stroke-dasharray:none"
+         d="M 460,700 V 580 L 540,220 V 100 220 L 460,580 Z M 690,220 H 350 V 390 H 650 V 580 H 310 650 V 390 H 350 V 220 Z"
          inkscape:label="dollar" />
       <path
          id="path372"
