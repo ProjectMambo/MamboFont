@@ -9,8 +9,8 @@ Modes:
   unrelease Delete a GitHub release and its tag (local + remote)
 
 Usage:
-  python mambo_font.py export [layer_filter ...]
-  python mambo_font.py compile <version> [layer_filter ...]
+  python mambo_font.py export [-o DIR] [-f layer_filter ...]
+  python mambo_font.py compile <version> [-o DIR] [-f layer_filter ...] [-t ttf woff2]
   python mambo_font.py release <version>
   python mambo_font.py unrelease <version>
 """
@@ -49,8 +49,10 @@ TTF_DIR      = PROJECT_ROOT / "ttf"
 FAMILY_NAME = "Mambo Font"
 
 WEIGHTS = [
-    ("regular", "Regular", 400),
-    ("bold",    "Bold",    700),
+    ("regular",  "Regular",  400),
+    ("medium",   "Medium",   500),
+    ("semibold", "SemiBold", 600),
+    ("bold",     "Bold",     700),
 ]
 
 SCAN_SUBDIRS = ["alphabetupper", "alphabetlower", "number", "punctuation", "control", "symbol"]
@@ -232,7 +234,7 @@ UNICODE_NAME_MAP = {
     "arrowleft":               0x2190,
     "arrowup":                 0x2191,
     "arrowright":              0x2192,
-    "arrowdown":               0x2193,
+    "arrowdown":                0x2193,
     "arrowleftright":          0x2194,
     "arrowupdown":             0x2195,
     "arrownwse":               0x2196,
@@ -1008,12 +1010,20 @@ def build_weight_from_memory(
     version: str,
     write_to_disk: bool = True,
     ttf_out: Optional[Path] = None,
+    types: Optional[list[str]] = None,
 ) -> tuple[bytes, bytes]:
     """
     Compile one font weight from in-memory SVGs.
-    Always returns (ttf_bytes, woff2_bytes).
-    Also writes TTF+WOFF2 to ttf_out (defaults to TTF_DIR) when write_to_disk=True.
+    types controls which output formats are generated: any subset of
+    ["ttf", "woff2"]. Defaults to both (used by release/unrelease, which
+    always produce every format).
+    Always returns (ttf_bytes, woff2_bytes) — bytes is empty for any type
+    not in `types`.
+    Also writes requested types to ttf_out (defaults to TTF_DIR) when
+    write_to_disk=True.
     """
+    types = types or ["ttf", "woff2"]
+
     ff = _ff
     font = ff.font()
     font.familyname = FAMILY_NAME
@@ -1034,9 +1044,12 @@ def build_weight_from_memory(
 
     print(f"\n{BLUE}=========================================={NC}")
     print(f" Weight:  {GREEN}{style_name}{NC}  (OS/2 {os2_weight})")
+    print(f" Types:   {GREEN}{', '.join(types)}{NC}")
     if write_to_disk:
-        print(f" Outputs: {ttf_filename}")
-        print(f"          {woff2_filename}")
+        if "ttf" in types:
+            print(f" Outputs: {ttf_filename}")
+        if "woff2" in types:
+            print(f"          {woff2_filename}")
     else:
         print(f" Mode:    in-memory only (release)")
     print(f"{BLUE}=========================================={NC}")
@@ -1130,31 +1143,42 @@ def build_weight_from_memory(
     if pua_used:
         print(f"\n{BLUE}[i] PUA slots used:{NC} {pua_used}  (U+E000 – U+{pua_counter - 1:04X})")
 
-    # Generate to temp files so we can read back as bytes
-    with tempfile.NamedTemporaryFile(suffix=".ttf",   delete=False) as t1, \
-         tempfile.NamedTemporaryFile(suffix=".woff2", delete=False) as t2:
-        tmp_ttf   = t1.name
-        tmp_woff2 = t2.name
+    # ---- generate only the requested formats, to temp files so we can read back as bytes ----
+    ttf_bytes   = b""
+    woff2_bytes = b""
 
-    try:
-        font.generate(tmp_ttf)
-        font.generate(tmp_woff2)
-        ttf_bytes   = Path(tmp_ttf).read_bytes()
-        woff2_bytes = Path(tmp_woff2).read_bytes()
-    finally:
-        Path(tmp_ttf).unlink(missing_ok=True)
-        Path(tmp_woff2).unlink(missing_ok=True)
+    if "ttf" in types:
+        with tempfile.NamedTemporaryFile(suffix=".ttf", delete=False) as t1:
+            tmp_ttf = t1.name
+        try:
+            font.generate(tmp_ttf)
+            ttf_bytes = Path(tmp_ttf).read_bytes()
+        finally:
+            Path(tmp_ttf).unlink(missing_ok=True)
+
+    if "woff2" in types:
+        with tempfile.NamedTemporaryFile(suffix=".woff2", delete=False) as t2:
+            tmp_woff2 = t2.name
+        try:
+            font.generate(tmp_woff2)
+            woff2_bytes = Path(tmp_woff2).read_bytes()
+        finally:
+            Path(tmp_woff2).unlink(missing_ok=True)
 
     if write_to_disk:
         out_path = ttf_out or TTF_DIR
         out_path.mkdir(parents=True, exist_ok=True)
-        (out_path / ttf_filename).write_bytes(ttf_bytes)
-        (out_path / woff2_filename).write_bytes(woff2_bytes)
-        print(f"\n{GREEN}[+] Generated TTF:{NC}   {ttf_filename}")
-        print(f"{GREEN}[+] Generated WOFF2:{NC} {woff2_filename}")
+        if "ttf" in types:
+            (out_path / ttf_filename).write_bytes(ttf_bytes)
+            print(f"\n{GREEN}[+] Generated TTF:{NC}   {ttf_filename}")
+        if "woff2" in types:
+            (out_path / woff2_filename).write_bytes(woff2_bytes)
+            print(f"{GREEN}[+] Generated WOFF2:{NC} {woff2_filename}")
     else:
-        print(f"\n{GREEN}[+] Compiled TTF:{NC}   {ttf_filename}  ({len(ttf_bytes):,} bytes, in memory)")
-        print(f"{GREEN}[+] Compiled WOFF2:{NC} {woff2_filename}  ({len(woff2_bytes):,} bytes, in memory)")
+        if "ttf" in types:
+            print(f"\n{GREEN}[+] Compiled TTF:{NC}   {ttf_filename}  ({len(ttf_bytes):,} bytes, in memory)")
+        if "woff2" in types:
+            print(f"{GREEN}[+] Compiled WOFF2:{NC} {woff2_filename}  ({len(woff2_bytes):,} bytes, in memory)")
 
     return ttf_bytes, woff2_bytes
 
@@ -1185,10 +1209,12 @@ def cmd_compile(
     filter_layers: list[str],
     svg_dir: Optional[Path] = None,
     out_dir: Optional[Path] = None,
+    types: Optional[list[str]] = None,
 ) -> None:
     """
     svg_dir: where to load cached SVGs from (fallback for filtered compile). Defaults to DEST_DIR.
     out_dir: where to write TTF/WOFF2 files. Defaults to TTF_DIR.
+    types:   which output formats to generate/write. Defaults to both ttf and woff2.
     """
     if _ff is None:
         print(f"{RED}[!] Error: FontForge Python bindings not found.{NC}")
@@ -1196,6 +1222,7 @@ def cmd_compile(
         sys.exit(1)
 
     ttf_out = out_dir or TTF_DIR
+    types   = types or ["ttf", "woff2"]
 
     # When a filter is active:
     #   1. Export only the filtered layers fresh (in-memory, no disk write).
@@ -1222,6 +1249,7 @@ def cmd_compile(
     print(f" Family:  {GREEN}{FAMILY_NAME}{NC}")
     print(f" Version: {GREEN}{version}{NC}")
     print(f" Weights: {GREEN}{', '.join(w[1] for w in WEIGHTS)}{NC}")
+    print(f" Types:   {GREEN}{', '.join(types)}{NC}")
     if out_dir:
         print(f" Output:  {GREEN}{ttf_out}{NC}")
     print(f"{BLUE}------------------------------------------{NC}")
@@ -1230,10 +1258,10 @@ def cmd_compile(
         if not any(k.startswith(f"{folder_name}/") for k in svgs):
             print(f"\n{RED}[!] No SVGs found for weight '{folder_name}', skipping{NC}")
             continue
-        build_weight_from_memory(svgs, folder_name, style_name, os2_weight, version, ttf_out=ttf_out)
+        build_weight_from_memory(svgs, folder_name, style_name, os2_weight, version, ttf_out=ttf_out, types=types)
 
     print(f"\n{BLUE}------------------------------------------{NC}")
-    print(f"{GREEN}[+] All weights compiled successfully (TTF & WOFF2)!{NC}")
+    print(f"{GREEN}[+] All weights compiled successfully!{NC}")
     print(f"{BLUE}------------------------------------------{NC}")
 
 
@@ -1314,6 +1342,11 @@ def _open_notes_in_nvim(seed_text: str = "") -> str:
 
 
 def cmd_release(version: str) -> None:
+    """
+    Full release: always compiles every weight in both TTF and WOFF2, then
+    publishes both format zips plus the loose files as GitHub release assets.
+    No layer filter and no type filter apply here — release is all-or-nothing.
+    """
     if _ff is None:
         print(f"{RED}[!] Error: FontForge Python bindings not found.{NC}")
         print("    Please run: 'sudo pacman -S fontforge'")
@@ -1346,6 +1379,7 @@ def cmd_release(version: str) -> None:
     print(f" Version: {GREEN}{version}{NC}")
     print(f" Tag:     {GREEN}{tag_name}{NC}")
     print(f" Weights: {GREEN}{', '.join(w[1] for w in WEIGHTS)}{NC}")
+    print(f" Types:   {GREEN}ttf, woff2 (all){NC}")
     print(f"{BLUE}------------------------------------------{NC}")
 
     # {filename -> bytes} for all generated font files
@@ -1358,6 +1392,7 @@ def cmd_release(version: str) -> None:
         ttf_bytes, woff2_bytes = build_weight_from_memory(
             svgs, folder_name, style_name, os2_weight, version,
             write_to_disk=False,
+            types=["ttf", "woff2"],
         )
         safe_style = style_name.replace(" ", "")
         font_files[f"MamboFont-{safe_style}_v{version}.ttf"]   = ttf_bytes
@@ -1440,6 +1475,8 @@ def cmd_release(version: str) -> None:
 def cmd_unrelease(version: str, _skip_auth_check: bool = False) -> None:
     """
     Delete a GitHub release and its tag — both remote and local.
+    Same scope as release: operates on the whole release (all types + zips),
+    there is nothing to filter here.
     When called from cmd_release (amend flow), _skip_auth_check=True skips
     redundant tool/auth validation.
     """
@@ -1483,7 +1520,66 @@ def cmd_unrelease(version: str, _skip_auth_check: bool = False) -> None:
 
 # ────────────────────────────────────────────────────────────────────────────
 # Entry point
+#
+# Layer filters (-f/--filter) and output type (-t/--type, compile-only) are
+# multi-value options (e.g. "-f symbol icon"), and "compile" also takes a
+# required positional "version". argparse's nargs='*' options are greedy —
+# they'll swallow a following positional token instead of leaving it for
+# "version" — so -f/-t/-o/--svg-cache are pulled out of argv by hand first,
+# in any order, and only the leftover tokens (mode + version) are handed to
+# argparse for structural validation and --help. This keeps every flag fully
+# order-interchangeable on the command line.
 # ────────────────────────────────────────────────────────────────────────────
+
+# Multi-value options: consume all following tokens up to the next flag.
+_MULTI_VALUE_FLAGS = {
+    "-f": "filter", "--filter": "filter",
+    "-t": "type",   "--type":   "type",
+}
+
+# Single-value options: consume exactly one following token.
+_SINGLE_VALUE_FLAGS = {
+    "-o": "out", "--out": "out",
+    "--svg-cache": "svg_cache",
+}
+
+
+def _extract_flags(argv: list[str]) -> tuple[dict, list[str]]:
+    """
+    Pull -f/--filter, -t/--type, -o/--out and --svg-cache out of argv,
+    wherever they appear, and return (collected_values, remaining_argv).
+    collected_values maps dest name -> list[str] (multi) or str (single).
+    remaining_argv keeps only the untouched tokens (mode + positionals),
+    in their original relative order, for argparse to validate normally.
+    """
+    collected: dict = {"filter": [], "type": []}
+    remaining: list[str] = []
+    i = 0
+    while i < len(argv):
+        tok = argv[i]
+
+        if tok in _MULTI_VALUE_FLAGS:
+            dest = _MULTI_VALUE_FLAGS[tok]
+            i += 1
+            while i < len(argv) and argv[i] not in _MULTI_VALUE_FLAGS and argv[i] not in _SINGLE_VALUE_FLAGS:
+                collected[dest].append(argv[i])
+                i += 1
+            continue
+
+        if tok in _SINGLE_VALUE_FLAGS:
+            dest = _SINGLE_VALUE_FLAGS[tok]
+            if i + 1 >= len(argv):
+                print(f"{RED}[!] Error: {tok} requires a value{NC}", file=sys.stderr)
+                sys.exit(2)
+            collected[dest] = argv[i + 1]
+            i += 2
+            continue
+
+        remaining.append(tok)
+        i += 1
+
+    return collected, remaining
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -1492,18 +1588,18 @@ def main() -> None:
     )
     sub = parser.add_subparsers(dest="mode", required=True)
 
-    # export sub-command
+    # ── export sub-command ──────────────────────────────────────────────────
     p_export = sub.add_parser("export", help="Export processed SVGs to disk")
     p_export.add_argument(
         "-o", "--out", metavar="DIR",
         help="Destination folder for exported SVGs (default: drawings/exported/)",
     )
     p_export.add_argument(
-        "filters", nargs="*",
+        "-f", "--filter", metavar="LAYER", nargs="*", default=[],
         help="Optional layer name filters (case-insensitive, partial match)",
     )
 
-    # compile sub-command
+    # ── compile sub-command ─────────────────────────────────────────────────
     p_compile = sub.add_parser(
         "compile",
         help="Compile font weights (export in-memory, no SVGs written to disk)",
@@ -1511,46 +1607,94 @@ def main() -> None:
     p_compile.add_argument("version", help="Font version string, e.g. 1.0")
     p_compile.add_argument(
         "-o", "--out", metavar="DIR",
-        help="Destination folder for TTF/WOFF2 files (default: ttf/)",
+        help="Destination folder for compiled font files (default: ttf/)",
+    )
+    p_compile.add_argument(
+        "-f", "--filter", metavar="LAYER", nargs="*", default=[],
+        help="Optional layer name filters (case-insensitive, partial match)",
+    )
+    p_compile.add_argument(
+        "-t", "--type", metavar="TYPE", nargs="*", choices=["ttf", "woff2"],
+        default=["ttf", "woff2"],
+        help="Output file type(s) to generate: ttf, woff2, or both (default: both)",
     )
     p_compile.add_argument(
         "--svg-cache", metavar="DIR",
         help="Folder to load cached SVGs from when using filters (default: drawings/exported/)",
     )
-    p_compile.add_argument(
-        "filters", nargs="*",
-        help="Optional layer name filters (case-insensitive, partial match)",
-    )
 
-    # release sub-command
+    # ── release sub-command (always all types + zip, no filter) ────────────
     p_release = sub.add_parser(
         "release",
         help="Compile all weights in-memory and publish a GitHub release",
     )
     p_release.add_argument("version", help="Font version string, e.g. 1.2.3")
 
-    # unrelease sub-command
+    # ── unrelease sub-command (always operates on the whole release) ───────
     p_unrelease = sub.add_parser(
         "unrelease",
         help="Delete a GitHub release and its tag (local + remote)",
     )
     p_unrelease.add_argument("version", help="Version to delete, e.g. 1.2.3")
 
-    args = parser.parse_args()
+    argv = sys.argv[1:]
 
-    if args.mode == "export":
-        cmd_export(args.filters, dest_dir=Path(args.out).resolve() if args.out else None)
-    elif args.mode == "compile":
-        cmd_compile(
-            args.version,
-            args.filters,
-            svg_dir=Path(args.svg_cache).resolve() if args.svg_cache else None,
-            out_dir=Path(args.out).resolve() if args.out else None,
+    # No args, or top-level help — let argparse print the usual usage/help.
+    if not argv or argv[0] in ("-h", "--help"):
+        parser.parse_args(argv)
+        return
+
+    mode = argv[0]
+    rest = argv[1:]
+
+    # Unknown mode — delegate to argparse so it reports the error the usual way.
+    if mode not in ("export", "compile", "release", "unrelease"):
+        parser.parse_args(argv)
+        return
+
+    # Defer to argparse for well-formatted subcommand help.
+    if "-h" in rest or "--help" in rest:
+        parser.parse_args([mode] + rest)
+        return
+
+    # "version" always sits immediately after the mode, per the documented
+    # usage (e.g. `compile 1.0 ...`). Pulling it out first — before the
+    # flag extractor runs — is what lets -o/-f/-t be fully interchangeable
+    # afterwards without ambiguity against a free-form positional.
+    version = None
+    if mode in ("compile", "release", "unrelease"):
+        if not rest or rest[0].startswith("-"):
+            print(f"{RED}[!] Error: {mode} requires a version argument, e.g. `{mode} 1.0`{NC}", file=sys.stderr)
+            sys.exit(2)
+        version, rest = rest[0], rest[1:]
+
+    flags, remaining = _extract_flags(rest)
+    if remaining:
+        print(f"{RED}[!] Error: unrecognized arguments: {' '.join(remaining)}{NC}", file=sys.stderr)
+        sys.exit(2)
+
+    if mode == "export":
+        cmd_export(
+            flags["filter"],
+            dest_dir=Path(flags["out"]).resolve() if flags.get("out") else None,
         )
-    elif args.mode == "release":
-        cmd_release(args.version)
-    elif args.mode == "unrelease":
-        cmd_unrelease(args.version)
+    elif mode == "compile":
+        types = flags["type"] or ["ttf", "woff2"]
+        for t in types:
+            if t not in ("ttf", "woff2"):
+                print(f"{RED}[!] Error: invalid -t/--type value '{t}' (choose from 'ttf', 'woff2'){NC}", file=sys.stderr)
+                sys.exit(2)
+        cmd_compile(
+            version,
+            flags["filter"],
+            svg_dir=Path(flags["svg_cache"]).resolve() if flags.get("svg_cache") else None,
+            out_dir=Path(flags["out"]).resolve() if flags.get("out") else None,
+            types=types,
+        )
+    elif mode == "release":
+        cmd_release(version)
+    elif mode == "unrelease":
+        cmd_unrelease(version)
 
 
 if __name__ == "__main__":
