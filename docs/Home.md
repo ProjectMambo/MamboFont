@@ -1,10 +1,10 @@
 ---
-description: A modern font designed for consistent layout.
 tags:
+  - Inkscape
   - SVG
   - TTF
-  - Inkscape
-date: May 2026 - Present
-wikiUrl: 
+description: A modern font designed for consistent layout.
+period: May 2026 - Present
+wikiUrl:
 githubUrl: https://github.com/ProjectMambo/MamboFont
 ---
