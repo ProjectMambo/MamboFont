@@ -10,13 +10,15 @@ Modes:
 
 Usage:
   python mambo_font.py export [-o DIR] [-f layer_filter ...]
-  python mambo_font.py compile <version> [-o DIR] [-f layer_filter ...] [-t ttf woff2]
+  python mambo_font.py compile <version> [-o DIR] [-f layer_filter ...] [--format ttf woff2]
   python mambo_font.py release <version>
-  python mambo_font.py unrelease <version>
+  python mambo_font.py unrelease <version> --yes
 """
 
 import argparse
 import io
+import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -44,6 +46,7 @@ SVG_DIR      = PROJECT_ROOT / "drawings"
 SOURCE       = SVG_DIR / "drawing.svg"
 DEST_DIR     = SVG_DIR / "exported"
 TTF_DIR      = PROJECT_ROOT / "ttf"
+EXPORT_MANIFEST = ".mambofont-export.json"
 
 # ── font config ─────────────────────────────────────────────────────────────
 FAMILY_NAME = "Mambo Font"
@@ -879,13 +882,86 @@ def collect_all_svgs(filter_layers: list[str]) -> dict[str, bytes]:
 # Export mode — write all SVGs to disk in one pass
 # ────────────────────────────────────────────────────────────────────────────
 
+def _validated_export_paths(out_dir: Path, relative_paths) -> dict[str, Path]:
+    root = out_dir.resolve()
+    validated: dict[str, Path] = {}
+    resolved_paths: set[Path] = set()
+    for value in relative_paths:
+        relative = Path(value)
+        if relative.is_absolute() or ".." in relative.parts:
+            print(f"{RED}[!] Refusing unsafe export path: {value}{NC}", file=sys.stderr)
+            sys.exit(1)
+        parent = root
+        for part in relative.parts[:-1]:
+            parent /= part
+            if parent.is_symlink():
+                print(f"{RED}[!] Refusing symlinked export directory: {parent}{NC}", file=sys.stderr)
+                sys.exit(1)
+        candidate = root / relative
+        resolved = candidate.resolve()
+        try:
+            resolved.relative_to(root)
+        except ValueError:
+            print(f"{RED}[!] Refusing export path outside {root}: {value}{NC}", file=sys.stderr)
+            sys.exit(1)
+        if candidate.is_symlink():
+            print(f"{RED}[!] Refusing symlinked export path: {candidate}{NC}", file=sys.stderr)
+            sys.exit(1)
+        if resolved in resolved_paths:
+            print(f"{RED}[!] Duplicate normalized export path: {value}{NC}", file=sys.stderr)
+            sys.exit(1)
+        resolved_paths.add(resolved)
+        validated[value] = candidate
+    return validated
+
+
+def _read_export_manifest(out_dir: Path) -> set[str]:
+    manifest = out_dir.resolve() / EXPORT_MANIFEST
+    if not manifest.exists():
+        return set()
+    if manifest.is_symlink():
+        print(f"{RED}[!] Refusing symlinked export manifest: {manifest}{NC}", file=sys.stderr)
+        sys.exit(1)
+    try:
+        values = json.loads(manifest.read_text())
+    except (OSError, json.JSONDecodeError) as error:
+        print(f"{RED}[!] Invalid export manifest {manifest}: {error}{NC}", file=sys.stderr)
+        sys.exit(1)
+    if not isinstance(values, list) or not all(isinstance(value, str) for value in values):
+        print(f"{RED}[!] Invalid export manifest {manifest}: expected a path list{NC}", file=sys.stderr)
+        sys.exit(1)
+    _validated_export_paths(out_dir, values)
+    return set(values)
+
+
 def cmd_export(filter_layers: list[str], dest_dir: Optional[Path] = None) -> None:
     out_dir = dest_dir or DEST_DIR
+    if dest_dir is None and out_dir.is_symlink():
+        print(f"{RED}[!] Refusing symlinked managed export directory: {out_dir}{NC}", file=sys.stderr)
+        sys.exit(1)
     svgs = collect_all_svgs(filter_layers)
+    output_paths = _validated_export_paths(out_dir, svgs)
 
     import shutil
     # ---- clean up old exports before writing new ones ----
-    if not filter_layers:
+    if dest_dir is not None:
+        # An explicit destination is caller-owned. A manifest limits cleanup
+        # to paths created by an earlier export and preserves unrelated files.
+        previous = _read_export_manifest(out_dir)
+        if filter_layers:
+            removed = {
+                value for value in previous
+                if len(Path(value).parts) >= 2
+                and _matches_filter(Path(value).parts[1], filter_layers)
+            }
+        else:
+            removed = previous
+        for path in _validated_export_paths(out_dir, removed).values():
+            if path.is_file() or path.is_symlink():
+                path.unlink()
+        retained = previous - removed
+        out_dir.mkdir(parents=True, exist_ok=True)
+    elif not filter_layers:
         # Full export: wipe everything
         if out_dir.exists():
             print(f"\n{YELLOW}[~] Removing old exports:{NC} {out_dir}")
@@ -909,9 +985,16 @@ def cmd_export(filter_layers: list[str], dest_dir: Optional[Path] = None) -> Non
 
     print(f"\n{BLUE}[*] Writing {len(svgs)} SVG(s) to disk…{NC}")
     for rel_path, data in svgs.items():
-        dest = out_dir / rel_path
+        dest = output_paths[rel_path]
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(data)
+
+    if dest_dir is not None:
+        manifest = out_dir.resolve() / EXPORT_MANIFEST
+        if manifest.is_symlink():
+            print(f"{RED}[!] Refusing symlinked export manifest: {manifest}{NC}", file=sys.stderr)
+            sys.exit(1)
+        manifest.write_text(json.dumps(sorted(retained | set(svgs)), indent=2) + "\n")
 
     print(f"\n{BLUE}------------------------------------------{NC}")
     print(f"{GREEN}[+] Export complete!{NC}")
@@ -1204,6 +1287,20 @@ def _load_disk_svgs(folder_name: str, svg_dir: Optional[Path] = None) -> dict[st
     return result
 
 
+def _require_all_weights(svgs: dict[str, bytes]) -> None:
+    missing = [
+        style_name
+        for folder_name, style_name, _ in WEIGHTS
+        if not any(path.startswith(f"{folder_name}/") for path in svgs)
+    ]
+    if missing:
+        print(
+            f"{RED}[!] Missing SVGs for required weights: {', '.join(missing)}.{NC}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+
 def cmd_compile(
     version: str,
     filter_layers: list[str],
@@ -1216,6 +1313,8 @@ def cmd_compile(
     out_dir: where to write TTF/WOFF2 files. Defaults to TTF_DIR.
     types:   which output formats to generate/write. Defaults to both ttf and woff2.
     """
+    _validate_semver(version)
+
     if _ff is None:
         print(f"{RED}[!] Error: FontForge Python bindings not found.{NC}")
         print("    Please run: 'sudo pacman -S fontforge'")
@@ -1245,6 +1344,8 @@ def cmd_compile(
     else:
         svgs = fresh_svgs
 
+    _require_all_weights(svgs)
+
     print(f"\n{BLUE}------------------------------------------{NC}")
     print(f" Family:  {GREEN}{FAMILY_NAME}{NC}")
     print(f" Version: {GREEN}{version}{NC}")
@@ -1255,9 +1356,6 @@ def cmd_compile(
     print(f"{BLUE}------------------------------------------{NC}")
 
     for folder_name, style_name, os2_weight in WEIGHTS:
-        if not any(k.startswith(f"{folder_name}/") for k in svgs):
-            print(f"\n{RED}[!] No SVGs found for weight '{folder_name}', skipping{NC}")
-            continue
         build_weight_from_memory(svgs, folder_name, style_name, os2_weight, version, ttf_out=ttf_out, types=types)
 
     print(f"\n{BLUE}------------------------------------------{NC}")
@@ -1287,12 +1385,60 @@ def _zip_in_memory(named_files: list[tuple[str, bytes]]) -> bytes:
     return buf.getvalue()
 
 
-def _check_git_auth() -> None:
+def _run_project_command(args: list[str], **kwargs):
+    """Run a Git or GitHub command against the MamboFont repository."""
+    return subprocess.run(args, cwd=PROJECT_ROOT, **kwargs)
+
+
+def _validate_semver(version: str) -> None:
+    pattern = r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)"
+    if re.fullmatch(pattern, version) is None:
+        print(
+            f"{RED}[!] Error: Version must use SemVer X.Y.Z (for example, 1.2.3).{NC}",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+
+
+def _validate_release_context(version: str) -> None:
+    _validate_semver(version)
+    _check_tool("git")
+
+    branch = _run_project_command(
+        ["git", "branch", "--show-current"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.strip()
+    if branch != "main":
+        current = branch or "detached HEAD"
+        print(
+            f"{RED}[!] Error: Releases must run from main (current: {current}).{NC}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    status = _run_project_command(
+        ["git", "status", "--porcelain"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout
+    if status.strip():
+        print(
+            f"{RED}[!] Error: Commit or stash worktree changes before releasing.{NC}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+
+def _check_git_auth(require_editor: bool = False) -> None:
     """Verify all CLI tools are present and gh is authenticated. Call before any heavy work."""
     _check_tool("gh")
     _check_tool("git")
-    _check_tool("nvim")
-    r = subprocess.run(["gh", "auth", "status"], capture_output=True)
+    if require_editor:
+        _check_tool("nvim")
+    r = _run_project_command(["gh", "auth", "status"], capture_output=True)
     if r.returncode != 0:
         print(f"{RED}[!] Error: Not authenticated with GitHub CLI. Run 'gh auth login'{NC}", file=sys.stderr)
         sys.exit(1)
@@ -1300,20 +1446,54 @@ def _check_git_auth() -> None:
 
 def _release_exists(tag_name: str) -> bool:
     """Return True if a GitHub release with this tag already exists."""
-    r = subprocess.run(
+    r = _run_project_command(
         ["gh", "release", "view", tag_name],
-        capture_output=True,
+        capture_output=True, text=True,
     )
-    return r.returncode == 0
+    if r.returncode == 0:
+        return True
+    if "not found" in (r.stderr or "").lower():
+        return False
+    print(
+        f"{RED}[!] Could not verify GitHub release {tag_name}: {(r.stderr or '').strip()}{NC}",
+        file=sys.stderr,
+    )
+    sys.exit(r.returncode or 1)
 
 
 def _fetch_release_notes(tag_name: str) -> str:
-    """Fetch the body of an existing GitHub release. Returns empty string on failure."""
-    r = subprocess.run(
+    """Fetch the body of an existing GitHub release."""
+    r = _run_project_command(
         ["gh", "release", "view", tag_name, "--json", "body", "--jq", ".body"],
         capture_output=True, text=True,
     )
-    return r.stdout.strip() if r.returncode == 0 else ""
+    if r.returncode != 0:
+        print(f"{RED}[!] Could not fetch release notes for {tag_name}.{NC}", file=sys.stderr)
+        sys.exit(r.returncode or 1)
+    return r.stdout.strip()
+
+
+def _rollback_failed_release(tag_name: str) -> None:
+    """Best-effort cleanup after the tag was pushed but release creation failed."""
+    release = _run_project_command(
+        ["gh", "release", "delete", tag_name, "--cleanup-tag", "--yes"],
+        capture_output=True, text=True,
+    )
+    remote_tag = _run_project_command(
+        ["git", "push", "origin", f":refs/tags/{tag_name}"],
+        capture_output=True, text=True,
+    )
+    local_tag = _run_project_command(
+        ["git", "tag", "-d", tag_name], capture_output=True, text=True
+    )
+    if remote_tag.returncode == 0 and local_tag.returncode == 0:
+        detail = "Inspect GitHub for a partial release." if release.returncode else "Rollback completed."
+        print(f"{YELLOW}[~] Release creation failed. {detail}{NC}", file=sys.stderr)
+    else:
+        print(
+            f"{RED}[!] Release creation failed and tag rollback was incomplete; inspect local and remote state.{NC}",
+            file=sys.stderr,
+        )
 
 
 def _open_notes_in_nvim(seed_text: str = "") -> str:
@@ -1347,19 +1527,22 @@ def cmd_release(version: str) -> None:
     publishes both format zips plus the loose files as GitHub release assets.
     No layer filter and no type filter apply here — release is all-or-nothing.
     """
+    _validate_release_context(version)
+
     if _ff is None:
         print(f"{RED}[!] Error: FontForge Python bindings not found.{NC}")
         print("    Please run: 'sudo pacman -S fontforge'")
         sys.exit(1)
 
     # ── auth + tool checks before any expensive work ──────────────────────────
-    _check_git_auth()
+    _check_git_auth(require_editor=True)
 
     tag_name      = f"v{version}"
     release_title = f"Mambo Font {tag_name}"
 
     # ── check if release already exists, offer to unrelease first ────────────
-    if _release_exists(tag_name):
+    replace_existing_release = _release_exists(tag_name)
+    if replace_existing_release:
         print(f"\n{YELLOW}[!] Release {tag_name} already exists on GitHub.{NC}")
         print(f"    Unreleasing first allows you to amend it with new assets + notes.")
         ans = input(f"    Unrelease {tag_name} and continue? [y/N] ").strip().lower()
@@ -1367,12 +1550,12 @@ def cmd_release(version: str) -> None:
             print(f"{YELLOW}[~] Aborting — existing release left untouched.{NC}")
             sys.exit(0)
         _amend_seed = _fetch_release_notes(tag_name)
-        cmd_unrelease(version, _skip_auth_check=True)
     else:
         _amend_seed = ""
 
     # ── compile all weights fully in memory (no disk write) ──────────────────
     svgs = collect_all_svgs([])   # no filter — full export
+    _require_all_weights(svgs)
 
     print(f"\n{BLUE}------------------------------------------{NC}")
     print(f" Family:  {GREEN}{FAMILY_NAME}{NC}")
@@ -1386,9 +1569,6 @@ def cmd_release(version: str) -> None:
     font_files: dict[str, bytes] = {}
 
     for folder_name, style_name, os2_weight in WEIGHTS:
-        if not any(k.startswith(f"{folder_name}/") for k in svgs):
-            print(f"\n{RED}[!] No SVGs found for weight '{folder_name}', skipping{NC}")
-            continue
         ttf_bytes, woff2_bytes = build_weight_from_memory(
             svgs, folder_name, style_name, os2_weight, version,
             write_to_disk=False,
@@ -1397,10 +1577,6 @@ def cmd_release(version: str) -> None:
         safe_style = style_name.replace(" ", "")
         font_files[f"MamboFont-{safe_style}_v{version}.ttf"]   = ttf_bytes
         font_files[f"MamboFont-{safe_style}_v{version}.woff2"] = woff2_bytes
-
-    if not font_files:
-        print(f"{RED}[!] No font files compiled, aborting release.{NC}", file=sys.stderr)
-        sys.exit(1)
 
     # ── build zip archives in memory ─────────────────────────────────────────
     ttf_pairs   = [(n, d) for n, d in font_files.items() if n.endswith(".ttf")]
@@ -1423,14 +1599,6 @@ def cmd_release(version: str) -> None:
     print(f" -> Created Archive: {woff2_zip_name}")
     print(f"{BLUE}------------------------------------------{NC}")
 
-    # ── tag commit ───────────────────────────────────────────────────────────
-    print(f"\n{BLUE}[*] Tagging commit: {tag_name}...{NC}")
-    subprocess.run(
-        ["git", "tag", "-a", tag_name, "-m", f"Mambo Font release version {version}"],
-        check=True,
-    )
-    subprocess.run(["git", "push", "origin", tag_name], capture_output=True, check=True)
-
     # ── open nvim for release notes ───────────────────────────────────────────
     notes = _open_notes_in_nvim(seed_text=_amend_seed)
     if not notes:
@@ -1451,16 +1619,43 @@ def cmd_release(version: str) -> None:
             p.write_bytes(data)
             asset_paths.append(str(p))
 
-        print(f"{BLUE}[*] Publishing release to GitHub ({total} files)...{NC}")
-        subprocess.run(
-            [
-                "gh", "release", "create", tag_name,
-                *asset_paths,
-                "--title", release_title,
-                "--notes", notes,
-            ],
+        answer = input(
+            f"\nPublish {tag_name} with {total} release assets? [y/N] "
+        ).strip().lower()
+        if answer != "y":
+            print(f"{YELLOW}[~] Aborting — no release state changed.{NC}")
+            return
+
+        # Everything interactive and fallible above is complete before the
+        # first local or remote release mutation.
+        if replace_existing_release:
+            cmd_unrelease(version, _skip_auth_check=True)
+
+        print(f"\n{BLUE}[*] Tagging commit: {tag_name}...{NC}")
+        _run_project_command(
+            ["git", "tag", "-a", tag_name, "-m", f"Mambo Font release version {version}"],
             check=True,
         )
+        _run_project_command(
+            ["git", "push", "origin", tag_name],
+            capture_output=True,
+            check=True,
+        )
+
+        print(f"{BLUE}[*] Publishing release to GitHub ({total} files)...{NC}")
+        try:
+            _run_project_command(
+                [
+                    "gh", "release", "create", tag_name,
+                    *asset_paths,
+                    "--title", release_title,
+                    "--notes", notes,
+                ],
+                check=True,
+            )
+        except subprocess.CalledProcessError as error:
+            _rollback_failed_release(tag_name)
+            sys.exit(error.returncode or 1)
     # temp dir and all files inside are deleted here automatically
 
     print(f"\n{BLUE}------------------------------------------{NC}")
@@ -1480,38 +1675,49 @@ def cmd_unrelease(version: str, _skip_auth_check: bool = False) -> None:
     When called from cmd_release (amend flow), _skip_auth_check=True skips
     redundant tool/auth validation.
     """
+    _validate_semver(version)
+
     if not _skip_auth_check:
         _check_git_auth()
 
     tag_name = f"v{version}"
 
-    # ── confirm the release actually exists ───────────────────────────────────
-    if not _release_exists(tag_name):
-        print(f"{RED}[!] No GitHub release found for {tag_name}. Nothing to do.{NC}", file=sys.stderr)
-        sys.exit(1)
+    release_exists = _release_exists(tag_name)
 
     print(f"\n{BLUE}------------------------------------------{NC}")
     print(f" Unreleasing: {GREEN}{tag_name}{NC}")
     print(f"{BLUE}------------------------------------------{NC}")
 
-    # ── delete the GitHub release (keeps tag for now) ────────────────────────
-    print(f"\n{BLUE}[*] Deleting GitHub release {tag_name}...{NC}")
-    subprocess.run(["gh", "release", "delete", tag_name, "--yes"], check=True)
-
-    # ── delete remote tag ─────────────────────────────────────────────────────
-    print(f"{BLUE}[*] Deleting remote tag {tag_name}...{NC}")
-    r = subprocess.run(
-        ["git", "push", "origin", f":refs/tags/{tag_name}"],
-        capture_output=True, text=True,
-    )
-    if r.returncode != 0:
-        # Non-fatal: tag may not exist on remote (e.g. never pushed)
-        print(f"  {YELLOW}[~] Remote tag not found or already deleted.{NC}")
+    # Delete the release and remote tag as one checked GitHub operation. A
+    # tag-only cleanup remains available after a failed release creation.
+    action = "GitHub release and remote tag" if release_exists else "remote tag"
+    print(f"\n{BLUE}[*] Deleting {action} {tag_name}...{NC}")
+    try:
+        if release_exists:
+            _run_project_command(
+                ["gh", "release", "delete", tag_name, "--cleanup-tag", "--yes"],
+                check=True,
+            )
+        else:
+            _run_project_command(
+                ["git", "push", "origin", f":refs/tags/{tag_name}"],
+                capture_output=True, text=True, check=True,
+            )
+    except subprocess.CalledProcessError as error:
+        print(
+            f"{RED}[!] Remote deletion failed; inspect the release and tag before retrying.{NC}",
+            file=sys.stderr,
+        )
+        sys.exit(error.returncode or 1)
 
     # ── delete local tag ──────────────────────────────────────────────────────
-    print(f"{BLUE}[*] Deleting local tag {tag_name}...{NC}")
-    r = subprocess.run(["git", "tag", "-d", tag_name], capture_output=True, text=True)
-    if r.returncode != 0:
+    local_tags = _run_project_command(
+        ["git", "tag", "--list", tag_name], capture_output=True, text=True, check=True
+    ).stdout.splitlines()
+    if tag_name in local_tags:
+        print(f"{BLUE}[*] Deleting local tag {tag_name}...{NC}")
+        _run_project_command(["git", "tag", "-d", tag_name], check=True)
+    else:
         print(f"  {YELLOW}[~] Local tag not found or already deleted.{NC}")
 
     print(f"\n{BLUE}------------------------------------------{NC}")
@@ -1520,70 +1726,11 @@ def cmd_unrelease(version: str, _skip_auth_check: bool = False) -> None:
 
 # ────────────────────────────────────────────────────────────────────────────
 # Entry point
-#
-# Layer filters (-f/--filter) and output type (-t/--type, compile-only) are
-# multi-value options (e.g. "-f symbol icon"), and "compile" also takes a
-# required positional "version". argparse's nargs='*' options are greedy —
-# they'll swallow a following positional token instead of leaving it for
-# "version" — so -f/-t/-o/--svg-cache are pulled out of argv by hand first,
-# in any order, and only the leftover tokens (mode + version) are handed to
-# argparse for structural validation and --help. This keeps every flag fully
-# order-interchangeable on the command line.
 # ────────────────────────────────────────────────────────────────────────────
 
-# Multi-value options: consume all following tokens up to the next flag.
-_MULTI_VALUE_FLAGS = {
-    "-f": "filter", "--filter": "filter",
-    "-t": "type",   "--type":   "type",
-}
-
-# Single-value options: consume exactly one following token.
-_SINGLE_VALUE_FLAGS = {
-    "-o": "out", "--out": "out",
-    "--svg-cache": "svg_cache",
-}
-
-
-def _extract_flags(argv: list[str]) -> tuple[dict, list[str]]:
-    """
-    Pull -f/--filter, -t/--type, -o/--out and --svg-cache out of argv,
-    wherever they appear, and return (collected_values, remaining_argv).
-    collected_values maps dest name -> list[str] (multi) or str (single).
-    remaining_argv keeps only the untouched tokens (mode + positionals),
-    in their original relative order, for argparse to validate normally.
-    """
-    collected: dict = {"filter": [], "type": []}
-    remaining: list[str] = []
-    i = 0
-    while i < len(argv):
-        tok = argv[i]
-
-        if tok in _MULTI_VALUE_FLAGS:
-            dest = _MULTI_VALUE_FLAGS[tok]
-            i += 1
-            while i < len(argv) and argv[i] not in _MULTI_VALUE_FLAGS and argv[i] not in _SINGLE_VALUE_FLAGS:
-                collected[dest].append(argv[i])
-                i += 1
-            continue
-
-        if tok in _SINGLE_VALUE_FLAGS:
-            dest = _SINGLE_VALUE_FLAGS[tok]
-            if i + 1 >= len(argv):
-                print(f"{RED}[!] Error: {tok} requires a value{NC}", file=sys.stderr)
-                sys.exit(2)
-            collected[dest] = argv[i + 1]
-            i += 2
-            continue
-
-        remaining.append(tok)
-        i += 1
-
-    return collected, remaining
-
-
-def main() -> None:
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="mambo_font.py",
+        prog="mbfont",
         description="Export SVG layers and/or compile Mambo Font weights.",
     )
     sub = parser.add_subparsers(dest="mode", required=True)
@@ -1595,7 +1742,8 @@ def main() -> None:
         help="Destination folder for exported SVGs (default: drawings/exported/)",
     )
     p_export.add_argument(
-        "-f", "--filter", metavar="LAYER", nargs="*", default=[],
+        "-f", "--filter", dest="filters", metavar="LAYER", nargs="+",
+        action="extend", default=[],
         help="Optional layer name filters (case-insensitive, partial match)",
     )
 
@@ -1604,19 +1752,20 @@ def main() -> None:
         "compile",
         help="Compile font weights (export in-memory, no SVGs written to disk)",
     )
-    p_compile.add_argument("version", help="Font version string, e.g. 1.0")
+    p_compile.add_argument("version", help="Font version string, e.g. 1.2.3")
     p_compile.add_argument(
         "-o", "--out", metavar="DIR",
         help="Destination folder for compiled font files (default: ttf/)",
     )
     p_compile.add_argument(
-        "-f", "--filter", metavar="LAYER", nargs="*", default=[],
+        "-f", "--filter", dest="filters", metavar="LAYER", nargs="+",
+        action="extend", default=[],
         help="Optional layer name filters (case-insensitive, partial match)",
     )
     p_compile.add_argument(
-        "-t", "--type", metavar="TYPE", nargs="*", choices=["ttf", "woff2"],
-        default=["ttf", "woff2"],
-        help="Output file type(s) to generate: ttf, woff2, or both (default: both)",
+        "--format", "-t", "--type", dest="types", metavar="TYPE", nargs="+",
+        action="extend", choices=["ttf", "woff2"], default=None,
+        help="Output format(s) to generate: ttf, woff2, or both (default: both)",
     )
     p_compile.add_argument(
         "--svg-cache", metavar="DIR",
@@ -1636,65 +1785,36 @@ def main() -> None:
         help="Delete a GitHub release and its tag (local + remote)",
     )
     p_unrelease.add_argument("version", help="Version to delete, e.g. 1.2.3")
+    p_unrelease.add_argument(
+        "--yes",
+        action="store_true",
+        required=True,
+        help="Confirm deletion of the GitHub release and local and remote tags",
+    )
 
-    argv = sys.argv[1:]
+    return parser
 
-    # No args, or top-level help — let argparse print the usual usage/help.
-    if not argv or argv[0] in ("-h", "--help"):
-        parser.parse_args(argv)
-        return
 
-    mode = argv[0]
-    rest = argv[1:]
+def main(argv: Optional[list[str]] = None) -> None:
+    args = build_parser().parse_args(argv)
 
-    # Unknown mode — delegate to argparse so it reports the error the usual way.
-    if mode not in ("export", "compile", "release", "unrelease"):
-        parser.parse_args(argv)
-        return
-
-    # Defer to argparse for well-formatted subcommand help.
-    if "-h" in rest or "--help" in rest:
-        parser.parse_args([mode] + rest)
-        return
-
-    # "version" always sits immediately after the mode, per the documented
-    # usage (e.g. `compile 1.0 ...`). Pulling it out first — before the
-    # flag extractor runs — is what lets -o/-f/-t be fully interchangeable
-    # afterwards without ambiguity against a free-form positional.
-    version = None
-    if mode in ("compile", "release", "unrelease"):
-        if not rest or rest[0].startswith("-"):
-            print(f"{RED}[!] Error: {mode} requires a version argument, e.g. `{mode} 1.0`{NC}", file=sys.stderr)
-            sys.exit(2)
-        version, rest = rest[0], rest[1:]
-
-    flags, remaining = _extract_flags(rest)
-    if remaining:
-        print(f"{RED}[!] Error: unrecognized arguments: {' '.join(remaining)}{NC}", file=sys.stderr)
-        sys.exit(2)
-
-    if mode == "export":
+    if args.mode == "export":
         cmd_export(
-            flags["filter"],
-            dest_dir=Path(flags["out"]).resolve() if flags.get("out") else None,
+            args.filters,
+            dest_dir=Path(args.out).resolve() if args.out else None,
         )
-    elif mode == "compile":
-        types = flags["type"] or ["ttf", "woff2"]
-        for t in types:
-            if t not in ("ttf", "woff2"):
-                print(f"{RED}[!] Error: invalid -t/--type value '{t}' (choose from 'ttf', 'woff2'){NC}", file=sys.stderr)
-                sys.exit(2)
+    elif args.mode == "compile":
         cmd_compile(
-            version,
-            flags["filter"],
-            svg_dir=Path(flags["svg_cache"]).resolve() if flags.get("svg_cache") else None,
-            out_dir=Path(flags["out"]).resolve() if flags.get("out") else None,
-            types=types,
+            args.version,
+            args.filters,
+            svg_dir=Path(args.svg_cache).resolve() if args.svg_cache else None,
+            out_dir=Path(args.out).resolve() if args.out else None,
+            types=args.types or ["ttf", "woff2"],
         )
-    elif mode == "release":
-        cmd_release(version)
-    elif mode == "unrelease":
-        cmd_unrelease(version)
+    elif args.mode == "release":
+        cmd_release(args.version)
+    elif args.mode == "unrelease":
+        cmd_unrelease(args.version)
 
 
 if __name__ == "__main__":
