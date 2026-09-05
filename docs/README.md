@@ -19,6 +19,7 @@ MamboFont is Project Mambo's custom monospace font family. A layered SVG drawing
 
 | Goal | Document or path |
 |---|---|
+| Read the canonical Wiki documentation | [projectmambo.org/mambofont/](https://projectmambo.org/mambofont/) |
 | Export glyph layers or compile fonts | [Command and Release Workflow](Commands.md) |
 | Edit the source drawing | [`drawings/drawing.svg`](../drawings/drawing.svg) |
 | Use existing font binaries | [`ttf/`](../ttf/) |
@@ -47,7 +48,14 @@ cd MamboFont
 ./script/install.sh
 ```
 
-The installer creates `/usr/local/bin/mbfont` and may request `sudo`. It exposes the build command only; it does **not** install a compiled font into the system font directory.
+The installer targets `/usr/local/bin` by default. It creates the `mbfont` symlink, refuses to replace a non-symlink at that target, and uses `sudo` only when the destination directory is absent or not writable. Set `MAMBOFONT_BIN_DIR` to use another bin directory; create that directory first to avoid `sudo`:
+
+```bash
+mkdir -p "$HOME/.local/bin"
+MAMBOFONT_BIN_DIR="$HOME/.local/bin" ./script/install.sh
+```
+
+The installer exposes the build command only; it does **not** install a compiled font into the system font directory.
 
 Run the script directly without installation:
 
@@ -60,7 +68,7 @@ python3 script/mambo_font.py --help
 ```bash
 mbfont export
 mbfont compile 0.2.4
-mbfont compile 0.2.4 -t woff2 -o /tmp/mambofont
+mbfont compile 0.2.4 --format woff2 --out /tmp/mambofont
 ```
 
 See [Command and Release Workflow](Commands.md) before publishing or deleting a release.
@@ -74,11 +82,12 @@ drawings/site-icons/       Project Mambo application/site icon exports
 ttf/                       committed historical TTF and WOFF2 builds
 script/mambo_font.py       export, compile, release, and unrelease CLI
 script/install.sh          command symlink installer
+script/test_cli.py         CLI, release, output-safety, and installer checks
 ```
 
 ## Status
 
-The source currently compiles four weights. The repository contains v0.2.4 binaries, while the newest Git tag is v0.2.3; committed artifacts and published releases are not yet enforced by CI. There is no automated test workflow.
+The source currently compiles four weights. The repository contains v0.2.4 binaries, while the newest Git tag is v0.2.3; committed artifacts and published releases are not yet enforced by CI. A focused local regression suite exists, but there is no CI workflow.
 
 Before committing generator changes, at minimum run:
 
@@ -86,6 +95,9 @@ Before committing generator changes, at minimum run:
 bash -n script/install.sh
 python3 script/mambo_font.py --help
 python3 script/mambo_font.py compile --help
+python3 script/test_cli.py
+git diff --check
+git status --short
 ```
 
 Perform a full export and compile when Inkscape, XMLStarlet, and FontForge are available.

@@ -1,7 +1,7 @@
 ---
 title: MamboFont
 description: Project Mambo's custom monospace font and SVG-to-font build pipeline.
-order: 50
+order: 60
 ---
 
 ::page{layout="project" width="normal" sidebar=true}
@@ -25,4 +25,4 @@ MamboFont is a four-weight monospace family designed for Project Mambo's interfa
 
 ## Current status
 
-The build pipeline is active but not automated by CI. v0.2.4 files are committed locally in the repository, while the latest Git tag is v0.2.3.
+The build pipeline is active and has focused local CLI and installer regression checks, but it is not automated by CI. v0.2.4 files are committed locally in the repository, while the latest Git tag is v0.2.3.
