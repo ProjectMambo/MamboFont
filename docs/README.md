@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/Maintenance-Active-brightgreen?style=flat-square" alt="Maintenance status: active" />
   <img src="https://img.shields.io/github/last-commit/ProjectMambo/MamboFont?style=flat-square&color=7a5fff" alt="Last commit" />
   <img src="https://img.shields.io/github/repo-size/ProjectMambo/MamboFont?style=flat-square&color=yellow" alt="Repository size" />
-  <a href="../LICENSE"><img src="https://img.shields.io/github/license/ProjectMambo/MamboFont?style=flat-square&color=orange" alt="License" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/ProjectMambo/MamboFont?style=flat-square&color=orange" alt="License" /></a>
 </p>
 
 MamboFont is Project Mambo's custom monospace font family. A layered SVG drawing is exported into per-glyph assets and compiled into Regular, Medium, SemiBold, and Bold TTF/WOFF2 files by one Python command-line tool.
@@ -21,8 +21,8 @@ MamboFont is Project Mambo's custom monospace font family. A layered SVG drawing
 |---|---|
 | Read the canonical Wiki documentation | [projectmambo.org/mambofont/](https://projectmambo.org/mambofont/) |
 | Export glyph layers or compile fonts | [Command and Release Workflow](Commands.md) |
-| Edit the source drawing | [`drawings/drawing.svg`](../drawings/drawing.svg) |
-| Use existing font binaries | [`ttf/`](../ttf/) |
+| Edit the source drawing | [`drawings/drawing.svg`](drawings/drawing.svg) |
+| Use existing font binaries | [`ttf/`](ttf/) |
 
 ## Pipeline
 
@@ -108,4 +108,4 @@ This font is maintained for Project Mambo, so external pull requests are not cur
 
 ## License
 
-Distributed under the MIT License. See **[LICENSE](../LICENSE)** for details.
+Distributed under the MIT License. See **[LICENSE](LICENSE)** for details.
