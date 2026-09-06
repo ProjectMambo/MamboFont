@@ -1,111 +1,52 @@
 # MamboFont
 
-<p align="left">
-  <img src="https://img.shields.io/badge/SVG-F9A03F?style=flat-square&logo=svg&logoColor=white" alt="SVG" />
-  <img src="https://img.shields.io/badge/TTF-4A4A4A?style=flat-square" alt="TrueType font" />
-  <img src="https://img.shields.io/badge/WOFF2-4A4A4A?style=flat-square" alt="WOFF2 web font" />
-  <img src="https://img.shields.io/badge/FontForge-202020?style=flat-square" alt="FontForge" />
-</p>
-<p align="left">
-  <img src="https://img.shields.io/badge/Maintenance-Active-brightgreen?style=flat-square" alt="Maintenance status: active" />
-  <img src="https://img.shields.io/github/last-commit/ProjectMambo/MamboFont?style=flat-square&color=7a5fff" alt="Last commit" />
-  <img src="https://img.shields.io/github/repo-size/ProjectMambo/MamboFont?style=flat-square&color=yellow" alt="Repository size" />
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/ProjectMambo/MamboFont?style=flat-square&color=orange" alt="License" /></a>
-</p>
+MamboFont is Project Mambo's square, blocky monospace type system. The 0.3 candidate separates text and icons into two focused families:
 
-MamboFont is Project Mambo's custom monospace font family. A layered SVG drawing is exported into per-glyph assets and compiled into Regular, Medium, SemiBold, and Bold TTF/WOFF2 files by one Python command-line tool.
+- **Mambo Font** — Regular, Medium, SemiBold, and Bold; every glyph advances 500 units.
+- **Mambo Icons** — Regular; every icon advances 1000 units.
 
-## Start here
+The source of truth is compact Python geometry. FontForge turns it directly into deterministic TTF and WOFF2 files; Inkscape, exported SVG caches, and hand-maintained per-weight drawings are no longer part of the build.
 
-| Goal | Document or path |
-|---|---|
-| Read the canonical Wiki documentation | [projectmambo.org/mambofont/](https://projectmambo.org/mambofont/) |
-| Export glyph layers or compile fonts | [Command and Release Workflow](docs/Commands.md) |
-| Edit the source drawing | [`drawings/drawing.svg`](drawings/drawing.svg) |
-| Use existing font binaries | [`ttf/`](ttf/) |
+## Build
 
-## Pipeline
+Install Python 3 with FontForge's Python bindings, then run:
+
+```bash
+./script/mbfont.py compile 0.3.0 --family all --format ttf woff2 --out dist
+```
+
+To expose the same `mbfont` command used by downstream repos, run `./script/install.sh`. It installs a symlink in `$HOME/.local/bin` by default; override that with `MAMBOFONT_BIN_DIR`.
+
+Useful review commands:
+
+```bash
+./script/mbfont.py check 0.3.0 --family all --format ttf woff2 --out dist
+./script/mbfont.py specimen 0.3.0 --fonts dist --out specimen.html
+/usr/bin/python3 tests/test_build.py
+```
+
+`check` rebuilds into a temporary directory and byte-compares the result with `dist/`. There is no cache to invalidate: edit a rule, rebuild, and Git shows both the readable source change and any changed candidate binaries.
+
+## Coverage
+
+Mambo Font contains 218 encoded characters: printable ASCII, Latin-1, and the defined printable Windows-1252 additions. Control-code slots are intentionally omitted. Accented letters reuse the same base skeletons and accent components across all four weights.
+
+Mambo Icons contains 30 redesigned functional icons in frozen legacy PUA slots. The three old brand illustrations are retired and their slots stay reserved.
+
+See [DESIGN.md](DESIGN.md) for the geometry rules and icon map. Open [specimen.html](specimen.html) after building to review every weight and icon.
+
+## Layout
 
 ```text
-drawings/drawing.svg
-    -> Inkscape layer export
-    -> XMLStarlet cleanup and path processing
-    -> drawings/exported/<weight>/ glyph cache
-    -> FontForge compilation
-    -> TTF + WOFF2
-    -> optional GitHub release assets
+sources/        text, icon, and geometry rules
+script/         direct build/check/specimen command
+tests/          one end-to-end deterministic build check
+dist/           review candidate TTF and WOFF2 files
+archive/v0.2/   frozen drawings, exports, binaries, docs, and old tooling
 ```
 
-The generator maps named layers to ASCII, Latin-1, symbols, Unicode characters, and private-use icons. Full-width and standard-width groups are compiled with different metrics.
-
-## Local setup
-
-The command requires Python 3. Exporting requires Inkscape and XMLStarlet; compilation additionally requires FontForge's Python bindings.
-
-```bash
-git clone https://github.com/ProjectMambo/MamboFont.git
-cd MamboFont
-./script/install.sh
-```
-
-The installer targets `/usr/local/bin` by default. It creates the `mbfont` symlink, refuses to replace a non-symlink at that target, and uses `sudo` only when the destination directory is absent or not writable. Set `MAMBOFONT_BIN_DIR` to use another bin directory; create that directory first to avoid `sudo`:
-
-```bash
-mkdir -p "$HOME/.local/bin"
-MAMBOFONT_BIN_DIR="$HOME/.local/bin" ./script/install.sh
-```
-
-The installer exposes the build command only; it does **not** install a compiled font into the system font directory.
-
-Run the script directly without installation:
-
-```bash
-python3 script/mambo_font.py --help
-```
-
-## Common commands
-
-```bash
-mbfont export
-mbfont compile 0.2.4
-mbfont compile 0.2.4 --format woff2 --out /tmp/mambofont
-```
-
-See [Command and Release Workflow](docs/Commands.md) before publishing or deleting a release.
-
-## Repository layout
-
-```text
-drawings/drawing.svg       layered source of truth
-drawings/exported/         committed processed-glyph cache for filtered builds
-drawings/site-icons/       Project Mambo application/site icon exports
-ttf/                       committed historical TTF and WOFF2 builds
-script/mambo_font.py       export, compile, release, and unrelease CLI
-script/install.sh          command symlink installer
-script/test_cli.py         CLI, release, output-safety, and installer checks
-```
-
-## Status
-
-The source currently compiles four weights. The repository contains v0.2.4 binaries, while the newest Git tag is v0.2.3; committed artifacts and published releases are not yet enforced by CI. A focused local regression suite exists, but there is no CI workflow.
-
-Before committing generator changes, at minimum run:
-
-```bash
-bash -n script/install.sh
-python3 script/mambo_font.py --help
-python3 script/mambo_font.py compile --help
-python3 script/test_cli.py
-git diff --check
-git status --short
-```
-
-Perform a full export and compile when Inkscape, XMLStarlet, and FontForge are available.
-
-## Issues and feedback
-
-This font is maintained for Project Mambo, so external pull requests are not currently requested. Glyph and build-pipeline bug reports are welcome as repository issues.
+Nothing in this branch publishes a release or updates downstream consumers. The checked-in 0.3 files are review candidates only.
 
 ## License
 
-Distributed under the MIT License. See **[LICENSE](LICENSE)** for details.
+Distributed under the MIT License. See [LICENSE](LICENSE).
