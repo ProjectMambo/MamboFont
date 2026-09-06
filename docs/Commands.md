@@ -75,7 +75,7 @@ The specimen is a local HTML review page containing all four weights and the sup
 mbfont specimen 0.4.0 --fonts build/pilot --out specimen.html
 ~~~
 
-Open specimen.html in a browser after any geometry or weight change. It includes actual text at 12, 16, 24, and 64 pixels plus Regular and Bold blueprint cards with design guides and vertices. The command requires the matching WOFF2 pilot files to exist first.
+Open specimen.html in a browser after any geometry or weight change. It includes actual text at 10, 12, 14, 16, 24, and 64 pixels plus Regular and Bold blueprint cards with design guides and raw pre-union vertices. Bold's candidate target is 16 pixels and above, but the current pilot does not claim to pass it; smaller rows are stress tests. The command requires the matching WOFF2 pilot files to exist first.
 
 ## Development workflow
 
@@ -94,7 +94,7 @@ git diff --check
 git status --short
 ~~~
 
-The test asserts the exact pilot map, one topology across weights, level-capped diagonals, fixed advances, safe bounds, straight on-curve contours, metadata and line metrics, FontForge validity, and deterministic bytes in both formats. It also rejects any active call to FontForge's stroke expansion.
+The test asserts the exact pilot map, one topology across weights, level-capped diagonals, fixed advances, safe bounds, straight on-curve contours with no redundant points, metadata and line metrics, FontForge validity, and deterministic bytes in both formats. It also rejects any active call to FontForge's stroke expansion.
 
 ## Publishing
 

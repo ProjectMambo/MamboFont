@@ -74,7 +74,7 @@ The former SVG/export pipeline and the rejected centerline-stroke generator rema
 git diff --check
 ~~~
 
-The check covers the exact pilot map, fixed advances, design bounds, all-on-curve contours, font validation, metadata, shared topology across weights, the absence of stroke expansion, and byte-for-byte deterministic output.
+The check covers the exact pilot map, fixed advances, design bounds, all-on-curve contours without redundant points, font validation, metadata, shared topology across weights, the absence of stroke expansion, and byte-for-byte deterministic output. The specimen reviews every weight at 10–24 pixels; 16 pixels is Bold's candidate floor, not yet a support claim.
 
 ## Issues and feedback
 

@@ -26,6 +26,7 @@ One immutable design record defines the dimensions, named x/y guides, and weight
 
 - Edge-anchored horizontal and vertical filled bars.
 - Constant-thickness diagonal polygons with horizontal caps.
+- Receiver-aware diagonals whose hidden cap is clipped into a bar or stem, preventing a shelf or protruding corner at the join.
 - Explicit filled polygons or cuts only for shapes the shared primitives cannot express.
 - Reusable components when accent work begins.
 
@@ -36,6 +37,14 @@ Most exterior surfaces stay fixed while weight grows inward. M, N, and W keep ve
 The recipe already produces filled contours; FontForge never expands a stroked path. The compiler normalizes polygon winding, unions intended overlaps, rounds to integer font units, removes only exact duplicate or collinear vertices, canonicalizes contour order, and validates the result. It does not call generic smoothing or simplification.
 
 SVG is a review view, not an intermediate font format. The same final straight contours are written as all-on-curve TrueType vertices, then serialized as TTF and WOFF2.
+
+The blueprint cards intentionally show primitive vertices before union. Generated fonts are checked after union and integer snapping, and contain no duplicate or removable collinear vertices. Generic simplification is excluded because it could move the hard corners that define the style.
+
+## Small-size review
+
+Bold's provisional design target is 16 pixels per em and above. This is not yet a support claim. The 10, 12, and 14 pixel specimen rows are stress tests: at 10 pixels, a 500-unit cell is only five screen pixels wide.
+
+Before the pilot can be approved, every identity-critical Bold counter, aperture, or notch must keep at least 125 font units at its declared clearance zone and at least two background pixels in a 16-pixel monochrome raster check. The current `A`, `a`, `e`, `0`, `M`, and `W` recipes remain blocked by that review; `N` also needs stress testing. The raster assertion will become a required build check once the pilot shapes pass it. Browser rendering at 10, 12, 14, 16, and 24 pixels remains a human gate across all four weights. Hinting or a separate optical master will be considered only if the approved geometry still fails on target platforms.
 
 ## Character coverage
 
@@ -49,6 +58,6 @@ C0 and C1 controls and undefined Windows-1252 holes will remain absent. The curr
 
 ## Build invariants
 
-The pilot generator rejects missing or extra codepoints, incorrect advances, design-space overhangs, curve points, invalid outlines, and stale review files. Source checks enforce shared primitive topology and horizontal diagonal caps across weights. The end-to-end check rebuilds twice and requires byte-identical TTF and WOFF2 output.
+The pilot generator rejects missing or extra codepoints, incorrect advances, design-space overhangs, curve points, invalid outlines, and stale review files. Source checks enforce shared primitive topology, horizontal diagonal caps, and redundant-point removal across weights. The end-to-end check rebuilds twice and requires byte-identical TTF and WOFF2 output.
 
 Visual style remains an explicit human gate. The compiler repairs topology only; it never makes aesthetic decisions on behalf of a glyph recipe.
