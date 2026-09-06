@@ -24,7 +24,7 @@ from sources.geometry import glyph, loop, path
 
 
 VERSION = "0.3.0"
-WEIGHTS = (("Regular", 400, 70), ("Medium", 500, 87), ("SemiBold", 600, 103), ("Bold", 700, 120))
+WEIGHTS = (("Regular", 400, 80), ("Medium", 500, 93), ("SemiBold", 600, 107), ("Bold", 700, 120))
 FORMATS = ("ttf", "woff2")
 GENERATION_FLAGS = ("opentype", "no-FFTM-table")
 PANOSE_WEIGHT = {400: 5, 500: 6, 600: 7, 700: 8}

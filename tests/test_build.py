@@ -3,6 +3,7 @@
 
 import sys
 import tempfile
+from string import ascii_letters, digits
 from pathlib import Path
 
 
@@ -51,6 +52,11 @@ def main():
     assert len(icon_points) == 30
     assert not ({icons.ICON_CODEPOINTS[name] for name in icons.RETIRED} & icon_points)
     assert icons.NEXT_ICON_CODEPOINT > max(icons.ICON_CODEPOINTS.values())
+    for char in ascii_letters + digits:
+        for points in text.GLYPHS[char]["paths"]:
+            for (left_x, left_y), (right_x, right_y) in zip(points, points[1:]):
+                dx, dy = abs(right_x - left_x), abs(right_y - left_y)
+                assert not (dx and dy) or max(dx, dy) > 100, (char, (left_x, left_y), (right_x, right_y))
 
     with tempfile.TemporaryDirectory(prefix="mambofont-test-a.") as first, tempfile.TemporaryDirectory(prefix="mambofont-test-b.") as second:
         first_files = compile_fonts("0.0.0", Path(first), "all", ("ttf", "woff2"))

@@ -10,17 +10,8 @@ def rectangle(left, bottom, right, top):
     return ((left, bottom), (left, top), (right, top), (right, bottom))
 
 
-def chamfered_box(left, bottom, right, top, cut=60):
-    return loop(
-        (left + cut, bottom),
-        (right - cut, bottom),
-        (right, bottom + cut),
-        (right, top - cut),
-        (right - cut, top),
-        (left + cut, top),
-        (left, top - cut),
-        (left, bottom + cut),
-    )
+def box(left, bottom, right, top):
+    return loop((left, bottom), (right, bottom), (right, top), (left, top))
 
 
 def indicators(level):
@@ -30,7 +21,7 @@ def indicators(level):
 
 def battery(level):
     shell = glyph(
-        chamfered_box(140, 140, 800, 560),
+        box(140, 140, 800, 560),
         path((800, 280), (880, 280), (880, 420), (800, 420)),
     )
     cells = tuple(rectangle(210 + index * 140, 230, 310 + index * 140, 470) for index in range(level // 25))
@@ -51,8 +42,8 @@ def audio(level):
 def headphones(level):
     return glyph(
         path((180, 220), (180, 460), (240, 600), (360, 680), (640, 680), (760, 600), (820, 460), (820, 220)),
-        chamfered_box(120, 80, 280, 300, 40),
-        chamfered_box(720, 80, 880, 300, 40),
+        box(120, 80, 280, 300),
+        box(720, 80, 880, 300),
         fills=indicators(level),
     )
 
@@ -60,7 +51,7 @@ def headphones(level):
 def light(level):
     cells = tuple(rectangle(300 + index * 100, 270, 370 + index * 100, 350) for index in range(level // 25))
     return glyph(
-        chamfered_box(240, 180, 760, 680),
+        box(240, 180, 760, 680),
         path((360, 180), (360, 20), (640, 20), (640, 180)),
         path((360, -80), (640, -80)),
         fills=cells,
@@ -68,7 +59,7 @@ def light(level):
 
 
 def camera(off=False):
-    paths = [chamfered_box(120, 80, 880, 580), chamfered_box(370, 220, 630, 480, 50), path((260, 580), (340, 680), (520, 680), (600, 580))]
+    paths = [box(120, 80, 880, 580), box(370, 220, 630, 480), path((260, 580), (260, 680), (600, 680), (600, 580))]
     if off:
         paths.append(path((120, 680), (880, -80)))
     return glyph(*paths)
@@ -76,8 +67,8 @@ def camera(off=False):
 
 def coffee(full=False):
     return glyph(
-        chamfered_box(180, 80, 700, 560),
-        path((700, 460), (840, 460), (880, 420), (880, 220), (840, 180), (700, 180)),
+        box(180, 80, 700, 560),
+        path((700, 460), (880, 460), (880, 180), (700, 180)),
         path((140, -20), (760, -20)),
         fills=(rectangle(240, 140, 640, 360),) if full else (),
     )
@@ -85,17 +76,17 @@ def coffee(full=False):
 
 def state(on=False):
     return glyph(
-        chamfered_box(180, 20, 820, 660),
-        chamfered_box(300, 140, 700, 540),
+        box(180, 20, 820, 660),
+        box(300, 140, 700, 540),
         fills=(rectangle(360, 200, 640, 480),) if on else (),
     )
 
 
 def lock(opened=False):
-    shackle = path((300 if opened else 260, 360), (300 if opened else 260, 560), (360, 680), (620, 680), (740, 560), (740, 480))
+    shackle = path((300 if opened else 260, 360), (300 if opened else 260, 680), (740, 680), (740, 480))
     if not opened:
-        shackle = path((260, 360), (260, 560), (360, 680), (640, 680), (740, 560), (740, 360))
-    return glyph(chamfered_box(180, -40, 820, 380), shackle, path((500, 230), (500, 80)), dots=((500, 250, 1.0),))
+        shackle = path((260, 360), (260, 680), (740, 680), (740, 360))
+    return glyph(box(180, -40, 820, 380), shackle, path((500, 230), (500, 80)), dots=((500, 250, 1.0),))
 
 
 def cpu():
@@ -104,14 +95,14 @@ def cpu():
         pins.extend((path((value, 80), (value, -80)), path((value, 600), (value, 680))))
     for value in (160, 320, 480):
         pins.extend((path((120, value), (60, value)), path((880, value), (940, value))))
-    return glyph(chamfered_box(120, 80, 880, 600), chamfered_box(300, 220, 700, 460), *pins)
+    return glyph(box(120, 80, 880, 600), box(300, 220, 700, 460), *pins)
 
 
 def disk():
     return glyph(
-        chamfered_box(160, -40, 840, 680),
-        chamfered_box(300, 400, 700, 680, 40),
-        chamfered_box(280, 40, 720, 300, 40),
+        box(160, -40, 840, 680),
+        box(300, 400, 700, 680),
+        box(280, 40, 720, 300),
         path((600, 680), (600, 480)),
     )
 
