@@ -12,7 +12,7 @@
   <a href="../LICENSE"><img src="https://img.shields.io/github/license/ProjectMambo/MamboFont?style=flat-square&color=orange" alt="License" /></a>
 </p>
 
-MamboFont is Project Mambo's blocky monospace typeface. Its Python blueprint compiler generates filled, straight-edged outlines for four consistent weights:
+MamboFont is Project Mambo's blocky monospace typeface. Its Python blueprint compiler generates filled, straight-edged outlines from proportional guides and declarative readability contracts for four consistent weights:
 
 - **Mambo Font** — Regular, Medium, SemiBold, and Bold, with a fixed 500-unit advance.
 
@@ -20,7 +20,7 @@ MamboFont is Project Mambo's blocky monospace typeface. Its Python blueprint com
 
 | Goal | Document or path |
 |---|---|
-| Read the canonical Wiki documentation | [projectmambo.org/mambofont/](https://projectmambo.org/mambofont/) |
+| Read the project overview | [docs/index.md](index.md) |
 | Build, check, or review the fonts | [Commands](Commands.md) |
 | Understand the glyph rules | [Design rules](Design.md) |
 | Edit the generator source | [sources/](../sources/) |
@@ -50,7 +50,9 @@ See [Commands](Commands.md) for all options and the required verification sequen
 
 ## Current scope
 
-The current review pilot encodes space plus 23 representative letters and figures. It exists to approve the outline grammar at Regular and Bold before expanding it. The milestone target remains 218 printable ASCII, Latin-1, and defined Windows-1252 characters.
+The current review pilot encodes space plus 23 representative letters and figures. It exists to approve the outline and gap grammar across all four weights before expansion. The milestone target remains 218 printable ASCII, Latin-1, and defined Windows-1252 characters.
+
+Only the base text family is active. All previous Mambo Icons drawings, binaries, and generator work are archived; a separate icon font can be designed after the base family reaches a usable release.
 
 ## Repository layout
 
@@ -60,8 +62,8 @@ script/         direct-outline compile, check, specimen, and installer commands
 tests/          one deterministic end-to-end build check
 build/pilot/    ignored local TTF and WOFF2 review files
 docs/           synchronized MamboDocs snapshot
-archive/v0.2/   frozen drawings, exports, binaries, docs, and old tooling
-archive/v0.3-stroke-prototype/  rejected generator and deferred work
+archive/v0.2/   frozen drawings, exports, binaries, icons, docs, and old tooling
+archive/v0.3-stroke-prototype/  rejected stroke generator and deferred icon work
 ~~~
 
 The former SVG/export pipeline and the rejected centerline-stroke generator remain available only in the archive for comparison. The 0.4.0 pilot is deliberately incomplete and has not been released.
@@ -74,7 +76,9 @@ The former SVG/export pipeline and the rejected centerline-stroke generator rema
 git diff --check
 ~~~
 
-The check covers the exact pilot map, fixed advances, design bounds, all-on-curve contours without redundant points, font validation, metadata, shared topology across weights, the absence of stroke expansion, and byte-for-byte deterministic output. The specimen reviews every weight at 10–24 pixels; 16 pixels is Bold's candidate floor, not yet a support claim.
+The check covers the exact pilot map, design-supplied advances, proportional resizing, bounds, all-on-curve contours without redundant points, font validation, metadata, shared topology across weights, declarative gap contracts, full Bold 14-pixel monochrome raster goldens, focused 16- and 24-pixel notch goldens, the absence of stroke expansion, and byte-for-byte deterministic output. Fourteen pixels per em is the review floor; 10- and 12-pixel rows are non-gating stress tests.
+
+MamboDocs owns the canonical pages under `Docs/Projects/MamboFont`. Sync only that project into this repository with `node Scripts/sync_docs.js --sync MamboFont` from the MamboDocs vault. MamboWiki stays unchanged until the base family is complete enough for a usable release.
 
 ## Issues and feedback
 

@@ -75,15 +75,15 @@ The specimen is a local HTML review page containing all four weights and the sup
 mbfont specimen 0.4.0 --fonts build/pilot --out specimen.html
 ~~~
 
-Open specimen.html in a browser after any geometry or weight change. It includes actual text at 10, 12, 14, 16, 24, and 64 pixels plus Regular and Bold blueprint cards with design guides and raw pre-union vertices. Bold's candidate target is 16 pixels and above, but the current pilot does not claim to pass it; smaller rows are stress tests. The command requires the matching WOFF2 pilot files to exist first.
+Open specimen.html in a browser after any geometry, weight, or gap-rule change. It includes actual text at 10, 12, 14, 16, 24, and 64 pixels plus Regular and Bold blueprint cards with design guides, raw pre-union vertices, and the declared gap decision below each vulnerable glyph. Fourteen pixels per em is the review floor; 10 and 12 pixels are non-gating stress tests. The command requires the matching WOFF2 pilot files to exist first.
 
 ## Development workflow
 
-1. Change dimensions and primitives in sources/model.py or glyph rules in sources/glyphs.py.
+1. Change dimensions, named proportional guides, primitives, or the default 14-pixel/80-unit gap settings in sources/model.py; change glyph geometry, per-rule minimum overrides, and each vulnerable glyph's explicit gap action in sources/glyphs.py.
 2. Compile all four weights into build/pilot.
 3. Regenerate and inspect specimen.html at large and small sizes and in the blueprint views.
 4. Run the deterministic end-to-end check.
-5. Run check against dist and inspect the source and binary diffs together.
+5. Run `check` against the local candidate directory and inspect the source and specimen diffs together.
 
 ~~~bash
 ./script/mbfont.py compile 0.4.0 --format ttf woff2 --out build/pilot
@@ -94,7 +94,20 @@ git diff --check
 git status --short
 ~~~
 
-The test asserts the exact pilot map, one topology across weights, level-capped diagonals, fixed advances, safe bounds, straight on-curve contours with no redundant points, metadata and line metrics, FontForge validity, and deterministic bytes in both formats. It also rejects any active call to FontForge's stroke expansion.
+The test asserts the exact pilot map, one topology across weights, level-capped diagonals, design-supplied advances, safe bounds, straight on-curve contours with no redundant points, metadata and line metrics, FontForge validity, and deterministic bytes in both formats. A 600-unit-wide, 850-unit-ascent blueprint check guards the named proportional guides and removal of raw optical coordinates.
+
+`GapRule` validation checks the recipe's declared `natural`, `minimum`, action, and `resolved` values; it does not remeasure the final outline. One-bit XBM goldens therefore gate the compiled Bold result: `A`, `B`, `M`, `N`, `W`, `a`, `e`, `m`, and `0` at the 14-pixel floor, plus focused `M`, `W`, and `m` checks at 16 and 24 pixels. The test also rejects any active call to FontForge's stroke expansion.
+
+## Documentation
+
+The canonical source is the MamboDocs vault at `Docs/Projects/MamboFont`. After updating those pages, export only MamboFont:
+
+~~~bash
+cd ~/ProjectMambo/notes
+node Scripts/sync_docs.js --sync MamboFont
+~~~
+
+Do not sync or edit MamboWiki during pilot iterations. Update the Wiki only after the complete base family is approved as a usable release.
 
 ## Publishing
 
