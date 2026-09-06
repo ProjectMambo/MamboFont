@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from math import hypot, isfinite
+from math import hypot, isfinite, sqrt
 
 
 Number = int | float
@@ -45,12 +45,14 @@ class Design:
 
     def x(self, name: str) -> Number:
         """Resolve a named horizontal guide."""
+        center = self.advance / 2
         guides = {
             "cell_left": 0,
             "ink_left": self.ink_left,
             "inner_left": self.ink_left + self.thickness,
-            "center": self.advance / 2,
+            "center": center,
             "inner_right": self.ink_right - self.thickness,
+            "upper_bowl_right": center + (self.ink_right - center) * 3 / 4,
             "ink_right": self.ink_right,
             "cell_right": self.advance,
         }
@@ -155,6 +157,39 @@ def diagonal(
         (x1 + half_cap, y1),
         (x1 - half_cap, y1),
     )
+
+
+def joined_descending_diagonal(
+    design: Design,
+    lower_y: Number,
+    upper_y: Number,
+    *,
+    upper_stem: bool = False,
+) -> Contour:
+    """Join left/bottom and right/top receivers without exposed shelves."""
+    if not lower_y < upper_y:
+        raise ValueError("diagonal guides are out of order")
+    width = design.ink_right - design.ink_left
+    height = upper_y - lower_y
+    thickness = design.thickness
+    if height <= thickness:
+        raise ValueError("diagonal is too short for its thickness")
+    a = height * height - thickness * thickness
+    b = 2 * thickness * thickness * width
+    c = -thickness * thickness * (width * width + height * height)
+    cap = (-b + sqrt(b * b - 4 * a * c)) / (2 * a)
+    points = [
+        (design.ink_left, lower_y),
+        (design.ink_left + cap, lower_y),
+        (design.ink_right, upper_y),
+    ]
+    if upper_stem:
+        run = width - cap
+        join_top = upper_y + (cap - thickness) * height / run
+        points.extend(((design.ink_right, join_top), (design.ink_right - thickness, join_top)))
+    else:
+        points.append((design.ink_right - cap, upper_y))
+    return polygon(*points)
 
 
 def glyph(*ink: Contour, cuts: tuple[Contour, ...] = ()):

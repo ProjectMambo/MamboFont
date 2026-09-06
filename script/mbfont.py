@@ -26,6 +26,7 @@ from sources.model import Design, design_for, glyph, rectangle
 VERSION = "0.4.0"
 WEIGHTS = (("Regular", 400), ("Medium", 500), ("SemiBold", 600), ("Bold", 700))
 FORMATS = ("ttf", "woff2")
+REVIEW_SIZES = (10, 12, 14, 16, 24)
 GENERATION_FLAGS = ("opentype", "no-FFTM-table")
 PANOSE_WEIGHT = {400: 5, 500: 6, 600: 7, 700: 8}
 PILOT_CODEPOINTS = {0x20, *map(ord, PILOT_CHARACTERS)}
@@ -255,7 +256,7 @@ def command_check(args):
 
 
 def _blueprint_card(char, blueprint, design):
-    vertical = (0, design.ink_left, design.advance / 2, design.ink_right, design.advance)
+    vertical = (0, design.ink_left, design.advance / 2, design.x("upper_bowl_right"), design.ink_right, design.advance)
     horizontal = (-design.descent, design.descender, 0, design.x_height, design.cap_height, design.ascent)
     guides = "".join(f'<line x1="{x}" y1="{-design.descent}" x2="{x}" y2="{design.ascent}"/>' for x in vertical)
     guides += "".join(f'<line x1="0" y1="{y}" x2="{design.advance}" y2="{y}"/>' for y in horizontal)
@@ -284,9 +285,13 @@ def command_specimen(args):
         faces.append(
             f'@font-face {{ font-family:"MamboFontPilot"; src:url("{font_dir / filename}") format("woff2"); font-weight:{weight}; }}'
         )
+    size_samples = "".join(
+        f'<span style="font-size:{size}px">{size}px · HOBS ANMVWXZ aegmnr Il 0128</span>'
+        for size in REVIEW_SIZES
+    )
     samples = "".join(
         f'<section><h2>{style} · {weight}</h2><p class="sample" style="font-weight:{weight}">HOBS ANMVWXZ<br>aegmnr Il 0128<br>Il1 O0 rn m</p>'
-        f'<p class="sizes" style="font-weight:{weight}"><span>12px · HOBS ANMVWXZ aegmnr Il 0128</span><span>16px · HOBS ANMVWXZ aegmnr Il 0128</span><span>24px · HOBS ANMVWXZ aegmnr Il 0128</span></p></section>'
+        f'<p class="sizes" style="font-weight:{weight}">{size_samples}</p></section>'
         for style, weight in WEIGHTS
     )
     blueprints = "".join(
@@ -304,14 +309,14 @@ def command_specimen(args):
 body {{ margin:3rem auto; max-width:1200px; padding:0 1.5rem; background:#f4f0e8; color:#181818; }}
 section {{ border-top:2px solid; margin-top:2rem; }}
 .sample,.sizes {{ font-family:MamboFontPilot,monospace; line-height:1.45; }} .sample {{ font-size:64px; overflow-wrap:anywhere; }}
-.sizes {{ display:grid; gap:.6rem; }} .sizes span:nth-child(1) {{ font-size:12px; }} .sizes span:nth-child(2) {{ font-size:16px; }} .sizes span:nth-child(3) {{ font-size:24px; }}
+.sizes {{ display:grid; gap:.6rem; }}
 .blueprints {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(90px,1fr)); gap:.75rem; }}
 figure {{ margin:0; padding:.5rem; border:1px solid #777; text-align:center; }} svg {{ display:block; width:100%; max-height:220px; }}
 .guides {{ fill:none; stroke:#2580d8; stroke-width:2; vector-effect:non-scaling-stroke; opacity:.45; }}
 .ink {{ fill:currentColor; }} .cuts {{ fill:#f4f0e8; stroke:#df6c24; stroke-width:2; vector-effect:non-scaling-stroke; }}
 .points {{ fill:#e13b35; }} figcaption {{ font-family:monospace; font-weight:700; }}
 @media (prefers-color-scheme:dark) {{ body {{ background:#171717; color:#f4f0e8; }} .cuts {{ fill:#171717; }} }}
-</style><body><h1>MamboFont direct-outline pilot</h1><p>Incomplete review font: 500-unit cells, straight filled contours, no stroked paths. Red dots are blueprint vertices; blue lines are design guides.</p>{samples}{blueprints}</body></html>
+</style><body><h1>MamboFont direct-outline pilot</h1><p>Incomplete review font: 500-unit cells, straight filled contours, no stroked paths. Bold's candidate floor is 16px, not yet a support claim; 10–14px rows are stress tests. Red dots are raw blueprint vertices before union and cleanup; blue lines are design guides.</p>{samples}{blueprints}</body></html>
 """
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(document)

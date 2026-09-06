@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from sources.model import Design, diagonal, glyph, hbar, validate_blueprint, vbar
+from sources.model import Design, diagonal, glyph, hbar, joined_descending_diagonal, validate_blueprint, vbar
 
 
 PILOT_CHARACTERS = "HOBSANMVWXZaegmnrIl0128"
@@ -30,6 +30,7 @@ def pilot_glyphs(design: Design):
     baseline, x_mid = design.y("baseline"), design.y("x_mid")
     mid, x_height, cap = design.y("midline"), design.y("x_height"), design.y("cap_height")
     descender = design.y("descender")
+    upper_bowl_right = design.x("upper_bowl_right")
 
     cap_frame = _frame(design, left, baseline, right, cap)
     x_frame = _frame(design, left, baseline, right, x_height)
@@ -46,8 +47,8 @@ def pilot_glyphs(design: Design):
         "O": glyph(*cap_frame),
         "B": glyph(
             vbar(design, left, baseline, cap),
-            hbar(design, left, right - 40, cap - t),
-            vbar(design, right - 40 - t, mid, cap),
+            hbar(design, left, upper_bowl_right, cap - t),
+            vbar(design, upper_bowl_right - t, mid, cap),
             _midbar(design, left, right, mid),
             vbar(design, right - t, baseline, mid),
             hbar(design, left, right, baseline),
@@ -62,7 +63,7 @@ def pilot_glyphs(design: Design):
         "A": glyph(
             diagonal(design, (90, baseline), (center, cap)),
             diagonal(design, (410, baseline), (center, cap)),
-            _midbar(design, 125, 375, mid),
+            _midbar(design, left, right, mid),
         ),
         "N": glyph(
             vbar(design, left, baseline, cap),
@@ -91,7 +92,7 @@ def pilot_glyphs(design: Design):
         ),
         "Z": glyph(
             hbar(design, left, right, cap - t),
-            diagonal(design, (right - t, cap - t // 2), (left + t, baseline + t // 2)),
+            joined_descending_diagonal(design, baseline + t, cap - t),
             hbar(design, left, right, baseline),
         ),
         "a": glyph(
@@ -148,8 +149,8 @@ def pilot_glyphs(design: Design):
         ),
         "2": glyph(
             hbar(design, left, right, cap - t),
-            vbar(design, right - t, 400, cap),
-            diagonal(design, (right - t, 430), (left + t, baseline + t / 2)),
+            vbar(design, right - t, x_height, cap),
+            joined_descending_diagonal(design, baseline + t, x_height, upper_stem=True),
             hbar(design, left, right, baseline),
         ),
         "8": glyph(*cap_frame, _midbar(design, left, right, mid)),
