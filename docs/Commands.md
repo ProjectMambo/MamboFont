@@ -1,6 +1,6 @@
 ---
+description: Generate, compare, and visually review MamboFont.
 title: MamboFont Commands
-description: Generate, compare, and visually review Mambo Font and Mambo Icons.
 order: 10
 ---
 
@@ -30,35 +30,35 @@ The installer uses $HOME/.local/bin by default. Set MAMBOFONT_BIN_DIR to select 
 ## Compile
 
 ~~~text
-mbfont compile [X.Y.Z] [--out DIR] [--family text|icons|all] [--format ttf woff2]
+mbfont compile [X.Y.Z] [--out DIR] [--format ttf woff2]
 ~~~
 
-The version defaults to the generator's current version and must be exact core SemVer such as 0.3.0. The output directory defaults to dist. Text is the default family; both file formats are generated when --format is omitted.
+The version defaults to the generator's current version and must be exact core SemVer such as 0.3.0. The output directory defaults to dist; both file formats are generated when --format is omitted.
 
-Build both families:
+Build all four weights:
 
 ~~~bash
-mbfont compile 0.3.0 --family all --format ttf woff2 --out dist
+mbfont compile 0.3.0 --format ttf woff2 --out dist
 ~~~
 
 Build only text TTF files into a temporary review directory:
 
 ~~~bash
-mbfont compile 0.3.0 --family text --format ttf --out /tmp/mambofont
+mbfont compile 0.3.0 --format ttf --out /tmp/mambofont
 ~~~
 
-Mambo Font produces Regular, Medium, SemiBold, and Bold. Mambo Icons produces one Regular file. Each output is validated before it atomically replaces its destination.
+MamboFont produces Regular, Medium, SemiBold, and Bold. Each output is validated before it atomically replaces its destination.
 
 ## Check committed candidates
 
 ~~~text
-mbfont check [X.Y.Z] [--out DIR] [--family text|icons|all] [--format ttf woff2]
+mbfont check [X.Y.Z] [--out DIR] [--format ttf woff2]
 ~~~
 
 Check rebuilds into a temporary directory and byte-compares every selected file with the destination. A missing or stale file makes the command fail.
 
 ~~~bash
-mbfont check 0.3.0 --family all --format ttf woff2 --out dist
+mbfont check 0.3.0 --format ttf woff2 --out dist
 ~~~
 
 Generation uses a fixed source epoch and fixed ordering, so identical rules produce identical TTF and WOFF2 bytes. There is no separate build cache.
@@ -69,7 +69,7 @@ Generation uses a fixed source epoch and fixed ordering, so identical rules prod
 mbfont specimen [X.Y.Z] [--fonts DIR] [--out FILE]
 ~~~
 
-The specimen is a local HTML review page containing all four text weights, the supported character groups, and every active icon.
+The specimen is a local HTML review page containing all four weights and the supported character groups.
 
 ~~~bash
 mbfont specimen 0.3.0 --fonts dist --out specimen.html
@@ -79,22 +79,22 @@ Open specimen.html in a browser after any geometry or weight change. The command
 
 ## Development workflow
 
-1. Change the shared rules in sources/text.py, sources/icons.py, or sources/geometry.py.
-2. Compile both families into dist.
+1. Change the shared rules in sources/text.py or sources/geometry.py.
+2. Compile all four weights into dist.
 3. Regenerate and inspect specimen.html at large and small sizes.
 4. Run the deterministic end-to-end check.
 5. Run check against dist and inspect the source and binary diffs together.
 
 ~~~bash
-./script/mbfont.py compile 0.3.0 --family all --format ttf woff2 --out dist
+./script/mbfont.py compile 0.3.0 --format ttf woff2 --out dist
 ./script/mbfont.py specimen 0.3.0 --fonts dist --out specimen.html
 /usr/bin/python3 tests/test_build.py
-./script/mbfont.py check 0.3.0 --family all --format ttf woff2 --out dist
+./script/mbfont.py check 0.3.0 --format ttf woff2 --out dist
 git diff --check
 git status --short
 ~~~
 
-The test asserts exact text and icon maps, fixed advances, safe bounding boxes, metadata and line metrics, stable private-use assignments, FontForge validity, and deterministic bytes in both formats.
+The test asserts the exact character map, fixed advances, safe bounding boxes, metadata and line metrics, FontForge validity, and deterministic bytes in both formats.
 
 ## Publishing
 

@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Build and verify Mambo Font and Mambo Icons directly from Python rules."""
+"""Build and verify Mambo Font directly from Python rules."""
 
 import argparse
-import html
 import os
 import re
 import sys
@@ -19,7 +18,7 @@ try:
 except ImportError:
     raise SystemExit("FontForge Python bindings are required (run with /usr/bin/python3).")
 
-from sources import icons, text
+from sources import text
 from sources.geometry import glyph, loop, path
 
 
@@ -124,7 +123,7 @@ def make_font(family, style, weight):
     font.os2_weight = weight
     font.os2_vendor = "MAMB"
     font.os2_use_typo_metrics = True
-    font.os2_panose = (2, 11, PANOSE_WEIGHT[weight], 9, 2, 2, 2, 2, 2, 4) if family == "Mambo Font" else (5, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    font.os2_panose = (2, 11, PANOSE_WEIGHT[weight], 9, 2, 2, 2, 2, 2, 4)
     font.copyright = "Copyright (c) 2026 ProjectMambo"
     font.appendSFNTName("English (US)", 13, "MIT License")
     font.appendSFNTName("English (US)", 14, "https://github.com/ProjectMambo/MamboFont/blob/main/LICENSE")
@@ -197,18 +196,6 @@ def build_text(style, weight, stroke, version):
     return font
 
 
-def build_icons(version):
-    font = make_font("Mambo Icons", "Regular", 400)
-    font.version = version
-    make_notdef(font, 1000, icons.STROKE)
-    for name, spec in sorted(icons.ICONS.items(), key=lambda item: icons.ICON_CODEPOINTS[item[0]]):
-        target = font.createChar(icons.ICON_CODEPOINTS[name], "icon_" + name.replace("-", "_"))
-        draw_spec(target, spec, icons.STROKE)
-        target.width = 1000
-    validate_source(font, {icons.ICON_CODEPOINTS[name] for name in icons.ICONS}, 1000)
-    return font
-
-
 def validate_source(font, expected_codepoints, advance):
     actual = {item.unicode for item in font.glyphs() if item.unicode >= 0}
     if actual != expected_codepoints:
@@ -253,23 +240,13 @@ def selected_formats(values):
     return tuple(dict.fromkeys(values or FORMATS))
 
 
-def compile_fonts(version, out_dir, families, formats):
+def compile_fonts(version, out_dir, formats):
     outputs = []
-    if families in ("text", "all"):
-        for style, weight, stroke in WEIGHTS:
-            font = build_text(style, weight, stroke, version)
-            try:
-                for file_format in formats:
-                    destination = out_dir / output_name("MamboFont", style, version, file_format)
-                    generate(font, destination)
-                    outputs.append(destination)
-            finally:
-                font.close()
-    if families in ("icons", "all"):
-        font = build_icons(version)
+    for style, weight, stroke in WEIGHTS:
+        font = build_text(style, weight, stroke, version)
         try:
             for file_format in formats:
-                destination = out_dir / output_name("MamboIcons", "Regular", version, file_format)
+                destination = out_dir / output_name("MamboFont", style, version, file_format)
                 generate(font, destination)
                 outputs.append(destination)
         finally:
@@ -278,7 +255,7 @@ def compile_fonts(version, out_dir, families, formats):
 
 
 def command_compile(args):
-    outputs = compile_fonts(args.version, args.out, args.family, selected_formats(args.formats))
+    outputs = compile_fonts(args.version, args.out, selected_formats(args.formats))
     for output in outputs:
         print(output)
 
@@ -286,7 +263,7 @@ def command_compile(args):
 def command_check(args):
     formats = selected_formats(args.formats)
     with tempfile.TemporaryDirectory(prefix="mambofont-check.") as temporary:
-        generated = compile_fonts(args.version, Path(temporary), args.family, formats)
+        generated = compile_fonts(args.version, Path(temporary), formats)
         stale = []
         for candidate in generated:
             expected = args.out / candidate.name
@@ -309,18 +286,9 @@ def command_specimen(args):
         faces.append(
             f'@font-face {{ font-family: "MamboFont"; src: url("{font_dir / filename}") format("woff2"); font-weight: {weight}; }}'
         )
-    icon_filename = output_name("MamboIcons", "Regular", args.version, "woff2")
-    if not (args.fonts / icon_filename).is_file():
-        raise SystemExit(f"missing font: {args.fonts / icon_filename}")
-    faces.append(f'@font-face {{ font-family: "MamboIcons"; src: url("{font_dir / icon_filename}") format("woff2"); }}')
-
     samples = "".join(
         f'<section><h2>{style} · {weight}</h2><p class="sample" style="font-weight:{weight}">MamboFont 0123456789<br>ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>!&quot;#$%&amp;\'()*+,-./:;&lt;=&gt;?@[\\]^_`{{|}}~<br>ÀÁÂÃÄÅ Æ Ç ÈÉÊË ÌÍÎÏ Ð Ñ ÒÓÔÕÖ Ø ÙÚÛÜ Ý Þ ß<br>àáâãäå æ ç èéêë ìíîï ð ñ òóôõö ø ùúûü ý þ ÿ<br>€ ‚ ƒ „ … † ‡ ˆ ‰ Š ‹ Œ Ž ‘ ’ “ ” • – — ˜ ™ š › œ ž Ÿ</p></section>'
         for style, weight, _ in WEIGHTS
-    )
-    icon_cells = "".join(
-        f'<li><span>&#x{icons.ICON_CODEPOINTS[name]:04X};</span><code>{html.escape(name)} · U+{icons.ICON_CODEPOINTS[name]:04X}</code></li>'
-        for name in sorted(icons.ICONS, key=icons.ICON_CODEPOINTS.get)
     )
     document = f"""<!doctype html>
 <html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width">
@@ -331,11 +299,8 @@ def command_specimen(args):
 body {{ margin: 3rem auto; max-width: 1100px; padding: 0 1.5rem; background:#f4f0e8; color:#181818; }}
 h1,h2 {{ font-family: MamboFont, monospace; }} section {{ border-top:2px solid; margin-top:2rem; }}
 .sample {{ font-family:MamboFont,monospace; font-size:clamp(18px,2.5vw,32px); line-height:1.55; overflow-wrap:anywhere; }}
-.icons {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1rem; padding:0; }}
-.icons li {{ list-style:none; border:2px solid; padding:1rem; display:grid; gap:.5rem; text-align:center; }}
-.icons span {{ font:64px MamboIcons; }} .icons code {{ font-size:12px; }}
 @media (prefers-color-scheme:dark) {{ body {{ background:#171717; color:#f4f0e8; }} }}
-</style><body><h1>Mambo Font {args.version}</h1>{samples}<h2>Mambo Icons</h2><ul class="icons">{icon_cells}</ul></body></html>
+</style><body><h1>Mambo Font {args.version}</h1>{samples}</body></html>
 """
     args.out.write_text(document)
     print(args.out)
@@ -344,7 +309,6 @@ h1,h2 {{ font-family: MamboFont, monospace; }} section {{ border-top:2px solid; 
 def add_build_options(parser):
     parser.add_argument("version", nargs="?", type=validate_version, default=VERSION)
     parser.add_argument("--out", type=Path, default=PROJECT_ROOT / "dist")
-    parser.add_argument("--family", choices=("text", "icons", "all"), default="text")
     parser.add_argument("--format", dest="formats", nargs="+", choices=FORMATS)
 
 

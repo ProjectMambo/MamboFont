@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Small end-to-end contract check for the generated families."""
+"""Small end-to-end contract check for the generated font."""
 
 import sys
 import tempfile
@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT))
 import fontforge
 
 from script.mbfont import WEIGHTS, compile_fonts
-from sources import icons, text
+from sources import text
 
 
 def encoded(font):
@@ -37,21 +37,8 @@ def inspect(path_value, expected, advance):
 
 
 def main():
-    legacy_names = (
-        "audio-0", "audio-100", "audio-25", "audio-50", "audio-75",
-        "battery-0", "battery-100", "battery-25", "battery-50", "battery-75",
-        "camera-off", "camera-on", "coconut", "cod", "coffee-empty", "coffee-full",
-        "cpu", "disk", "headphones-0", "headphones-100", "headphones-25",
-        "headphones-50", "headphones-75", "light-0", "light-100", "light-25",
-        "light-50", "light-75", "lock", "mambo", "off", "on", "unlock",
-    )
-    assert icons.ICON_CODEPOINTS == {name: 0xE000 + index for index, name in enumerate(legacy_names)}
     text_points = set(text.TARGET_CODEPOINTS)
-    icon_points = {icons.ICON_CODEPOINTS[name] for name in icons.ICONS}
     assert len(text_points) == 218
-    assert len(icon_points) == 30
-    assert not ({icons.ICON_CODEPOINTS[name] for name in icons.RETIRED} & icon_points)
-    assert icons.NEXT_ICON_CODEPOINT > max(icons.ICON_CODEPOINTS.values())
     for char in ascii_letters + digits:
         for points in text.GLYPHS[char]["paths"]:
             for (left_x, left_y), (right_x, right_y) in zip(points, points[1:]):
@@ -59,18 +46,15 @@ def main():
                 assert not (dx and dy) or max(dx, dy) > 100, (char, (left_x, left_y), (right_x, right_y))
 
     with tempfile.TemporaryDirectory(prefix="mambofont-test-a.") as first, tempfile.TemporaryDirectory(prefix="mambofont-test-b.") as second:
-        first_files = compile_fonts("0.0.0", Path(first), "all", ("ttf", "woff2"))
-        second_files = compile_fonts("0.0.0", Path(second), "all", ("ttf", "woff2"))
-        assert len(first_files) == (len(WEIGHTS) + 1) * 2
+        first_files = compile_fonts("0.0.0", Path(first), ("ttf", "woff2"))
+        second_files = compile_fonts("0.0.0", Path(second), ("ttf", "woff2"))
+        assert len(first_files) == len(WEIGHTS) * 2
         assert [item.name for item in first_files] == [item.name for item in second_files]
         for left, right in zip(first_files, second_files):
             assert left.read_bytes() == right.read_bytes(), left.name
-            if left.name.startswith("MamboIcons"):
-                inspect(left, icon_points, 1000)
-            else:
-                inspect(left, text_points, 500)
+            inspect(left, text_points, 500)
 
-    print("ok: deterministic 4-weight text and 1-weight icon build")
+    print("ok: deterministic 4-weight MamboFont build")
 
 
 if __name__ == "__main__":
