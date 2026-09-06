@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Small end-to-end contract check for the generated font."""
+"""One end-to-end check for the direct-outline MamboFont pilot."""
 
 import sys
 import tempfile
-from string import ascii_letters, digits
+from math import hypot
 from pathlib import Path
 
 
@@ -12,49 +12,77 @@ sys.path.insert(0, str(ROOT))
 
 import fontforge
 
-from script.mbfont import WEIGHTS, compile_fonts
-from sources import text
+from script.mbfont import PILOT_CODEPOINTS, WEIGHTS, compile_fonts
+from sources.glyphs import PILOT_CHARACTERS, pilot_glyphs
+from sources.model import design_for
 
 
-def encoded(font):
-    return {item.unicode for item in font.glyphs() if item.unicode >= 0}
-
-
-def inspect(path_value, expected, advance):
+def inspect(path_value):
     font = fontforge.open(str(path_value))
     try:
+        encoded = {item.unicode for item in font.glyphs() if item.unicode >= 0}
         assert font.validate(True) == 0, path_value
-        assert encoded(font) == expected, path_value
-        assert all(item.width == advance for item in font.glyphs() if item.unicode >= 0), path_value
-        assert (font.hhea_ascent, font.hhea_descent, font.hhea_linegap) == (900, -200, 0), path_value
-        assert (font.os2_winascent, font.os2_windescent) == (900, 200), path_value
-        assert all(0 <= item.boundingBox()[0] and item.boundingBox()[2] <= advance for item in font.glyphs() if item.unicode >= 0), path_value
-        assert font.copyright == "Copyright (c) 2026 ProjectMambo"
-        if advance == 500:
-            assert font.os2_panose[3] == 9, path_value
+        assert encoded == PILOT_CODEPOINTS, path_value
+        assert font.familyname == "Mambo Font Pilot", path_value
+        assert font.copyright == "Copyright (c) 2026 ProjectMambo", path_value
+        assert font.os2_panose[3] == 9, path_value
+        assert (font.hhea_ascent, font.hhea_descent, font.hhea_linegap) == (800, -200, 0), path_value
+        assert (font.os2_winascent, font.os2_windescent) == (800, 200), path_value
+        signature = {}
+        for item in font.glyphs():
+            is_ours = item.unicode >= 0 or item.glyphname == ".notdef"
+            if is_ours:
+                assert item.width == 500, (path_value, item.glyphname)
+                assert all(point.on_curve for contour in item.foreground for point in contour), (path_value, item.glyphname)
+                assert all(point.x == round(point.x) and point.y == round(point.y) for contour in item.foreground for point in contour), (path_value, item.glyphname)
+            if item.unicode >= 0:
+                left, bottom, right, top = item.boundingBox()
+                assert 0 <= left <= right <= 500, (path_value, item.glyphname, item.boundingBox())
+                assert -200 <= bottom <= top <= 800, (path_value, item.glyphname, item.boundingBox())
+                signature[item.unicode] = len(item.foreground)
+        return signature
     finally:
         font.close()
 
 
 def main():
-    text_points = set(text.TARGET_CODEPOINTS)
-    assert len(text_points) == 218
-    for char in ascii_letters + digits:
-        for points in text.GLYPHS[char]["paths"]:
-            for (left_x, left_y), (right_x, right_y) in zip(points, points[1:]):
-                dx, dy = abs(right_x - left_x), abs(right_y - left_y)
-                assert not (dx and dy) or max(dx, dy) > 100, (char, (left_x, left_y), (right_x, right_y))
+    assert set(PILOT_CHARACTERS) == set(pilot_glyphs(design_for("Regular")))
+    topology = None
+    for style, _ in WEIGHTS:
+        recipes = pilot_glyphs(design_for(style))
+        current = {char: (len(value["ink"]), len(value["cuts"])) for char, value in recipes.items()}
+        topology = current if topology is None else topology
+        assert current == topology
+        for blueprint in recipes.values():
+            for contour in blueprint["ink"]:
+                edges = list(zip(contour, (*contour[1:], contour[0])))
+                if any(left[0] != right[0] and left[1] != right[1] for left, right in edges):
+                    assert len(contour) == 4
+                    bottom_left, bottom_right, top_right, top_left = contour
+                    assert bottom_left[1] == bottom_right[1]
+                    assert top_left[1] == top_right[1]
+                    side = (top_left[0] - bottom_left[0], top_left[1] - bottom_left[1])
+                    cap = (bottom_right[0] - bottom_left[0], bottom_right[1] - bottom_left[1])
+                    measured = abs(side[0] * cap[1] - side[1] * cap[0]) / hypot(*side)
+                    assert abs(measured - design_for(style).thickness) < 1e-9
+
+    active_python = [*(ROOT / "sources").glob("*.py"), *(ROOT / "script").glob("*.py")]
+    assert all(".stroke(" not in path.read_text() for path in active_python)
 
     with tempfile.TemporaryDirectory(prefix="mambofont-test-a.") as first, tempfile.TemporaryDirectory(prefix="mambofont-test-b.") as second:
         first_files = compile_fonts("0.0.0", Path(first), ("ttf", "woff2"))
         second_files = compile_fonts("0.0.0", Path(second), ("ttf", "woff2"))
         assert len(first_files) == len(WEIGHTS) * 2
         assert [item.name for item in first_files] == [item.name for item in second_files]
+        final_topology = []
         for left, right in zip(first_files, second_files):
             assert left.read_bytes() == right.read_bytes(), left.name
-            inspect(left, text_points, 500)
+            signature = inspect(left)
+            if left.suffix == ".ttf":
+                final_topology.append(signature)
+        assert all(signature == final_topology[0] for signature in final_topology)
 
-    print("ok: deterministic 4-weight MamboFont build")
+    print("ok: deterministic direct-outline pilot, 4 weights, TTF + WOFF2")
 
 
 if __name__ == "__main__":

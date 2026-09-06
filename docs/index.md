@@ -8,7 +8,7 @@ order: 60
 
 # MamboFont
 
-MamboFont is Project Mambo's generated typeface. One small Python geometry source produces four deterministic TTF and WOFF2 weights.
+MamboFont is Project Mambo's generated typeface. A small Python blueprint compiler produces four deterministic TTF and WOFF2 weights from direct filled outlines.
 
 ::button{label="Source code" href="https://github.com/ProjectMambo/MamboFont" variant="secondary" external=true}
 
@@ -18,9 +18,9 @@ MamboFont is Project Mambo's generated typeface. One small Python geometry sourc
 
 ## Design
 
-The text family uses square counters, right-angle corners, and no rounded or beveled corner treatment. Long diagonals remain only when they identify the glyph. All weights expand the same centerline skeleton, keeping proportions and details consistent.
+The family uses square counters, right-angle corners, and no rounded or beveled corner treatment. True diagonals remain only when they identify the glyph and have level ends. All weights share one blueprint topology while thickness grows inward.
 
-Coverage includes 218 printable ASCII, Latin-1, and Windows-1252 characters.
+The current review pilot covers space plus 23 representative letters and figures. The milestone target is 218 printable ASCII, Latin-1, and Windows-1252 characters after the design grammar is approved.
 
 ## Documentation
 
@@ -28,4 +28,4 @@ Coverage includes 218 printable ASCII, Latin-1, and Windows-1252 characters.
 
 ## Current status
 
-Version 0.3.0 is a review candidate. The generator, candidate files, and local validation exist; no 0.3 release or downstream migration has been made.
+Version 0.4.0 is an intentionally incomplete design pilot. The direct-outline generator and local validation exist; no release files, tag, or downstream migration have been made.
