@@ -110,12 +110,14 @@ def _normalize(target):
         raise RuntimeError(f"{target.glyphname}: validation flags {problems:#x}")
 
 
-def _draw_blueprint(target, blueprint):
+def _draw_blueprint(target, blueprint, design):
     for contour in blueprint["ink"]:
         _add_contour(target, contour, clockwise=True)
+    target.removeOverlap()
+    target.correctDirection()
     for contour in blueprint["cuts"]:
         _add_contour(target, contour, clockwise=False)
-    target.width = 500
+    target.width = design.advance
     _normalize(target)
 
 
@@ -167,12 +169,13 @@ def _make_font(style, weight, version):
                 design.cap_height - design.thickness,
             ),),
         ),
+        design,
     )
     space = font.createChar(0x20, "space")
     space.width = design.advance
     for char, blueprint in sorted(pilot_glyphs(design).items()):
         target = font.createChar(ord(char))
-        _draw_blueprint(target, blueprint)
+        _draw_blueprint(target, blueprint, design)
 
     _validate_font(font, design)
     return font
@@ -267,11 +270,15 @@ def _blueprint_card(char, blueprint, design):
         for contour in (*blueprint["ink"], *blueprint["cuts"])
         for x, y in contour
     )
+    gap_notes = "".join(
+        f'<small>{html.escape(rule.name)}: {rule.natural:.0f}→{rule.resolved:.0f} ({rule.outcome})</small>'
+        for rule in blueprint["gaps"]
+    )
     return (
         f'<figure><svg viewBox="0 0 {design.advance} {design.upm}" role="img" aria-label="{html.escape(char)} blueprint">'
         f'<g transform="translate(0 {design.ascent}) scale(1 -1)"><g class="guides">{guides}</g>'
         f'<g class="ink">{ink}</g><g class="cuts">{cuts}</g><g class="points">{points}</g></g></svg>'
-        f'<figcaption>{html.escape(char)}</figcaption></figure>'
+        f'<figcaption>{html.escape(char)}{gap_notes}</figcaption></figure>'
     )
 
 
@@ -314,9 +321,9 @@ section {{ border-top:2px solid; margin-top:2rem; }}
 figure {{ margin:0; padding:.5rem; border:1px solid #777; text-align:center; }} svg {{ display:block; width:100%; max-height:220px; }}
 .guides {{ fill:none; stroke:#2580d8; stroke-width:2; vector-effect:non-scaling-stroke; opacity:.45; }}
 .ink {{ fill:currentColor; }} .cuts {{ fill:#f4f0e8; stroke:#df6c24; stroke-width:2; vector-effect:non-scaling-stroke; }}
-.points {{ fill:#e13b35; }} figcaption {{ font-family:monospace; font-weight:700; }}
+.points {{ fill:#e13b35; }} figcaption {{ font-family:monospace; font-weight:700; }} figcaption small {{ display:block; font:11px/1.3 system-ui,sans-serif; }}
 @media (prefers-color-scheme:dark) {{ body {{ background:#171717; color:#f4f0e8; }} .cuts {{ fill:#171717; }} }}
-</style><body><h1>MamboFont direct-outline pilot</h1><p>Incomplete review font: 500-unit cells, straight filled contours, no stroked paths. Bold's candidate floor is 16px, not yet a support claim; 10–14px rows are stress tests. Red dots are raw blueprint vertices before union and cleanup; blue lines are design guides.</p>{samples}{blueprints}</body></html>
+</style><body><h1>MamboFont direct-outline pilot</h1><p>Incomplete review font: 500-unit cells, straight filled contours, no stroked paths. The small-size review floor is 14px; 10–12px rows are non-gating stress tests. Red dots are raw blueprint vertices before union and cleanup; gap decisions appear below vulnerable glyphs.</p>{samples}{blueprints}</body></html>
 """
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(document)
