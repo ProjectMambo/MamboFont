@@ -9,7 +9,7 @@
 <p align="left">
   <img src="https://img.shields.io/badge/Maintenance-Active-brightgreen?style=flat-square" alt="Maintenance status: active" />
   <img src="https://img.shields.io/github/last-commit/ProjectMambo/MamboFont?style=flat-square&color=7a5fff" alt="Last commit" />
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/ProjectMambo/MamboFont?style=flat-square&color=orange" alt="License" /></a>
+  <a href="../LICENSE"><img src="https://img.shields.io/github/license/ProjectMambo/MamboFont?style=flat-square&color=orange" alt="License" /></a>
 </p>
 
 MamboFont is Project Mambo's blocky monospace type system. Its compact Python geometry generates two focused families directly through FontForge:
@@ -22,11 +22,11 @@ MamboFont is Project Mambo's blocky monospace type system. Its compact Python ge
 | Goal | Document or path |
 |---|---|
 | Read the canonical Wiki documentation | [projectmambo.org/mambofont/](https://projectmambo.org/mambofont/) |
-| Build, check, or review the fonts | [Commands](docs/Commands.md) |
-| Understand the glyph and icon rules | [Design rules](docs/Design.md) |
-| Edit the generator source | [sources/](sources/) |
-| Inspect candidate binaries | [dist/](dist/) |
-| Review every weight and icon | [specimen.html](specimen.html) |
+| Build, check, or review the fonts | [Commands](Commands.md) |
+| Understand the glyph and icon rules | [Design rules](Design.md) |
+| Edit the generator source | [sources/](../sources/) |
+| Inspect candidate binaries | [dist/](../dist/) |
+| Review every weight and icon | [specimen.html](../specimen.html) |
 
 ## Build
 
@@ -47,7 +47,7 @@ To install the same mbfont command used by downstream repositories:
 
 The installer creates a symlink under $HOME/.local/bin by default. Set MAMBOFONT_BIN_DIR to choose a different existing command directory. It does not install font files into the operating system.
 
-See [Commands](docs/Commands.md) for all options and the required verification sequence.
+See [Commands](Commands.md) for all options and the required verification sequence.
 
 ## Coverage
 
@@ -84,4 +84,4 @@ This font is maintained for Project Mambo, so external pull requests are not cur
 
 ## License
 
-Distributed under the MIT License. See **[LICENSE](LICENSE)** for details.
+Distributed under the MIT License. See **[LICENSE](../LICENSE)** for details.
