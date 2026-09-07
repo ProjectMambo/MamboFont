@@ -100,15 +100,17 @@ The test asserts the exact 95-character printable-ASCII map, declared fill/widen
 
 ## Config and editor migration
 
-Phase 1 is implemented. `sources/font.json`, `sources/components.json`, the first `.notdef` glyph document, and the strict `sources/config.py` loader now exist. They establish dimensions, weights, guides, target coverage, empty controls/spaces, safe project paths, and the bounded scalar grammar. They do not drive `compile` or `check` yet, and `mbfont edit` does not exist, so use the current Python and specimen commands above until the migration reaches its parity gate.
+Phases 1 and 2 are implemented. The strict `sources/config.py` evaluator loads the JSON project, resolves project and glyph references, expands generic filled primitives and the reusable frame component, measures declared gaps, and applies one explicit `fill` or `widen` fallback. The current representative files are `.notdef`, `7`, `A`, `H`, `M`, `O`, and `a`.
 
-Check the phase-1 contract without FontForge:
+JSON does not drive `compile` or `check` yet, and `mbfont edit` does not exist, so use the current Python and specimen commands above until the printable-ASCII migration reaches its parity gate.
+
+Check the JSON source contract without FontForge:
 
 ~~~bash
 /usr/bin/python3 tests/test_config.py
 ~~~
 
-It requires 283 target code points, 67 explicit empty code points, 216 pending drawn glyphs, exact parity between JSON and Python guides at every weight, a resolved `.notdef` rectangle, and rejection of duplicate JSON keys.
+It requires 283 target code points, 67 explicit empty code points, 210 pending drawn glyphs, exact JSON/Python guide parity, and exact source-blueprint parity for the seven configured glyphs in every weight. It also checks duplicate-key and cyclic-reference rejection. The FontForge end-to-end test separately requires identical normalized contours between the JSON and current Python recipes.
 
 The existing headless interface remains stable for other repositories:
 
@@ -140,7 +142,7 @@ It will start a loopback-only local server and open the browser editor. Its Buil
 ### Migration sequence
 
 1. **Complete:** establish the strict versioned JSON manifest and resolver, preserve the current source commit as the behavior baseline, and record controls and spaces as explicit empty coverage.
-2. Translate a representative set covering bars, diagonals, cuts, components, joins, and both gap actions; compare its normalized contours with the current recipes.
+2. **Complete:** translate `.notdef`, `7`, `A`, `H`, `M`, `O`, and `a`, covering bars, diagonals, cuts, components, joins, and both gap actions; require matching source geometry and normalized contours in all four weights.
 3. Translate all printable ASCII into JSON and keep both paths only long enough to prove parity. Switch `compile` and `check`, then remove glyph-specific Python recipes in the same checkpoint.
 4. Add the editor first as a read-only geometry and live-font viewer, then add point, guide, primitive, gap-rule, undo, and atomic-save operations.
 5. Match the current specimen's glyph grid, weights, sizes, optimized-point display, gap diagnostics, and ambiguity strings. Only after that gate, remove the tracked `specimen.html` and the `specimen` command; the editor's typable box becomes the review surface.

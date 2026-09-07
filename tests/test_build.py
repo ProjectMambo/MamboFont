@@ -12,7 +12,15 @@ sys.path.insert(0, str(ROOT))
 
 import fontforge
 
-from script.mbfont import ASCII_CODEPOINTS, WEIGHTS, _without_redundant_points, compile_fonts
+from script.mbfont import (
+    ASCII_CODEPOINTS,
+    WEIGHTS,
+    _draw_blueprint,
+    _make_font,
+    _without_redundant_points,
+    compile_fonts,
+)
+from sources.config import blueprint_for, load_project
 from sources.glyphs import ASCII_CHARACTERS, ascii_glyphs
 from sources.model import Design, design_for
 
@@ -134,6 +142,7 @@ def main():
         for x, y in contour
     )
 
+    project = load_project()
     assert set(ASCII_CHARACTERS) == set(ascii_glyphs(design_for("Regular")))
     for style, _ in WEIGHTS:
         design = design_for(style)
@@ -181,6 +190,34 @@ def main():
         assert five_diagonal[2] == (design.ink_right, design.cap_height / 2 - design.thickness / 2)
         assert seven_diagonal[2] == (design.ink_right, design.cap_height - design.thickness)
         assert len(recipes["("]["ink"][0]) == 8 and len(recipes["~"]["ink"]) == 3
+
+        legacy = _make_font(style, project.font["weights"][style]["css"], "0.0.0")
+        configured = fontforge.font()
+        try:
+            for char in "7AHMOa":
+                target = configured.createChar(ord(char))
+                _draw_blueprint(
+                    target, blueprint_for(project, f"U+{ord(char):04X}", style), design
+                )
+                assert tuple(
+                    tuple((point.x, point.y) for point in contour)
+                    for contour in target.foreground
+                ) == tuple(
+                    tuple((point.x, point.y) for point in contour)
+                    for contour in legacy[ord(char)].foreground
+                ), (style, char)
+            target = configured.createChar(-1, ".notdef")
+            _draw_blueprint(target, blueprint_for(project, ".notdef", style), design)
+            assert tuple(
+                tuple((point.x, point.y) for point in contour)
+                for contour in target.foreground
+            ) == tuple(
+                tuple((point.x, point.y) for point in contour)
+                for contour in legacy[".notdef"].foreground
+            ), (style, ".notdef")
+        finally:
+            configured.close()
+            legacy.close()
 
     active_python = [*(ROOT / "sources").glob("*.py"), *(ROOT / "script").glob("*.py")]
     assert all(".stroke(" not in path.read_text() for path in active_python)

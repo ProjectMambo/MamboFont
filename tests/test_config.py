@@ -11,7 +11,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from sources.config import ConfigError, load_project, resolved_glyph, resolved_guides
+from sources.config import ConfigError, blueprint_for, load_project, resolved_glyph, resolved_guides
+from sources.glyphs import ascii_glyphs
 from sources.model import design_for
 
 
@@ -19,7 +20,7 @@ def main():
     project = load_project()
     assert len(project.coverage) == 283
     assert len(project.empty) == 67
-    assert len(project.pending) == 216
+    assert len(project.pending) == 210
     assert project.empty == frozenset((*range(0x00, 0x21), *range(0x7F, 0xA1)))
     assert {0x20AC, 0x0152, 0x0178, 0x2122} <= project.coverage
     assert project.glyphs[".notdef"]["review"] == "approved"
@@ -47,16 +48,27 @@ def main():
         assert notdef["shapes"] == (
             {
                 "id": "outer", "operation": "add", "primitive": "rectangle",
-                "left": design.ink_left, "bottom": 0,
-                "right": design.ink_right, "top": design.cap_height,
+                "contour": (
+                    (design.ink_left, 0), (design.ink_right, 0),
+                    (design.ink_right, design.cap_height), (design.ink_left, design.cap_height),
+                ),
             },
             {
                 "id": "counter", "operation": "subtract", "primitive": "rectangle",
-                "left": design.ink_left + design.thickness, "bottom": design.thickness,
-                "right": design.ink_right - design.thickness,
-                "top": design.cap_height - design.thickness,
+                "contour": (
+                    (design.ink_left + design.thickness, design.thickness),
+                    (design.ink_right - design.thickness, design.thickness),
+                    (design.ink_right - design.thickness, design.cap_height - design.thickness),
+                    (design.ink_left + design.thickness, design.cap_height - design.thickness),
+                ),
             },
         )
+        legacy = ascii_glyphs(design)
+        for char in "7AHMOa":
+            configured = blueprint_for(project, f"U+{ord(char):04X}", weight)
+            assert sorted(configured["ink"]) == sorted(legacy[char]["ink"])
+            assert configured["cuts"] == legacy[char]["cuts"]
+            assert configured["gaps"] == legacy[char]["gaps"]
 
     with tempfile.TemporaryDirectory(prefix="mambofont-config-test.") as temporary:
         bad = Path(temporary) / "font.json"
@@ -82,7 +94,7 @@ def main():
         else:
             raise AssertionError("cyclic guide references must fail")
 
-    print("ok: strict JSON manifest, guides, coverage, and empty controls")
+    print("ok: strict JSON project and representative glyph parity")
 
 
 if __name__ == "__main__":

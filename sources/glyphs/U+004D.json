@@ -1,0 +1,127 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+004D",
+  "name": "M",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "approved",
+  "values": {},
+  "points": {
+    "left_notch": {
+      "x": {
+        "constant": 0,
+        "terms": {
+          "guide.x.ink_left": 1,
+          "weight.thickness": 1
+        }
+      },
+      "y": {
+        "ref": "guide.y.cap_height"
+      }
+    },
+    "right_notch": {
+      "x": {
+        "constant": 0,
+        "terms": {
+          "guide.x.ink_right": 1,
+          "weight.thickness": -1
+        }
+      },
+      "y": {
+        "ref": "guide.y.cap_height"
+      }
+    },
+    "notch_join": {
+      "x": {
+        "ref": "guide.x.center"
+      },
+      "y": {
+        "ref": "guide.y.m_join"
+      }
+    }
+  },
+  "shapes": [
+    {
+      "id": "left_stem",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "guide.x.ink_left"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "ref": "guide.y.cap_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "left_diagonal",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "left_notch",
+      "to": "notch_join",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "right_diagonal",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "right_notch",
+      "to": "notch_join",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "right_stem",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "guide.x.inner_right"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "ref": "guide.y.cap_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [
+    {
+      "id": "center_notch",
+      "name": "center notch",
+      "minimum": {
+        "ref": "review.minimum_gap"
+      },
+      "probes": [
+        {
+          "axis": "x",
+          "at": {
+            "ref": "guide.y.cap_height"
+          },
+          "between": [
+            "left_diagonal",
+            "right_diagonal"
+          ]
+        }
+      ],
+      "if_below": {
+        "action": "fill",
+        "to": "notch_join"
+      }
+    }
+  ],
+  "anchors": {}
+}

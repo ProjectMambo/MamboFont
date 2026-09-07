@@ -1,0 +1,143 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+0061",
+  "name": "a",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "approved",
+  "values": {
+    "bar_thickness": {
+      "ref": "weight.thickness"
+    }
+  },
+  "points": {},
+  "shapes": [
+    {
+      "id": "top",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "guide.x.ink_left"
+      },
+      "right": {
+        "ref": "guide.x.ink_right"
+      },
+      "bottom": {
+        "constant": 0,
+        "terms": {
+          "guide.y.x_height": 1,
+          "value.bar_thickness": -1
+        }
+      },
+      "thickness": {
+        "ref": "value.bar_thickness"
+      }
+    },
+    {
+      "id": "right",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "guide.x.inner_right"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "ref": "guide.y.x_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "middle",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "guide.x.ink_left"
+      },
+      "right": {
+        "ref": "guide.x.ink_right"
+      },
+      "bottom": {
+        "constant": 0,
+        "terms": {
+          "guide.y.x_mid": 1,
+          "value.bar_thickness": -0.5
+        }
+      },
+      "thickness": {
+        "ref": "value.bar_thickness"
+      }
+    },
+    {
+      "id": "left",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "guide.x.ink_left"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "ref": "guide.y.x_mid"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "bottom",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "guide.x.ink_left"
+      },
+      "right": {
+        "ref": "guide.x.ink_right"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "thickness": {
+        "ref": "value.bar_thickness"
+      }
+    }
+  ],
+  "gaps": [
+    {
+      "id": "horizontal_spaces",
+      "name": "horizontal spaces",
+      "minimum": {
+        "ref": "review.minimum_gap"
+      },
+      "probes": [
+        {
+          "axis": "y",
+          "between": [
+            "bottom",
+            "middle"
+          ]
+        },
+        {
+          "axis": "y",
+          "between": [
+            "middle",
+            "top"
+          ]
+        }
+      ],
+      "if_below": {
+        "action": "widen",
+        "set": {
+          "bar_thickness": 80
+        }
+      }
+    }
+  ],
+  "anchors": {}
+}

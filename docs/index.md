@@ -34,4 +34,6 @@ The active project covers only the base text family. Previous Mambo Icons assets
 
 Version 0.4.0 is an intentionally incomplete design pilot. The direct-outline generator, gap policy, and local validation exist; no release files, tag, or downstream migration have been made.
 
-The JSON project manifest, strict standard-library loader, empty/control coverage, and `.notdef` rectangle recipe form the completed first migration phase. They do not drive font compilation yet. There is no `mbfont edit` command today: the Python recipes and generated `specimen.html` remain the current workflow until later phases reach editor parity. MamboWiki will be updated only after the full base family becomes a usable release.
+The JSON project manifest and strict standard-library evaluator now resolve a seven-glyph representative set across all four weights. It covers rectangles, bars, true and receiver-aware diagonals, subtraction, a reusable frame component, and both threshold-driven gap actions. Tests require its source geometry and final normalized contours to match the current Python recipes.
+
+JSON still does not drive the production font build, and there is no `mbfont edit` command today. The Python recipes and generated `specimen.html` remain the current workflow until all printable ASCII migrates and later editor phases reach parity. MamboWiki will be updated only after the full base family becomes a usable release.

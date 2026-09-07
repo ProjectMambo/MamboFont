@@ -1,0 +1,117 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+0041",
+  "name": "A",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "approved",
+  "values": {
+    "mid_bottom": {
+      "constant": 0,
+      "terms": {
+        "guide.y.midline": 1,
+        "weight.thickness": -0.5
+      }
+    },
+    "mid_top": {
+      "constant": 0,
+      "terms": {
+        "guide.y.midline": 1,
+        "weight.thickness": 0.5
+      }
+    }
+  },
+  "points": {
+    "left_base": {
+      "x": {
+        "ref": "guide.x.diagonal_left"
+      },
+      "y": {
+        "ref": "guide.y.baseline"
+      }
+    },
+    "right_base": {
+      "x": {
+        "ref": "guide.x.diagonal_right"
+      },
+      "y": {
+        "ref": "guide.y.baseline"
+      }
+    },
+    "apex": {
+      "x": {
+        "ref": "guide.x.center"
+      },
+      "y": {
+        "ref": "guide.y.cap_height"
+      }
+    }
+  },
+  "shapes": [
+    {
+      "id": "left_leg",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "left_base",
+      "to": "apex",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "right_leg",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "right_base",
+      "to": "apex",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "crossbar",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "guide.x.ink_left"
+      },
+      "right": {
+        "ref": "guide.x.ink_right"
+      },
+      "bottom": {
+        "ref": "value.mid_bottom"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [
+    {
+      "id": "upper_counter",
+      "name": "upper counter",
+      "minimum": {
+        "ref": "review.minimum_gap"
+      },
+      "probes": [
+        {
+          "axis": "x",
+          "at": {
+            "ref": "value.mid_top"
+          },
+          "between": [
+            "left_leg",
+            "right_leg"
+          ]
+        }
+      ],
+      "if_below": {
+        "action": "fill",
+        "to": "apex"
+      }
+    }
+  ],
+  "anchors": {}
+}

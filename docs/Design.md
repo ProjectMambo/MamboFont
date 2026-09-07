@@ -28,7 +28,9 @@ There is no SVG-to-font source pipeline and no cache. SVG appears only in the sp
 
 ## Config and editor architecture
 
-This architecture is being introduced in gated phases. Phase 1 provides `sources/font.json`, `sources/components.json`, a strict standard-library loader/resolver, and the first `.notdef` JSON recipe. The JSON source does not drive font compilation yet, visible glyph files have not been migrated, and `mbfont edit` does not exist. The current Python recipes and generated specimen remain authoritative until the migration gates in [MamboFont Commands](Commands.md) pass.
+This architecture is being introduced in gated phases. Phases 1 and 2 provide `sources/font.json`, `sources/components.json`, a strict standard-library evaluator, and JSON recipes for `.notdef`, `7`, `A`, `H`, `M`, `O`, and `a`. The representative set covers rectangles, bars, true and receiver-aware diagonals, subtraction, reusable components, and both gap actions. The tests require exact legacy source geometry and normalized-outline parity in every weight.
+
+The JSON source does not drive production font compilation yet, the rest of printable ASCII has not migrated, and `mbfont edit` does not exist. The current Python recipes and generated specimen remain authoritative until the migration gates in [MamboFont Commands](Commands.md) pass.
 
 ### Architecture decisions
 
@@ -97,7 +99,7 @@ The scalar language stays data-only. A value is one of:
 
 References may address project metrics, review settings, global guides, the current weight, glyph-local values and points, or component parameters. The resolver evaluates them as an acyclic dependency graph. There are no expression strings, scripts, loops, arbitrary conditionals, Python calls, or `eval`. Geometry-specific mathematics stays inside the small tested primitive implementation.
 
-Phase 1 resolves rectangle geometry for `.notdef`. Later migration phases add the rest of the deliberately narrow primitive vocabulary as real converted glyphs require it:
+Phase 2 resolves rectangles, horizontal and vertical bars, true diagonals, receiver-aware joined diagonals, and reusable component shapes. Later phases add the remaining deliberately narrow vocabulary only as converted glyphs require it:
 
 - rectangle, horizontal bar, and vertical bar;
 - true level-capped diagonal and receiver-aware joined diagonal;
@@ -116,7 +118,7 @@ Gap decisions stay explicit and per glyph. A gap record names one or more semant
 3. If a probe is smaller, apply its configured `fill` patch or `widen` replacement once.
 4. Rebuild and measure the final normalized outline. `fill` must close the declared opening; `widen` must meet the threshold. Otherwise compilation fails.
 
-A fallback may add a named patch or replace/remove named shapes supplied in that same rule. Nested gap rules, rule-dependent rules, and two rules that edit the same shape are invalid. The compiler never guesses whether a small void is important, runs a global morphology pass, or searches for arbitrary nearest edges.
+A fallback may add a named patch or replace named values supplied in that same rule. The Phase 2 evaluator permits one gap rule per glyph; multiple independent rules are deferred until a migrated glyph actually needs them. Nested gap rules and rule-dependent rules remain invalid. The compiler never guesses whether a small void is important, runs a global morphology pass, or searches for arbitrary nearest edges.
 
 This represents the approved pilot decisions directly: `A` and sub-threshold `M`, `W`, `m`, and `w` notches fill; the lower `g` aperture widens or remains at least the declared minimum. The GUI exposes the natural measurement, action, and resolved measurement for every weight.
 
@@ -302,6 +304,6 @@ The milestone target contains 283 encoded entries:
 
 C0 controls U+0000–U+001F, space U+0020, DEL and C1 controls U+007F–U+009F, and no-break space U+00A0 are encoded with the 500-unit family advance and no contours. This includes Unicode control characters at U+0080–U+009F as empty glyphs while the printable Windows-1252 characters for those byte positions use their actual Unicode code points such as U+20AC. Undefined Windows-1252 byte positions do not create extra mappings beyond their corresponding empty Unicode C1 controls.
 
-The 67 empty entries leave 216 drawn glyphs. The current compiler contains the 95 printable ASCII entries, including the empty regular space; the JSON manifest already declares all 283 target entries and reports the 216 drawn glyphs as pending until they receive JSON recipes. Latin-1 and the printable Windows-1252 geometry expands only after the ASCII grammar is reviewed and migrated.
+The 67 empty entries leave 216 drawn glyphs. The current compiler contains the 95 printable ASCII entries, including the empty regular space; the JSON manifest already declares all 283 target entries. Six drawn glyphs now have JSON recipes, leaving 210 pending. Latin-1 and the printable Windows-1252 geometry expands only after the ASCII grammar is reviewed and migrated.
 
 A usable base-font release requires all 283 target entries, all four weights, an explicit gap decision for every vulnerable drawn glyph, passing structural/deterministic/raster checks, visual approval at the supported review sizes, approved final family metadata and binaries, and no unresolved base-font design blockers. Only then are release files and a tag created and MamboWiki updated. Icon work remains a separate later milestone.

@@ -53,7 +53,9 @@ See [Commands](docs/Commands.md) for all options and the required verification s
 
 The current compiler encodes all 95 printable ASCII characters. It exists to approve the complete ASCII outline and gap grammar across all four weights before Latin-1 and Windows-1252 expansion. The JSON manifest expands the milestone target to 283 encoded entries: U+0000–U+00FF plus the 27 defined printable Windows-1252 additions. Sixty-seven controls and spaces are explicitly empty, leaving 216 characters with drawn glyphs.
 
-Phase 1 of the config-driven architecture is implemented: `sources/font.json` owns the family dimensions, guides, weights, target coverage, and empty ranges; `sources/config.py` strictly validates and resolves them; and `.notdef` has the first JSON rectangle recipe. The current Python recipes and generated specimen remain authoritative for compiled ASCII during migration. Existing `compile` and `check` usage will stay compatible, and `specimen.html` will be removed only after the editor can replace every review function it provides.
+The first two config-driven migration phases are implemented. `sources/font.json` owns the family dimensions, guides, weights, target coverage, and empty ranges. The strict evaluator now resolves `.notdef`, `7`, `A`, `H`, `M`, `O`, and `a` from JSON, including reusable components, receiver-aware diagonals, subtraction, and threshold-driven fill/widen rules. Their source geometry and normalized contours match the current Python recipes in all four weights.
+
+The current Python recipes and generated specimen remain authoritative for compiled ASCII until every printable ASCII glyph has migrated. Existing `compile` and `check` usage will stay compatible, and `specimen.html` will be removed only after the editor can replace every review function it provides.
 
 Only the base text family is active. All previous Mambo Icons drawings, binaries, and generator work are archived; a separate icon font can be designed after the base family reaches a usable release.
 

@@ -8,6 +8,18 @@ from dataclasses import dataclass
 from math import isfinite
 from pathlib import Path
 
+from sources.model import (
+    Design,
+    diagonal,
+    gap_rule,
+    glyph as make_glyph,
+    hbar,
+    joined_descending_diagonal,
+    polygon,
+    rectangle,
+    vbar,
+)
+
 
 DEFAULT_CONFIG = Path(__file__).with_name("font.json")
 CODEPOINT = re.compile(r"U\+([0-9A-F]{4,6})")
@@ -27,11 +39,26 @@ WEIGHT_KEYS = {"css", "thickness"}
 SET_KEYS = {"ranges", "codepoints"}
 FILE_KEYS = {"components", "glyphs"}
 COMPONENT_KEYS = {"format", "schema_version", "components"}
+COMPONENT_DEFINITION_KEYS = {"parameters", "shapes"}
 GLYPH_KEYS = {
     "format", "schema_version", "codepoint", "name", "advance", "review",
     "values", "points", "shapes", "gaps", "anchors",
 }
-RECTANGLE_KEYS = {"id", "operation", "primitive", "left", "bottom", "right", "top"}
+SHAPE_FIELDS = {
+    "rectangle": {"left", "bottom", "right", "top"},
+    "hbar": {"left", "right", "bottom", "thickness"},
+    "vbar": {"left", "bottom", "top", "thickness"},
+    "diagonal": {"from", "to", "thickness"},
+    "joined_diagonal": {
+        "lower_y", "upper_y", "lower_left", "upper_right", "upper_stem",
+    },
+}
+COMPONENT_SHAPE_KEYS = {"id", "component", "parameters"}
+POINT_KEYS = {"x", "y"}
+GAP_KEYS = {"id", "name", "minimum", "probes", "if_below"}
+PROBE_KEYS = {"axis", "between"}
+FILL_KEYS = {"action", "to"}
+WIDEN_KEYS = {"action", "set"}
 
 
 class ConfigError(ValueError):
@@ -292,41 +319,275 @@ def resolved_guides(project: Project, weight: str):
     return {"x": x, "y": y}
 
 
-def resolved_glyph(project: Project, key: str, weight: str):
+def _design(project, weight):
+    metrics = project.font["metrics"]
+    return Design(
+        thickness=project.font["weights"][weight]["thickness"],
+        advance=metrics["advance"],
+        upm=metrics["upm"],
+        ascent=metrics["ascent"],
+        descent=metrics["descent"],
+        cap_height=metrics["cap_height"],
+        x_height=metrics["x_height"],
+        descender=metrics["descender"],
+        ink_left=metrics["ink_left"],
+        ink_right=metrics["ink_right"],
+        review_ppem=project.font["review"]["minimum_ppem"],
+        minimum_gap=project.font["review"]["minimum_gap"],
+    )
+
+
+def _build_primitive(shape, resolve, points, design, where):
+    primitive = shape["primitive"]
+
+    def value(field):
+        return resolve(shape[field], f"{where}.{field}")
+
+    if primitive == "rectangle":
+        return rectangle(value("left"), value("bottom"), value("right"), value("top"))
+    if primitive == "hbar":
+        return hbar(
+            design, value("left"), value("right"), value("bottom"), value("thickness")
+        )
+    if primitive == "vbar":
+        return vbar(
+            design, value("left"), value("bottom"), value("top"), value("thickness")
+        )
+    if primitive == "diagonal":
+        return diagonal(design, points[shape["from"]], points[shape["to"]], value("thickness"))
+    if primitive == "joined_diagonal":
+        return joined_descending_diagonal(
+            design,
+            value("lower_y"),
+            value("upper_y"),
+            lower_left=value("lower_left"),
+            upper_right=value("upper_right"),
+            upper_stem=shape["upper_stem"],
+        )
+    raise ConfigError(f"{where}: unsupported primitive {primitive}")
+
+
+def _resolved_glyph(project: Project, key: str, weight: str, overrides=None):
     try:
-        glyph = project.glyphs[key]
+        glyph_source = project.glyphs[key]
     except KeyError:
         raise ConfigError(f"unknown glyph: {key}") from None
     guides = resolved_guides(project, weight)
-    values = _base_references(project, weight)
-    values.update(
+    references = _base_references(project, weight)
+    references.update(
         (f"guide.{axis}.{name}", value)
         for axis, resolved in guides.items()
         for name, value in resolved.items()
     )
-    advance = _resolve_scalar(glyph["advance"], values, {}, weight, set(), f"{key}.advance")
+    definitions = {
+        f"value.{name}": scalar for name, scalar in glyph_source["values"].items()
+    }
+    definitions.update(
+        (f"point.{name}.{axis}", scalar)
+        for name, point in glyph_source["points"].items()
+        for axis, scalar in point.items()
+    )
+    for name, scalar in (overrides or {}).items():
+        definitions[f"value.{name}"] = scalar
+    active = set()
+
+    def resolve(value, where):
+        return _resolve_scalar(value, references, definitions, weight, active, where)
+
+    for reference in definitions:
+        _resolve_reference(reference, references, definitions, weight, active, reference)
+    points = {
+        name: (references[f"point.{name}.x"], references[f"point.{name}.y"])
+        for name in glyph_source["points"]
+    }
+    design = _design(project, weight)
     shapes = []
-    for shape in glyph["shapes"]:
-        resolved = {field: shape[field] for field in ("id", "operation", "primitive")}
-        for field in ("left", "bottom", "right", "top"):
-            resolved[field] = _resolve_scalar(
-                shape[field], values, {}, weight, set(), f"{key}.{shape['id']}.{field}"
-            )
-        if not resolved["left"] < resolved["right"] or not resolved["bottom"] < resolved["top"]:
-            raise ConfigError(f"{key}.{shape['id']}: rectangle edges are out of order")
-        shapes.append(resolved)
-    return {"name": glyph["name"], "advance": advance, "shapes": tuple(shapes)}
+    for shape in glyph_source["shapes"]:
+        if "component" not in shape:
+            shapes.append({
+                "id": shape["id"],
+                "operation": shape["operation"],
+                "primitive": shape["primitive"],
+                "contour": _build_primitive(
+                    shape, resolve, points, design, f"{key}.{shape['id']}"
+                ),
+            })
+            continue
+        component = project.components["components"][shape["component"]]
+        parameters = {
+            f"parameter.{name}": resolve(scalar, f"{key}.{shape['id']}.{name}")
+            for name, scalar in shape["parameters"].items()
+        }
+
+        def resolve_parameter(value, where):
+            return _resolve_scalar(value, parameters, {}, weight, set(), where)
+
+        for part in component["shapes"]:
+            shapes.append({
+                "id": f"{shape['id']}.{part['id']}",
+                "operation": part["operation"],
+                "primitive": part["primitive"],
+                "contour": _build_primitive(
+                    part, resolve_parameter, {}, design,
+                    f"{key}.{shape['id']}.{part['id']}",
+                ),
+            })
+    return {
+        "name": glyph_source["name"],
+        "advance": resolve(glyph_source["advance"], f"{key}.advance"),
+        "points": points,
+        "shapes": tuple(shapes),
+        "resolve": resolve,
+    }
+
+
+def resolved_glyph(project: Project, key: str, weight: str):
+    state = _resolved_glyph(project, key, weight)
+    return {name: value for name, value in state.items() if name != "resolve"}
+
+
+def _probe(state, probe):
+    axis = 0 if probe["axis"] == "x" else 1
+    across = 1 - axis
+    by_id = {shape["id"]: shape["contour"] for shape in state["shapes"]}
+    try:
+        first, second = (by_id[name] for name in probe["between"])
+    except KeyError as error:
+        raise ConfigError(f"gap probe references unexpanded shape {error.args[0]}") from None
+    if "at" not in probe:
+        first_edge = max(point[axis] for point in first)
+        second_edge = min(point[axis] for point in second)
+        return max(0, second_edge - first_edge), None, None
+    at = state["resolve"](probe["at"], "gap probe")
+
+    def intersections(contour):
+        result = set()
+        for start, end in zip(contour, (*contour[1:], contour[0])):
+            a, b = start[across], end[across]
+            if a == b == at:
+                result.update((start[axis], end[axis]))
+            elif a != b and min(a, b) <= at <= max(a, b):
+                result.add(start[axis] + (end[axis] - start[axis]) * (at - a) / (b - a))
+        if not result:
+            raise ConfigError("gap probe does not intersect its shape")
+        return result
+
+    first_edge = max(intersections(first))
+    second_edge = min(intersections(second))
+    first_point = (first_edge, at) if axis == 0 else (at, first_edge)
+    second_point = (second_edge, at) if axis == 0 else (at, second_edge)
+    return max(0, second_edge - first_edge), first_point, second_point
+
+
+def blueprint_for(project: Project, key: str, weight: str):
+    source = project.glyphs[key]
+    state = _resolved_glyph(project, key, weight)
+    rules = []
+    patches = []
+    for gap_source in source["gaps"]:
+        measured = [_probe(state, probe) for probe in gap_source["probes"]]
+        natural = min(value for value, _, _ in measured)
+        minimum = state["resolve"](gap_source["minimum"], f"{key}.{gap_source['id']}.minimum")
+        fallback = gap_source["if_below"]
+        resolved = natural
+        if natural < minimum and fallback["action"] == "widen":
+            state = _resolved_glyph(project, key, weight, fallback["set"])
+            resolved = min(_probe(state, probe)[0] for probe in gap_source["probes"])
+        elif natural < minimum and fallback["action"] == "fill":
+            if len(measured) != 1 or measured[0][1] is None:
+                raise ConfigError(f"{key}.{gap_source['id']}: fill needs one cross-section")
+            _, first, second = measured[0]
+            if natural:
+                patches.append(polygon(first, second, state["points"][fallback["to"]]))
+            resolved = 0
+        rules.append(gap_rule(
+            _design(project, weight), gap_source["name"], natural,
+            fallback["action"], resolved, minimum,
+        ))
+    ink = [shape["contour"] for shape in state["shapes"] if shape["operation"] == "add"]
+    cuts = tuple(
+        shape["contour"] for shape in state["shapes"] if shape["operation"] == "subtract"
+    )
+    return make_glyph(*ink, *patches, cuts=cuts, gaps=tuple(rules))
 
 
 def _validate_components(value):
     _keys(value, COMPONENT_KEYS, "components")
     if value["format"] != "mambofont-components" or value["schema_version"] != 1:
         raise ConfigError("components: unsupported format or schema version")
-    if not isinstance(value["components"], dict) or value["components"]:
-        raise ConfigError("components: Phase 1 requires an empty component map")
+    if not isinstance(value["components"], dict):
+        raise ConfigError("components: expected an object")
 
 
-def _validate_glyph(value, filename, weight_ids):
+def _validate_shape(shape, where, weight_ids, point_ids, components, *, allow_component):
+    if not isinstance(shape, dict) or not isinstance(shape.get("id"), str) or not NAME.fullmatch(shape["id"]):
+        raise ConfigError(f"{where}: invalid shape or id")
+    if "component" in shape:
+        if not allow_component:
+            raise ConfigError(f"{where}: nested components are not supported")
+        _keys(shape, COMPONENT_SHAPE_KEYS, where)
+        if not isinstance(shape["component"], str) or shape["component"] not in components:
+            raise ConfigError(f"{where}: unknown component {shape['component']}")
+        parameters = components[shape["component"]]["parameters"]
+        if not isinstance(shape["parameters"], dict) or set(shape["parameters"]) != set(parameters):
+            raise ConfigError(f"{where}: component parameters do not match")
+        for name, scalar in shape["parameters"].items():
+            _scalar(scalar, f"{where}.parameters.{name}", weight_ids)
+        return
+    primitive = shape.get("primitive")
+    if primitive not in SHAPE_FIELDS:
+        raise ConfigError(f"{where}: unsupported primitive {primitive!r}")
+    _keys(shape, {"id", "operation", "primitive"} | SHAPE_FIELDS[primitive], where)
+    if shape["operation"] not in {"add", "subtract"}:
+        raise ConfigError(f"{where}: invalid operation")
+    if primitive == "diagonal":
+        if (
+            not isinstance(shape["from"], str)
+            or not isinstance(shape["to"], str)
+            or shape["from"] not in point_ids
+            or shape["to"] not in point_ids
+        ):
+            raise ConfigError(f"{where}: diagonal references an unknown point")
+        _scalar(shape["thickness"], f"{where}.thickness", weight_ids)
+        return
+    if primitive == "joined_diagonal":
+        if not isinstance(shape["upper_stem"], bool):
+            raise ConfigError(f"{where}.upper_stem: expected a boolean")
+        fields = SHAPE_FIELDS[primitive] - {"upper_stem"}
+    else:
+        fields = SHAPE_FIELDS[primitive]
+    for field in fields:
+        _scalar(shape[field], f"{where}.{field}", weight_ids)
+
+
+def _validate_component_definitions(value, weight_ids):
+    for name, component in value["components"].items():
+        where = f"components.{name}"
+        if not isinstance(name, str) or not NAME.fullmatch(name) or not isinstance(component, dict):
+            raise ConfigError(f"{where}: invalid component")
+        _keys(component, COMPONENT_DEFINITION_KEYS, where)
+        parameters = component["parameters"]
+        if (
+            not isinstance(parameters, list)
+            or not parameters
+            or len(parameters) != len(set(parameters))
+            or not all(isinstance(item, str) and NAME.fullmatch(item) for item in parameters)
+        ):
+            raise ConfigError(f"{where}.parameters: expected unique names")
+        if not isinstance(component["shapes"], list) or not component["shapes"]:
+            raise ConfigError(f"{where}.shapes: expected shapes")
+        ids = set()
+        for index, shape in enumerate(component["shapes"]):
+            _validate_shape(
+                shape, f"{where}.shapes[{index}]", weight_ids, set(), value["components"],
+                allow_component=False,
+            )
+            if shape["id"] in ids:
+                raise ConfigError(f"{where}: duplicate shape id {shape['id']}")
+            ids.add(shape["id"])
+
+
+def _validate_glyph(value, filename, weight_ids, components):
     required = GLYPH_KEYS - {"codepoint"}
     if not isinstance(value, dict) or not required <= set(value) <= GLYPH_KEYS:
         raise ConfigError(f"{filename}: invalid glyph fields")
@@ -339,25 +600,76 @@ def _validate_glyph(value, filename, weight_ids):
     _scalar(value["advance"], f"{filename}.advance", weight_ids)
     if not all(isinstance(value[field], dict) for field in ("values", "points", "anchors")):
         raise ConfigError(f"{filename}: values, points, and anchors must be objects")
+    if value["anchors"]:
+        raise ConfigError(f"{filename}: anchors are deferred until component composition")
+    for name, scalar in value["values"].items():
+        if not NAME.fullmatch(name):
+            raise ConfigError(f"{filename}.values: invalid name {name!r}")
+        _scalar(scalar, f"{filename}.values.{name}", weight_ids)
+    for name, point in value["points"].items():
+        if not NAME.fullmatch(name):
+            raise ConfigError(f"{filename}.points: invalid name {name!r}")
+        _keys(point, POINT_KEYS, f"{filename}.points.{name}")
+        for axis, scalar in point.items():
+            _scalar(scalar, f"{filename}.points.{name}.{axis}", weight_ids)
     if not isinstance(value["gaps"], list):
         raise ConfigError(f"{filename}: gaps must be an array")
-    if value["values"] or value["points"] or value["anchors"] or value["gaps"]:
-        raise ConfigError(f"{filename}: Phase 1 supports only the .notdef rectangle pilot")
     if not isinstance(value["shapes"], list) or not value["shapes"]:
         raise ConfigError(f"{filename}: expected at least one shape")
     shape_ids = set()
     for index, shape in enumerate(value["shapes"]):
         where = f"{filename}.shapes[{index}]"
-        _keys(shape, RECTANGLE_KEYS, where)
-        if shape["primitive"] != "rectangle" or shape["operation"] not in {"add", "subtract"}:
-            raise ConfigError(f"{where}: unsupported Phase 1 shape")
-        if not isinstance(shape["id"], str) or not NAME.fullmatch(shape["id"]):
-            raise ConfigError(f"{where}: invalid shape id")
+        _validate_shape(
+            shape, where, weight_ids, set(value["points"]), components, allow_component=True
+        )
         if shape["id"] in shape_ids:
             raise ConfigError(f"{where}: duplicate shape id")
         shape_ids.add(shape["id"])
-        for field in ("left", "bottom", "right", "top"):
-            _scalar(shape[field], f"{where}.{field}", weight_ids)
+    if len(value["gaps"]) > 1:
+        raise ConfigError(f"{filename}: Phase 2 supports one gap rule per glyph")
+    for index, gap in enumerate(value["gaps"]):
+        where = f"{filename}.gaps[{index}]"
+        _keys(gap, GAP_KEYS, where)
+        if (
+            not isinstance(gap["id"], str)
+            or not NAME.fullmatch(gap["id"])
+            or not isinstance(gap["name"], str)
+            or not gap["name"]
+        ):
+            raise ConfigError(f"{where}: invalid gap identity")
+        _scalar(gap["minimum"], f"{where}.minimum", weight_ids)
+        if not isinstance(gap["probes"], list) or not gap["probes"]:
+            raise ConfigError(f"{where}.probes: expected at least one probe")
+        for probe_index, probe in enumerate(gap["probes"]):
+            probe_where = f"{where}.probes[{probe_index}]"
+            allowed = (PROBE_KEYS, PROBE_KEYS | {"at"})
+            if not isinstance(probe, dict) or set(probe) not in allowed:
+                raise ConfigError(f"{probe_where}: invalid probe fields")
+            if probe["axis"] not in {"x", "y"}:
+                raise ConfigError(f"{probe_where}: invalid axis")
+            if (
+                not isinstance(probe["between"], list)
+                or len(probe["between"]) != 2
+                or any(not isinstance(item, str) or item not in shape_ids for item in probe["between"])
+            ):
+                raise ConfigError(f"{probe_where}: unknown shape in between")
+            if "at" in probe:
+                _scalar(probe["at"], f"{probe_where}.at", weight_ids)
+        fallback = gap["if_below"]
+        if not isinstance(fallback, dict) or fallback.get("action") not in {"fill", "widen"}:
+            raise ConfigError(f"{where}.if_below: invalid fallback")
+        if fallback["action"] == "fill":
+            _keys(fallback, FILL_KEYS, f"{where}.if_below")
+            if not isinstance(fallback["to"], str) or fallback["to"] not in value["points"]:
+                raise ConfigError(f"{where}.if_below: unknown fill point")
+        else:
+            _keys(fallback, WIDEN_KEYS, f"{where}.if_below")
+            if not isinstance(fallback["set"], dict) or not fallback["set"]:
+                raise ConfigError(f"{where}.if_below.set: expected value replacements")
+            for name, scalar in fallback["set"].items():
+                if name not in value["values"]:
+                    raise ConfigError(f"{where}.if_below.set: unknown value {name}")
+                _scalar(scalar, f"{where}.if_below.set.{name}", weight_ids)
     if "codepoint" in value:
         codepoint = parse_codepoint(value["codepoint"])
         if filename != f"U+{codepoint:04X}.json":
@@ -375,12 +687,13 @@ def load_project(path: Path | str = DEFAULT_CONFIG) -> Project:
     glyphs_path = _relative_path(root, font["files"]["glyphs"], "files.glyphs")
     components = _read(components_path)
     _validate_components(components)
+    _validate_component_definitions(components, font["weights"])
     if not glyphs_path.is_dir():
         raise ConfigError(f"files.glyphs: not a directory: {glyphs_path}")
     glyphs = {}
     for glyph_path in sorted(glyphs_path.glob("*.json")):
         glyph = _read(glyph_path)
-        _validate_glyph(glyph, glyph_path.name, font["weights"])
+        _validate_glyph(glyph, glyph_path.name, font["weights"], components["components"])
         key = glyph.get("codepoint", ".notdef")
         if key in glyphs:
             raise ConfigError(f"duplicate glyph: {key}")
@@ -398,7 +711,7 @@ def load_project(path: Path | str = DEFAULT_CONFIG) -> Project:
     for weight in font["weights"]:
         resolved_guides(project, weight)
         for key in glyphs:
-            resolved_glyph(project, key, weight)
+            blueprint_for(project, key, weight)
     return project
 
 

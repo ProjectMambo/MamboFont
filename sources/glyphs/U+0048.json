@@ -1,0 +1,71 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+0048",
+  "name": "H",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "approved",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "left",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "guide.x.ink_left"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "ref": "guide.y.cap_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "right",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "guide.x.inner_right"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "ref": "guide.y.cap_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "middle",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "guide.x.ink_left"
+      },
+      "right": {
+        "ref": "guide.x.ink_right"
+      },
+      "bottom": {
+        "constant": 0,
+        "terms": {
+          "guide.y.midline": 1,
+          "weight.thickness": -0.5
+        }
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

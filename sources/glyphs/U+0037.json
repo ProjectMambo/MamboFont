@@ -1,0 +1,63 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+0037",
+  "name": "seven",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "approved",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "top",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "guide.x.ink_left"
+      },
+      "right": {
+        "ref": "guide.x.ink_right"
+      },
+      "bottom": {
+        "constant": 0,
+        "terms": {
+          "guide.y.cap_height": 1,
+          "weight.thickness": -1
+        }
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "diagonal",
+      "operation": "add",
+      "primitive": "joined_diagonal",
+      "lower_y": {
+        "ref": "guide.y.baseline"
+      },
+      "upper_y": {
+        "constant": 0,
+        "terms": {
+          "guide.y.cap_height": 1,
+          "weight.thickness": -1
+        }
+      },
+      "lower_left": {
+        "constant": 0,
+        "terms": {
+          "guide.x.center": 1,
+          "weight.thickness": -0.5
+        }
+      },
+      "upper_right": {
+        "ref": "guide.x.ink_right"
+      },
+      "upper_stem": false
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

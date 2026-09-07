@@ -1,5 +1,93 @@
 {
   "format": "mambofont-components",
   "schema_version": 1,
-  "components": {}
+  "components": {
+    "frame": {
+      "parameters": [
+        "left",
+        "bottom",
+        "right",
+        "top",
+        "thickness"
+      ],
+      "shapes": [
+        {
+          "id": "left",
+          "operation": "add",
+          "primitive": "vbar",
+          "left": {
+            "ref": "parameter.left"
+          },
+          "bottom": {
+            "ref": "parameter.bottom"
+          },
+          "top": {
+            "ref": "parameter.top"
+          },
+          "thickness": {
+            "ref": "parameter.thickness"
+          }
+        },
+        {
+          "id": "right",
+          "operation": "add",
+          "primitive": "vbar",
+          "left": {
+            "constant": 0,
+            "terms": {
+              "parameter.right": 1,
+              "parameter.thickness": -1
+            }
+          },
+          "bottom": {
+            "ref": "parameter.bottom"
+          },
+          "top": {
+            "ref": "parameter.top"
+          },
+          "thickness": {
+            "ref": "parameter.thickness"
+          }
+        },
+        {
+          "id": "bottom",
+          "operation": "add",
+          "primitive": "hbar",
+          "left": {
+            "ref": "parameter.left"
+          },
+          "right": {
+            "ref": "parameter.right"
+          },
+          "bottom": {
+            "ref": "parameter.bottom"
+          },
+          "thickness": {
+            "ref": "parameter.thickness"
+          }
+        },
+        {
+          "id": "top",
+          "operation": "add",
+          "primitive": "hbar",
+          "left": {
+            "ref": "parameter.left"
+          },
+          "right": {
+            "ref": "parameter.right"
+          },
+          "bottom": {
+            "constant": 0,
+            "terms": {
+              "parameter.top": 1,
+              "parameter.thickness": -1
+            }
+          },
+          "thickness": {
+            "ref": "parameter.thickness"
+          }
+        }
+      ]
+    }
+  }
 }

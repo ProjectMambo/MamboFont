@@ -1,0 +1,37 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+004F",
+  "name": "O",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "approved",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "frame",
+      "component": "frame",
+      "parameters": {
+        "left": {
+          "ref": "guide.x.ink_left"
+        },
+        "bottom": {
+          "ref": "guide.y.baseline"
+        },
+        "right": {
+          "ref": "guide.x.ink_right"
+        },
+        "top": {
+          "ref": "guide.y.cap_height"
+        },
+        "thickness": {
+          "ref": "weight.thickness"
+        }
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}
