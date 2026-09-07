@@ -30,9 +30,9 @@ There is no SVG-to-font source pipeline and no cache. SVG appears only in the sp
 
 Every encoded glyph currently advances 500 units in a 1000-unit em. The compiler reads that advance from `Design` rather than embedding 500 in the outline stage. The fixed default vertical metrics are an 800-unit ascent and 200-unit descent; line metrics do not change between weights.
 
-The default `x` guides include cell edges 0 and 500, ink edges 40 and 460, center 250, and upper-bowl receiver 407.5. The inner guides remain weight-dependent at `ink_left + thickness` and `ink_right - thickness`. Former literal optical positions now have names and ratios within the ink width: diagonal terminals at 5/42 from either edge, the `1` flag at 5/21 from the left, lowercase stem at 11/42, `r` shoulder at 31/42, and lowercase foot at 5/6.
+The default `x` guides include cell edges 0 and 500, ink edges 40 and 460, center 250, and upper-bowl receiver 390. The inner guides remain weight-dependent at `ink_left + thickness` and `ink_right - thickness`. Shared optical positions have names and ratios within the ink width: diagonal terminals at 5/42 from either edge, the `1` flag at 5/21 from the left, lowercase stem at 11/42, `r` shoulder at 31/42, lowercase foot at 5/6, and the upper `B` receiver at two thirds of the distance from center to the right ink edge. A few punctuation layouts use explicit coordinates as deliberate optical exceptions in the default 500-unit cell.
 
-The default `y` guides are descender -140, baseline 0, x-mid at half the x-height, midline at half the cap height, x-height 400, cap height 640, and ascender 800. Former literal join positions are also derived: the `r` join is 3/5 of x-height, the `M` join is 13/32 of cap height, the `1` flag is 25/32 of cap height, and accent height is 3/4 of the way from cap height to ascender. This keeps optical relationships intact when the design dimensions change.
+The default `y` guides are descender -140, baseline 0, x-mid at half the x-height, midline at half the cap height, x-height 400, cap height 640, and ascender 800. Former literal join positions are also derived: the `r` join is 3/5 of x-height, the `M` join is 13/32 of cap height, the `1` flag is 25/32 of cap height, and accent height is 3/4 of the way from cap height to ascender. This keeps optical relationships intact when the design dimensions change. `Design` rejects dimensions that cannot leave room for the declared protected gaps.
 
 | Style | CSS weight | Nominal thickness |
 |---|---:|---:|
@@ -41,7 +41,7 @@ The default `y` guides are descender -140, baseline 0, x-mid at half the x-heigh
 | SemiBold | 600 | 107 |
 | Bold | 700 | 120 |
 
-All four weights use the same blueprint fields and primitive topology. Exterior surfaces normally stay fixed while weight grows inward. A local thickness or receiver-position exception is allowed when the gap contract requires it for readability.
+All four weights use the same blueprint fields and glyph recipes. Exterior surfaces normally stay fixed while weight grows inward. A local thickness, receiver clip, or conditional fill patch is allowed when a declared gap contract requires it for readability; such a fill may intentionally add one source contour at a heavier weight.
 
 ## Blueprint and style grammar
 
@@ -58,28 +58,35 @@ The visual rules are:
 - Counters and bowl corners are square. Rounded, beveled, or corner-smoothing surfaces are outside the grammar.
 - Horizontal and ordinary vertical terminals stay level. A diagonal is a true straight band with parallel sides and level ends, never a staircase, except for a declared receiver-cap clip at an outer ink bound.
 - Slanted surfaces appear only where the glyph's identifying diagonal requires them. Joined diagonal endpoints sit inside their receiving bar or stem so no shelf, spike, concave corner, or point contact remains.
-- M, N, and W retain vertical exterior stems and place their diagonals inside. The tapered diagonal pairs in `M`, `W`, and `m` are clipped at `ink_left` and `ink_right`, keeping the exterior stems square; that local receiver-cap clipping is their explicit exception to constant diagonal thickness. A, V, and X retain identity-critical exterior diagonals.
+- M, N, and W retain vertical exterior stems and place their diagonals inside. A, V, and X retain identity-critical exterior diagonals.
+- Receiver caps in `1`, `5`, `7`, and `?` are clipped to the bar or stem they join. This removes tiny shelves and spikes without moving the visible diagonal or applying a global simplifier.
 - Ambiguous monospace characters remain distinct: serifed `I`, footed `l`, flagged `1`, square `O`, and slashed `0`.
 - Readability outranks nominal thickness only at a declared local exception; the rest of the glyph keeps the weight's nominal thickness.
+
+### Printable-ASCII recipe families
+
+The active pilot contains all 95 printable ASCII code points. Recipes share geometry by visual grammar rather than by alphabetic order:
+
+- Square frames and open `C` frames form `B`, `C`, `E`, `G`, `O`, `P`, `D`, the round lowercase family, and the enclosed figures.
+- Exterior stems plus internal diagonals form `M`, `N`, `W`, and their lowercase relatives. `A`, `K`, `R`, `V`, `X`, `Z`, and the diagonal figures use true level-capped diagonal polygons where the diagonal identifies the character.
+- `Z`, `z`, and `2` use receiver-aware diagonal polygons whose ends meet their horizontal bars without exposed shelves. Lowercase `s` instead uses a compact square S construction so `s` and `z` remain distinct.
+- Dense horizontal stacks in `a`, `e`, and `s` may use locally thinner horizontal bars. The `#` grid is capped at 90 units, ordinary small marks use two thirds of nominal thickness, and the compact `@` construction uses half of nominal thickness. These formulas preserve visible weight progression while protecting internal spaces. They are explicit readability exceptions, not alternate weights.
+- Punctuation is assembled from the same rectangles, square dots, true diagonals, and stepped right-angle contours. Parentheses and braces are mirrored from one source recipe; `%` uses solid square nodes because miniature counters would not survive the supported review floor.
 
 ## Gap rules
 
 The compiler never guesses whether a small space matters. A vulnerable glyph declares a `GapRule` as a recipe contract with a name, its `natural` clearance, its own `minimum`, an `on_small` action, and the geometry's `resolved` clearance.
 
-The design-level defaults are a 14-pixel review floor and an 80-unit minimum gap. Eighty units corresponds to 1.12 pixels at 14 ppem before rasterization. A recipe may override the minimum for a geometry that needs more raster protection; the resulting value is stored on that rule rather than changing unrelated glyphs. The rule is evaluated as follows:
+The design-level defaults are a 14-pixel review floor and an 80-unit minimum gap. Eighty units corresponds to 1.12 pixels at 14 ppem before rasterization. The rule is evaluated as follows:
 
 1. If `natural >= minimum`, the outcome is `preserve` and `resolved` must equal `natural`.
 2. If `natural < minimum` and `on_small` is `widen`, the glyph recipe changes local geometry and `resolved` must be at least that rule's `minimum`.
 3. If `natural < minimum` and `on_small` is `fill`, the space closes completely and `resolved` must be 0.
 4. A nonzero result below the rule's `minimum` is invalid.
 
-The glyph author chooses `widen` or `fill` because that choice is semantic. Counters, apertures, and notches that distinguish a character are widened. Only an incidental sliver that adds no recognition value may be filled. The contract validates author-supplied scalar values; it does not remeasure the final contours after union and rounding, so active outcomes also require raster goldens.
-
-The current pilot has no `fill` geometry and no active `fill` outcome. Only the branch semantics—a small declared gap must resolve to zero—are validated. A future glyph that chooses `fill` must implement the actual closed geometry and add its own raster golden before the outcome is accepted.
+The glyph author chooses `widen` or `fill` because that choice is semantic. A space is widened when keeping it open is required for recognition. It is filled when a sub-threshold pinhole or tapered notch is less readable than a complete surface. The contract validates author-supplied scalar values; it does not run a generic nearest-distance scan or reshape a finished outline.
 
 Clearance is measured at a glyph-declared protected cross-section, not by a global closest-point search. For example, a stacked horizontal space is measured vertically between bars, a center notch at its open edge, and a slash window where the slash passes the frame. A taper endpoint that is intentionally buried in a receiver is outside the protected section; treating it as a zero-width gap would be a false collision.
-
-The open-edge center notches of `M`, `W`, and `m` taper immediately after their measured mouth. At the default 80 units that mouth can rasterize closed even though the scalar contract passes, so those three rules use a 150-unit minimum, equivalent to 2.4 pixels at 16 ppem before rasterization. Their recipes widen the receiver positions until the open-edge measurement reaches 150 and clip the outer receiver caps to the ink bounds; all other current pilot rules retain the 80-unit default.
 
 The `0` slash always uses the weight's nominal thickness. There is no automatic thinning fallback: if a future geometry change makes its declared windows too small, blueprint construction fails until the recipe and its raster golden are deliberately revised.
 
@@ -87,17 +94,22 @@ The Bold pilot resolves its declared gaps as follows. Values are font units, rou
 
 | Glyph | Protected space | Natural | Minimum | Outcome | Resolved geometry |
 |---|---|---:|---:|---|---:|
-| `A` | upper counter | 6.3 | 80 | widen with explicit counter cut | 80.0 |
-| `B` | bowl counters | 127.5 | 80 | preserve | 127.5 |
-| `M` | tapered center notch | 56.7 | 150 | widen by moving diagonal receivers outward | 150.2 |
+| `A` | upper counter | 6.3 | 80 | fill the upper triangular sliver | 0 |
+| `B` | bowl counters | 110.0 | 80 | preserve | 110.0 |
+| `M` | tapered center notch | 56.7 | 80 | fill the complete notch | 0 |
 | `N` | diagonal windows | 117.7 | 80 | preserve | 117.7 |
-| `W` | tapered center notch | 55.3 | 150 | widen by moving diagonal receivers outward | 150.9 |
+| `W` | tapered center notch | 55.3 | 80 | fill the complete notch | 0 |
 | `a` | spaces between horizontal bars | 20.0 | 80 | widen with 80-unit local horizontal bars | 80.0 |
 | `e` | spaces between horizontal bars | 20.0 | 80 | widen with 80-unit local horizontal bars | 80.0 |
-| `m` | tapered center notch | 48.4 | 150 | widen by moving diagonal receivers outward | 150.0 |
+| `g` | lower tail aperture | 80.0 | 80 | preserve | 80.0 |
+| `j` | lower tail aperture | 80.0 | 80 | preserve | 80.0 |
+| `m` | tapered center notch | 48.4 | 80 | fill the complete notch | 0 |
+| `s` | spaces between horizontal bars | 20.0 | 80 | widen with 80-unit local horizontal bars | 80.0 |
+| `w` | tapered center notch | 48.4 | 80 | fill the complete notch | 0 |
+| `y` | lower tail aperture | 80.0 | 80 | preserve | 80.0 |
 | `0` | slash windows | 95.7 | 80 | preserve | 95.7 |
 
-The same declarations run at every weight. A thinner weight may naturally preserve a space that Bold must widen.
+The same declarations run at every weight. `A` fills at all four current weights. The `M`, `W`, `m`, and `w` notches remain naturally open in Regular, Medium, and SemiBold, then fill in Bold. The `g`, `j`, and `y` hooks reach the full -200 descent so their lower apertures retain at least 80 units without thinning the main stems.
 
 ## Outline compilation
 
@@ -121,14 +133,14 @@ Fourteen ppem is the pilot's geometry and readability review floor, not a promis
 
 The end-to-end check enforces:
 
-- The exact pilot character map, design-supplied advances, bounds, fixed line metrics, metadata, and valid TTF/WOFF2 files.
-- The same blueprint fields and primitive topology at every weight.
-- Level diagonal caps, nominal diagonal thickness except for declared clipped receiver caps in `M`, `W`, and `m`, direct filled outlines, and no active stroke expansion.
+- The exact 95-code-point printable-ASCII map, design-supplied advances, bounds, fixed line metrics, metadata, and valid TTF/WOFF2 files.
+- Valid blueprint fields and declared gap outcomes at every weight, including zero clearance for a triggered fill.
+- Receiver-aligned `Z` and `2` diagonals, a bounded `1` flag, direct filled outlines, and no active stroke expansion.
 - Integer, all-on-curve output with no duplicate or removable collinear points.
 - A resized 600-unit-wide, 850-unit-ascent blueprint whose proportional `A` terminals resolve from named guides and whose ink and cuts remain inside the resized design bounds.
 - Every declarative gap scalar: preserved values remain unchanged, widened values reach their rule's minimum, and the validated `fill` branch resolves to zero. This check does not remeasure final contours.
-- Expected Bold outcomes plus one-bit 14-ppem XBM raster goldens for `A`, `B`, `M`, `N`, `W`, `a`, `e`, `m`, and `0`, so an opening cannot disappear unnoticed.
-- Focused one-bit 16- and 24-ppem XBM goldens for the tapered `M`, `W`, and `m` open-edge notches, covering the raster failure that requires their 150-unit override.
+- Expected Bold gap outcomes plus one-bit 14-, 16-, and 24-ppem XBM goldens for the protected `g` tail aperture.
+- A unique one-bit raster signature for every non-space ASCII glyph at 14, 16, and 24 ppem, catching collisions such as `B`/`8`, `s`/`z`, or punctuation that loses its identifying detail.
 - Two independent builds with byte-identical TTF and WOFF2 output. The separate `check` command then compares a clean rebuild with the local candidate.
 
 FontForge validation is mandatory during generation and after reopening each file. Maintainer review also includes `fontlint`, `fc-scan`, and the generated specimen before a release candidate is approved.
@@ -141,6 +153,6 @@ The milestone target contains 218 characters:
 - Latin-1 U+00A0–U+00FF.
 - The 27 defined printable Windows-1252 additions.
 
-C0 and C1 controls and undefined Windows-1252 holes remain absent. The current pilot contains space plus 23 representative letters and figures; coverage expands only after its geometry is approved.
+C0 and C1 controls and undefined Windows-1252 holes remain absent. The current pilot contains all 95 printable ASCII characters. Latin-1 and the printable Windows-1252 additions expand only after this ASCII geometry is reviewed.
 
 A usable base-font release requires all 218 target characters, all four weights, an explicit gap decision for every vulnerable glyph, passing structural/deterministic/raster checks, visual approval at the supported review sizes, approved final family metadata and binaries, and no unresolved base-font design blockers. Only then are release files and a tag created and MamboWiki updated. Icon work remains a separate later milestone.

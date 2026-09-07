@@ -20,9 +20,9 @@ MamboFont is Project Mambo's generated typeface. A small Python blueprint compil
 
 The family uses square counters, right-angle corners, and no rounded or beveled corner treatment. True diagonals remain only when they identify the glyph and have level ends. Optical positions come from named proportional guides, and all weights share one blueprint topology while thickness grows inward.
 
-Every vulnerable counter, aperture, or notch owns a declarative recipe contract: its minimum clearance and what the recipe does if the natural space is smaller. The default is 80 font units; the tapered open-edge notches in `M`, `W`, and `m` use 150 because an 80-unit mouth can disappear during rasterization. Compiled Bold outlines are raster-gated across all active gaps at 14 pixels and again for those three notches at 16 and 24 pixels; 10 and 12 pixels are stress tests only.
+Every vulnerable counter, aperture, or notch owns a declarative recipe contract: its minimum clearance and what the recipe does if the natural space is smaller. The default is 80 font units. Identity-bearing apertures such as the lower `g` tail are kept open; tiny `A`, `M`, `W`, `m`, and `w` voids fill when they fall below the threshold. Compiled Bold outlines are raster-gated at 14, 16, and 24 pixels; 10 and 12 pixels are stress tests only.
 
-The current review pilot covers space plus 23 representative letters and figures. The milestone target is 218 printable ASCII, Latin-1, and Windows-1252 characters after the design grammar is approved.
+The current review pilot covers all 95 printable ASCII characters. The milestone target is 218 printable ASCII, Latin-1, and Windows-1252 characters after the ASCII design grammar is approved.
 
 The active project covers only the base text family. Previous Mambo Icons assets and generator work are archived until a separate icon-font project is resumed.
 

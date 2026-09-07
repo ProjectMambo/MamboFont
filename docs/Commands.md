@@ -75,11 +75,11 @@ The specimen is a local HTML review page containing all four weights and the sup
 mbfont specimen 0.4.0 --fonts build/pilot --out specimen.html
 ~~~
 
-Open specimen.html in a browser after any geometry, weight, or gap-rule change. It includes actual text at 10, 12, 14, 16, 24, and 64 pixels plus Regular and Bold blueprint cards with design guides, raw pre-union vertices, and the declared gap decision below each vulnerable glyph. Fourteen pixels per em is the review floor; 10 and 12 pixels are non-gating stress tests. The command requires the matching WOFF2 pilot files to exist first.
+Open specimen.html in a browser after any geometry, weight, or gap-rule change. It includes all printable ASCII in every weight, ambiguity strings at 10, 12, 14, 16, and 24 pixels, and Regular and Bold geometry cards. Red points on those cards are the final TTF vertices after union, integer rounding, and exact duplicate/collinear cleanup; declared gap decisions appear below vulnerable glyphs. Fourteen pixels per em is the review floor, while 10 and 12 pixels are non-gating stress tests. The command requires the matching WOFF2 pilot files to exist first.
 
 ## Development workflow
 
-1. Change dimensions, named proportional guides, primitives, or the default 14-pixel/80-unit gap settings in sources/model.py; change glyph geometry, per-rule minimum overrides, and each vulnerable glyph's explicit gap action in sources/glyphs.py.
+1. Change dimensions, named proportional guides, primitives, or the default 14-pixel/80-unit gap settings in sources/model.py; change glyph geometry and each vulnerable glyph's explicit gap action in sources/glyphs.py.
 2. Compile all four weights into build/pilot.
 3. Regenerate and inspect specimen.html at large and small sizes and in the blueprint views.
 4. Run the deterministic end-to-end check.
@@ -94,9 +94,9 @@ git diff --check
 git status --short
 ~~~
 
-The test asserts the exact pilot map, one topology across weights, level-capped diagonals, design-supplied advances, safe bounds, straight on-curve contours with no redundant points, metadata and line metrics, FontForge validity, and deterministic bytes in both formats. A 600-unit-wide, 850-unit-ascent blueprint check guards the named proportional guides and removal of raw optical coordinates.
+The test asserts the exact 95-character printable-ASCII map, declared fill/widen outcomes, receiver-aligned diagonals, design-supplied advances, safe bounds, straight on-curve contours with no redundant points, metadata and line metrics, FontForge validity, and deterministic bytes in both formats. A 600-unit-wide, 850-unit-ascent blueprint check guards the shared proportional guides.
 
-`GapRule` validation checks the recipe's declared `natural`, `minimum`, action, and `resolved` values; it does not remeasure the final outline. One-bit XBM goldens therefore gate the compiled Bold result: `A`, `B`, `M`, `N`, `W`, `a`, `e`, `m`, and `0` at the 14-pixel floor, plus focused `M`, `W`, and `m` checks at 16 and 24 pixels. The test also rejects any active call to FontForge's stroke expansion.
+`GapRule` validation checks each recipe's declared `natural`, `minimum`, action, and `resolved` values; it does not run a generic post-outline gap detector. One-bit XBM checks preserve the Bold `g` tail aperture and require every non-space ASCII glyph to remain visually distinct at 14, 16, and 24 pixels. The test also rejects any active call to FontForge's stroke expansion.
 
 ## Documentation
 
@@ -111,4 +111,4 @@ Do not sync or edit MamboWiki during pilot iterations. Update the Wiki only afte
 
 ## Publishing
 
-The generator intentionally has no release command. The current pilot is not a usable full font and never writes release files to dist. Publishing remains a separate maintainer decision after the design, full character set, and committed candidates are approved.
+The generator intentionally has no release command. The current printable-ASCII pilot is not a usable full font and never writes release files to dist. Publishing remains a separate maintainer decision after Latin-1 and Windows-1252 coverage, the design, and committed candidates are approved.

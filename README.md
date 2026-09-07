@@ -50,14 +50,14 @@ See [Commands](docs/Commands.md) for all options and the required verification s
 
 ## Current scope
 
-The current review pilot encodes space plus 23 representative letters and figures. It exists to approve the outline and gap grammar across all four weights before expansion. The milestone target remains 218 printable ASCII, Latin-1, and defined Windows-1252 characters.
+The current review pilot encodes all 95 printable ASCII characters. It exists to approve the complete ASCII outline and gap grammar across all four weights before Latin-1 and Windows-1252 expansion. The milestone target remains 218 characters.
 
 Only the base text family is active. All previous Mambo Icons drawings, binaries, and generator work are archived; a separate icon font can be designed after the base family reaches a usable release.
 
 ## Repository layout
 
 ~~~text
-sources/        dimensions, primitive rules, and pilot glyph blueprints
+sources/        dimensions, primitive rules, and printable-ASCII blueprints
 script/         direct-outline compile, check, specimen, and installer commands
 tests/          one deterministic end-to-end build check
 build/pilot/    ignored local TTF and WOFF2 review files
@@ -76,7 +76,7 @@ The former SVG/export pipeline and the rejected centerline-stroke generator rema
 git diff --check
 ~~~
 
-The check covers the exact pilot map, design-supplied advances, proportional resizing, bounds, all-on-curve contours without redundant points, font validation, metadata, shared topology across weights, declarative gap contracts, full Bold 14-pixel monochrome raster goldens, focused 16- and 24-pixel notch goldens, the absence of stroke expansion, and byte-for-byte deterministic output. Fourteen pixels per em is the review floor; 10- and 12-pixel rows are non-gating stress tests.
+The check covers the exact printable-ASCII map, design-supplied advances, proportional resizing, bounds, all-on-curve contours without duplicate or removable collinear points, font validation, metadata, declarative gap contracts, the protected Bold `g` aperture, visually distinct non-space glyphs at 14, 16, and 24 pixels, the absence of stroke expansion, and byte-for-byte deterministic output. Fourteen pixels per em is the review floor; 10- and 12-pixel rows are non-gating stress tests.
 
 MamboDocs owns the canonical pages under `Docs/Projects/MamboFont`. Sync only that project into this repository with `node Scripts/sync_docs.js --sync MamboFont` from the MamboDocs vault. MamboWiki stays unchanged until the base family is complete enough for a usable release.
 
