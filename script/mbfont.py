@@ -19,7 +19,7 @@ try:
 except ImportError:
     raise SystemExit("FontForge Python bindings are required (run with /usr/bin/python3).")
 
-from sources.glyphs import PILOT_CHARACTERS, pilot_glyphs
+from sources.glyphs import ASCII_CHARACTERS, ascii_glyphs
 from sources.model import Design, design_for, glyph, rectangle
 
 
@@ -29,7 +29,7 @@ FORMATS = ("ttf", "woff2")
 REVIEW_SIZES = (10, 12, 14, 16, 24)
 GENERATION_FLAGS = ("opentype", "no-FFTM-table")
 PANOSE_WEIGHT = {400: 5, 500: 6, 600: 7, 700: 8}
-PILOT_CODEPOINTS = {0x20, *map(ord, PILOT_CHARACTERS)}
+ASCII_CODEPOINTS = set(range(0x20, 0x7F))
 
 
 def validate_version(value):
@@ -173,7 +173,7 @@ def _make_font(style, weight, version):
     )
     space = font.createChar(0x20, "space")
     space.width = design.advance
-    for char, blueprint in sorted(pilot_glyphs(design).items()):
+    for char, blueprint in sorted(ascii_glyphs(design).items()):
         target = font.createChar(ord(char))
         _draw_blueprint(target, blueprint, design)
 
@@ -183,8 +183,8 @@ def _make_font(style, weight, version):
 
 def _validate_font(font, design):
     actual = {item.unicode for item in font.glyphs() if item.unicode >= 0}
-    if actual != PILOT_CODEPOINTS:
-        raise RuntimeError(f"pilot cmap mismatch: {sorted(actual ^ PILOT_CODEPOINTS)}")
+    if actual != ASCII_CODEPOINTS:
+        raise RuntimeError(f"ASCII cmap mismatch: {sorted(actual ^ ASCII_CODEPOINTS)}")
     for item in font.glyphs():
         is_ours = item.unicode >= 0 or item.glyphname == ".notdef"
         if is_ours and item.width != design.advance:
@@ -258,16 +258,19 @@ def command_check(args):
     print(f"{len(generated)} pilot files are current")
 
 
-def _blueprint_card(char, blueprint, design):
+def _blueprint_card(char, blueprint, design, compiled):
     vertical = (0, design.ink_left, design.advance / 2, design.x("upper_bowl_right"), design.ink_right, design.advance)
     horizontal = (-design.descent, design.descender, 0, design.x_height, design.cap_height, design.ascent)
     guides = "".join(f'<line x1="{x}" y1="{-design.descent}" x2="{x}" y2="{design.ascent}"/>' for x in vertical)
     guides += "".join(f'<line x1="0" y1="{y}" x2="{design.advance}" y2="{y}"/>' for y in horizontal)
-    ink = "".join('<polygon points="' + " ".join(f"{x},{y}" for x, y in contour) + '"/>' for contour in blueprint["ink"])
-    cuts = "".join('<polygon points="' + " ".join(f"{x},{y}" for x, y in contour) + '"/>' for contour in blueprint["cuts"])
+    contours = [tuple((point.x, point.y) for point in contour) for contour in compiled.foreground]
+    outline = "".join(
+        "M " + " L ".join(f"{x} {y}" for x, y in contour) + " Z"
+        for contour in contours
+    )
     points = "".join(
         f'<circle cx="{x}" cy="{y}" r="5"/>'
-        for contour in (*blueprint["ink"], *blueprint["cuts"])
+        for contour in contours
         for x, y in contour
     )
     gap_notes = "".join(
@@ -277,7 +280,7 @@ def _blueprint_card(char, blueprint, design):
     return (
         f'<figure><svg viewBox="0 0 {design.advance} {design.upm}" role="img" aria-label="{html.escape(char)} blueprint">'
         f'<g transform="translate(0 {design.ascent}) scale(1 -1)"><g class="guides">{guides}</g>'
-        f'<g class="ink">{ink}</g><g class="cuts">{cuts}</g><g class="points">{points}</g></g></svg>'
+        f'<path class="ink" d="{outline}"/><g class="points">{points}</g></g></svg>'
         f'<figcaption>{html.escape(char)}{gap_notes}</figcaption></figure>'
     )
 
@@ -292,21 +295,39 @@ def command_specimen(args):
         faces.append(
             f'@font-face {{ font-family:"MamboFontPilot"; src:url("{font_dir / filename}") format("woff2"); font-weight:{weight}; }}'
         )
+    review_text = "Il1|! O0Q B8& S5$ Z2 G6 g9q rn m vv w uvw cld pqbd"
     size_samples = "".join(
-        f'<span style="font-size:{size}px">{size}px · HOBS ANMVWXZ aegmnr Il 0128</span>'
+        f'<span style="font-size:{size}px">{size}px · {html.escape(review_text)}</span>'
         for size in REVIEW_SIZES
     )
+    ascii_rows = (
+        "!\"#$%&'()*+,-./ 0123456789:;<=>?@",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`",
+        "abcdefghijklmnopqrstuvwxyz{|}~",
+    )
+    display = "<br>".join(html.escape(row) for row in ascii_rows)
     samples = "".join(
-        f'<section><h2>{style} · {weight}</h2><p class="sample" style="font-weight:{weight}">HOBS ANMVWXZ<br>aegmnr Il 0128<br>Il1 O0 rn m</p>'
+        f'<section><h2>{style} · {weight}</h2><p class="sample" style="font-weight:{weight}">{display}</p>'
         f'<p class="sizes" style="font-weight:{weight}">{size_samples}</p></section>'
         for style, weight in WEIGHTS
     )
-    blueprints = "".join(
-        f'<section><h2>{style} geometry · {design.thickness} units</h2><div class="blueprints">'
-        + "".join(_blueprint_card(char, blueprint, design) for char, blueprint in pilot_glyphs(design).items())
-        + "</div></section>"
-        for style, design in (("Regular", design_for("Regular")), ("Bold", design_for("Bold")))
-    )
+    blueprint_sections = []
+    for style, weight in (WEIGHTS[0], WEIGHTS[-1]):
+        design = design_for(style)
+        recipes = ascii_glyphs(design)
+        font = _make_font(style, weight, args.version)
+        try:
+            cards = "".join(
+                _blueprint_card(char, recipes[char], design, font[ord(char)])
+                for char in ASCII_CHARACTERS
+            )
+        finally:
+            font.close()
+        blueprint_sections.append(
+            f'<section><h2>{style} geometry · {design.thickness} units</h2>'
+            f'<div class="blueprints">{cards}</div></section>'
+        )
+    blueprints = "".join(blueprint_sections)
     document = f"""<!doctype html>
 <html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <title>MamboFont direct-outline pilot {args.version}</title>
@@ -320,10 +341,10 @@ section {{ border-top:2px solid; margin-top:2rem; }}
 .blueprints {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(90px,1fr)); gap:.75rem; }}
 figure {{ margin:0; padding:.5rem; border:1px solid #777; text-align:center; }} svg {{ display:block; width:100%; max-height:220px; }}
 .guides {{ fill:none; stroke:#2580d8; stroke-width:2; vector-effect:non-scaling-stroke; opacity:.45; }}
-.ink {{ fill:currentColor; }} .cuts {{ fill:#f4f0e8; stroke:#df6c24; stroke-width:2; vector-effect:non-scaling-stroke; }}
+.ink {{ fill:currentColor; fill-rule:nonzero; }}
 .points {{ fill:#e13b35; }} figcaption {{ font-family:monospace; font-weight:700; }} figcaption small {{ display:block; font:11px/1.3 system-ui,sans-serif; }}
 @media (prefers-color-scheme:dark) {{ body {{ background:#171717; color:#f4f0e8; }} .cuts {{ fill:#171717; }} }}
-</style><body><h1>MamboFont direct-outline pilot</h1><p>Incomplete review font: 500-unit cells, straight filled contours, no stroked paths. The small-size review floor is 14px; 10–12px rows are non-gating stress tests. Red dots are raw blueprint vertices before union and cleanup; gap decisions appear below vulnerable glyphs.</p>{samples}{blueprints}</body></html>
+</style><body><h1>MamboFont direct-outline ASCII pilot</h1><p>Review font: all 95 printable ASCII code points in 500-unit cells, with straight filled contours and no stroked paths. The small-size review floor is 14px; 10–12px rows are non-gating stress tests. Red dots are final TTF vertices after union, integer rounding, and exact duplicate/collinear cleanup; gap decisions appear below vulnerable glyphs.</p>{samples}{blueprints}</body></html>
 """
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(document)

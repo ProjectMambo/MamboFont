@@ -47,6 +47,8 @@ class Design:
             raise ValueError("vertical guides are out of order")
         if self.review_ppem < 1 or not 0 < self.minimum_gap < self.advance:
             raise ValueError("small-size review settings are invalid")
+        if self.x_height <= 2 * self.minimum_gap or self.descent <= self.minimum_gap:
+            raise ValueError("dimensions leave no room for protected gaps")
 
     def x(self, name: str) -> Number:
         """Resolve a named horizontal guide."""
@@ -63,7 +65,7 @@ class Design:
             "shoulder_right": self.ink_left + ink_width * 31 / 42,
             "lowercase_foot": self.ink_left + ink_width * 5 / 6,
             "inner_right": self.ink_right - self.thickness,
-            "upper_bowl_right": center + (self.ink_right - center) * 3 / 4,
+            "upper_bowl_right": center + (self.ink_right - center) * 2 / 3,
             "diagonal_right": self.ink_right - ink_width * 5 / 42,
             "ink_right": self.ink_right,
             "cell_right": self.advance,

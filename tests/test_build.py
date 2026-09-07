@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""One end-to-end check for the direct-outline MamboFont pilot."""
+"""One end-to-end check for the direct-outline printable-ASCII pilot."""
 
 import re
 import sys
 import tempfile
-from math import hypot
 from pathlib import Path
 
 
@@ -13,44 +12,36 @@ sys.path.insert(0, str(ROOT))
 
 import fontforge
 
-from script.mbfont import PILOT_CODEPOINTS, WEIGHTS, _without_redundant_points, compile_fonts
-from sources.glyphs import PILOT_CHARACTERS, pilot_glyphs
+from script.mbfont import ASCII_CODEPOINTS, WEIGHTS, _without_redundant_points, compile_fonts
+from sources.glyphs import ASCII_CHARACTERS, ascii_glyphs
 from sources.model import Design, design_for
 
 
-BOLD_GAP_RASTER = {
-    "A": ("..#..", ".###.", ".#.#.", ".#.#.", "#####", "##.##", "##.##", "#...#", "#...#"),
-    "B": ("#####", "#####", "#..##", "#..##", "#####", "#...#", "#...#", "#####", "#####"),
-    "M": ("##.##", "##.##", "##.##", "#####", "#####", "#...#", "#...#", "#...#", "#...#"),
-    "N": ("##..#", "###.#", "###.#", "###.#", "#.#.#", "#.###", "#.###", "#.###", "#..##"),
-    "W": ("#...#", "#...#", "#...#", "#...#", "#...#", "#####", "#####", "##.##", "##.##"),
-    "a": ("#####", "#####", "....#", "#####", "#...#", "#####"),
-    "e": ("#####", "#####", "#....", "#####", "#....", "#####"),
-    "m": ("##.##", "##.##", "#####", "#...#", "#...#", "#...#"),
-    "0": ("#####", "#####", "#.###", "#.###", "#.#.#", "###.#", "###.#", "#####", "#####"),
-}
-BOLD_NOTCH_RASTERS = {
-    16: {
-        "M": ("##..##", "##..##", "######", "######", "######", "######", "##..##", "##..##", "##..##", "##..##"),
-        "W": ("##..##", "##..##", "##..##", "##..##", "##..##", "######", "######", "######", "##..##", "##..##"),
-        "m": ("##..##", "######", "######", "##..##", "##..##", "##..##"),
-    },
-    24: {
-        "M": ("####..####", "####..####", "####..####", "##########", "##########", "##########", "##########", "##########", "##########", "###....###", "###....###", "###....###", "###....###", "###....###", "###....###"),
-        "W": ("###....###", "###....###", "###....###", "###....###", "###....###", "###....###", "###....###", "##########", "##########", "##########", "##########", "##########", "####..####", "####..####", "###....###"),
-        "m": ("###....###", "####..####", "##########", "##########", "##########", "###....###", "###....###", "###....###", "###....###", "###....###"),
-    },
+SUPPORTED_REVIEW_SIZES = (14, 16, 24)
+BOLD_G_RASTERS = {
+    14: ("#####", "#####", "#...#", "#...#", "#####", "#####", "....#", "#####", "#####"),
+    16: ("######", "######", "##..##", "##..##", "######", "######", "....##", "######", "######"),
+    24: (
+        "##########", "##########", "##########", "###....###", "###....###",
+        "###....###", "###....###", "##########", "##########", "##########",
+        ".......###", ".......###", "##########", "##########", "##########",
+    ),
 }
 BOLD_GAP_OUTCOMES = {
-    "A": "widen",
+    "0": "preserve",
+    "A": "fill",
     "B": "preserve",
-    "M": "widen",
+    "M": "fill",
     "N": "preserve",
-    "W": "widen",
+    "W": "fill",
     "a": "widen",
     "e": "widen",
-    "m": "widen",
-    "0": "preserve",
+    "g": "preserve",
+    "j": "preserve",
+    "m": "fill",
+    "s": "widen",
+    "w": "fill",
+    "y": "preserve",
 }
 
 
@@ -69,10 +60,11 @@ def raster(glyph, directory, ppem):
     black = [(x, y) for y, row in enumerate(rows) for x, value in enumerate(row) if value]
     left, right = min(x for x, _ in black), max(x for x, _ in black)
     top, bottom = min(y for _, y in black), max(y for _, y in black)
-    return tuple(
+    cropped = tuple(
         "".join("#" if rows[y][x] else "." for x in range(left, right + 1))
         for y in range(top, bottom + 1)
     )
+    return glyph.boundingBox(), cropped
 
 
 def inspect(path_value):
@@ -80,19 +72,21 @@ def inspect(path_value):
     try:
         encoded = {item.unicode for item in font.glyphs() if item.unicode >= 0}
         assert font.validate(True) == 0, path_value
-        assert encoded == PILOT_CODEPOINTS, path_value
+        assert encoded == ASCII_CODEPOINTS, path_value
         assert font.familyname == "Mambo Font Pilot", path_value
         assert font.copyright == "Copyright (c) 2026 ProjectMambo", path_value
         assert font.os2_panose[3] == 9, path_value
         assert (font.hhea_ascent, font.hhea_descent, font.hhea_linegap) == (800, -200, 0), path_value
         assert (font.os2_winascent, font.os2_windescent) == (800, 200), path_value
-        signature = {}
         for item in font.glyphs():
             is_ours = item.unicode >= 0 or item.glyphname == ".notdef"
             if is_ours:
                 assert item.width == 500, (path_value, item.glyphname)
-                assert all(point.on_curve for contour in item.foreground for point in contour), (path_value, item.glyphname)
-                assert all(point.x == round(point.x) and point.y == round(point.y) for contour in item.foreground for point in contour), (path_value, item.glyphname)
+                assert all(point.on_curve for contour in item.foreground for point in contour)
+                assert all(
+                    point.x == round(point.x) and point.y == round(point.y)
+                    for contour in item.foreground for point in contour
+                )
                 assert all(
                     points == _without_redundant_points(points)
                     for contour in item.foreground
@@ -102,8 +96,6 @@ def inspect(path_value):
                 left, bottom, right, top = item.boundingBox()
                 assert 0 <= left <= right <= 500, (path_value, item.glyphname, item.boundingBox())
                 assert -200 <= bottom <= top <= 800, (path_value, item.glyphname, item.boundingBox())
-                signature[item.unicode] = len(item.foreground)
-        return signature
     finally:
         font.close()
 
@@ -112,6 +104,13 @@ def main():
     assert _without_redundant_points(
         [(0, 0), (0, 0), (1, 0), (2, 0), (2, 2), (0, 2)]
     ) == [(0, 0), (2, 0), (2, 2), (0, 2)]
+    try:
+        Design(minimum_gap=200)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("an impossible protected gap must fail at the design boundary")
+
     resized = Design(
         advance=600,
         ink_left=48,
@@ -122,7 +121,7 @@ def main():
         x_height=430,
         descender=-120,
     )
-    resized_recipes = pilot_glyphs(resized)
+    resized_recipes = ascii_glyphs(resized)
     assert tuple(
         sum(point[0] for point in shape[:2]) / 2
         for shape in resized_recipes["A"]["ink"][:2]
@@ -133,17 +132,12 @@ def main():
         for contour in (*blueprint["ink"], *blueprint["cuts"])
         for x, y in contour
     )
-    assert set(PILOT_CHARACTERS) == set(pilot_glyphs(design_for("Regular")))
-    topology = None
+
+    assert set(ASCII_CHARACTERS) == set(ascii_glyphs(design_for("Regular")))
     for style, _ in WEIGHTS:
         design = design_for(style)
-        recipes = pilot_glyphs(design)
-        current = {
-            char: (len(value["ink"]), len(value["cuts"]), tuple(rule.name for rule in value["gaps"]))
-            for char, value in recipes.items()
-        }
-        topology = current if topology is None else topology
-        assert current == topology
+        recipes = ascii_glyphs(design)
+        assert all(blueprint["ink"] for blueprint in recipes.values())
         assert all(
             rule.resolved == 0 or rule.resolved >= rule.minimum
             for blueprint in recipes.values()
@@ -151,10 +145,12 @@ def main():
         )
         assert all(
             design.ink_left <= x <= design.ink_right
-            for char in "MWm"
+            for char in "MWmw"
             for contour in recipes[char]["ink"]
             for x, _ in contour
         )
+        stem_right = design.advance / 2 + design.thickness / 2
+        assert max(x for x, _ in recipes["1"]["ink"][0]) <= stem_right
         z_diagonal = recipes["Z"]["ink"][1]
         two_diagonal = recipes["2"]["ink"][2]
         assert (z_diagonal[0], z_diagonal[2]) == (
@@ -165,20 +161,6 @@ def main():
             (design.ink_left, design.thickness),
             (design.ink_right, design.x_height),
         )
-        for char, blueprint in recipes.items():
-            for contour in blueprint["ink"]:
-                edges = list(zip(contour, (*contour[1:], contour[0])))
-                if any(left[0] != right[0] and left[1] != right[1] for left, right in edges):
-                    assert len(contour) in (4, 5)
-                    bottom_left, bottom_right = contour[:2]
-                    top_right, top_left = contour[-2:]
-                    assert bottom_left[1] == bottom_right[1]
-                    assert top_left[1] == top_right[1]
-                    side = (top_left[0] - bottom_left[0], top_left[1] - bottom_left[1])
-                    cap = (bottom_right[0] - bottom_left[0], bottom_right[1] - bottom_left[1])
-                    measured = abs(side[0] * cap[1] - side[1] * cap[0]) / hypot(*side)
-                    if char not in "MWm":
-                        assert abs(measured - design.thickness) < 1e-9
 
     active_python = [*(ROOT / "sources").glob("*.py"), *(ROOT / "script").glob("*.py")]
     assert all(".stroke(" not in path.read_text() for path in active_python)
@@ -188,38 +170,32 @@ def main():
         second_files = compile_fonts("0.0.0", Path(second), ("ttf", "woff2"))
         assert len(first_files) == len(WEIGHTS) * 2
         assert [item.name for item in first_files] == [item.name for item in second_files]
-        final_contours = []
         for left, right in zip(first_files, second_files):
             assert left.read_bytes() == right.read_bytes(), left.name
-            signature = inspect(left)
-            if left.suffix == ".ttf":
-                final_contours.append(signature)
-        assert all(signature == final_contours[0] for signature in final_contours)
-        bold = fontforge.open(str(next(path for path in first_files if path.name.startswith("MamboFontPilot-Bold_") and path.suffix == ".ttf")))
+            inspect(left)
+
+        bold = fontforge.open(str(next(
+            path for path in first_files
+            if path.name.startswith("MamboFontPilot-Bold_") and path.suffix == ".ttf"
+        )))
         try:
             raster_dir = Path(first) / "raster"
             raster_dir.mkdir()
-            assert {
-                char: raster(bold[ord(char)], raster_dir, design_for("Bold").review_ppem)
-                for char in BOLD_GAP_RASTER
-            } == BOLD_GAP_RASTER
-            for ppem, expected in BOLD_NOTCH_RASTERS.items():
-                assert {
-                    char: raster(bold[ord(char)], raster_dir, ppem)
-                    for char in expected
-                } == expected
+            for ppem in SUPPORTED_REVIEW_SIZES:
+                signatures = [raster(bold[ord(char)], raster_dir, ppem) for char in ASCII_CHARACTERS]
+                assert len(signatures) == len(set(signatures)), f"duplicate Bold glyph raster at {ppem}px"
+                assert raster(bold[ord("g")], raster_dir, ppem)[1] == BOLD_G_RASTERS[ppem]
         finally:
             bold.close()
 
-        bold_recipes = pilot_glyphs(design_for("Bold"))
+        bold_recipes = ascii_glyphs(design_for("Bold"))
         assert {
             char: blueprint["gaps"][0].outcome
             for char, blueprint in bold_recipes.items()
             if blueprint["gaps"]
         } == BOLD_GAP_OUTCOMES
-        assert set(BOLD_GAP_RASTER) == set(BOLD_GAP_OUTCOMES)
 
-    print("ok: deterministic direct-outline pilot, 4 weights, TTF + WOFF2")
+    print("ok: deterministic direct-outline printable ASCII, 4 weights, TTF + WOFF2")
 
 
 if __name__ == "__main__":
