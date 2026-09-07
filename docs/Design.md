@@ -59,7 +59,7 @@ The visual rules are:
 - Horizontal and ordinary vertical terminals stay level. A diagonal is a true straight band with parallel sides and level ends, never a staircase, except for a declared receiver-cap clip at an outer ink bound.
 - Slanted surfaces appear only where the glyph's identifying diagonal requires them. Joined diagonal endpoints sit inside their receiving bar or stem so no shelf, spike, concave corner, or point contact remains.
 - M, N, and W retain vertical exterior stems and place their diagonals inside. A, V, and X retain identity-critical exterior diagonals.
-- Receiver caps in `1`, `5`, `7`, and `?` are clipped to the bar or stem they join. This removes tiny shelves and spikes without moving the visible diagonal or applying a global simplifier.
+- Receiver caps in `1` and `?` are clipped to the stem they join. The `5` and `7` use the same receiver-aware diagonal calculation as `Z` and `2`, so their level ends terminate flush with the connected horizontal bars.
 - Ambiguous monospace characters remain distinct: serifed `I`, footed `l`, flagged `1`, square `O`, and slashed `0`.
 - Readability outranks nominal thickness only at a declared local exception; the rest of the glyph keeps the weight's nominal thickness.
 
@@ -70,8 +70,8 @@ The active pilot contains all 95 printable ASCII code points. Recipes share geom
 - Square frames and open `C` frames form `B`, `C`, `E`, `G`, `O`, `P`, `D`, the round lowercase family, and the enclosed figures.
 - Exterior stems plus internal diagonals form `M`, `N`, `W`, and their lowercase relatives. `A`, `K`, `R`, `V`, `X`, `Z`, and the diagonal figures use true level-capped diagonal polygons where the diagonal identifies the character.
 - `Z`, `z`, and `2` use receiver-aware diagonal polygons whose ends meet their horizontal bars without exposed shelves. Lowercase `s` instead uses a compact square S construction so `s` and `z` remain distinct.
-- Dense horizontal stacks in `a`, `e`, and `s` may use locally thinner horizontal bars. The `#` grid is capped at 90 units, ordinary small marks use two thirds of nominal thickness, and the compact `@` construction uses half of nominal thickness. These formulas preserve visible weight progression while protecting internal spaces. They are explicit readability exceptions, not alternate weights.
-- Punctuation is assembled from the same rectangles, square dots, true diagonals, and stepped right-angle contours. Parentheses and braces are mirrored from one source recipe; `%` uses solid square nodes because miniature counters would not survive the supported review floor.
+- Dense horizontal stacks in `a`, `e`, and `s` may use locally thinner horizontal bars. Ordinary punctuation, dots, commas, the `#` grid, `%`, and punctuation diagonals use the weight's full nominal thickness. The compact `@` construction alone uses half of nominal thickness so both its counter and exit remain visible; this is an explicit readability exception, not an alternate weight.
+- Punctuation is assembled from the same rectangles, square dots, and true diagonals. Parentheses use one direct angular outline with diagonal upper and lower sides, brackets remain orthogonal, mirrored pairs share one source recipe, and `~` is a three-segment diagonal zigzag. The dollar uses two full-thickness vertical segments that enter its upper and lower spaces without blacking out the middle. The ampersand follows the archived angular crossed-stroke topology. `%` uses solid square nodes because miniature counters would not survive the supported review floor.
 
 ## Gap rules
 
@@ -95,6 +95,7 @@ The Bold pilot resolves its declared gaps as follows. Values are font units, rou
 | Glyph | Protected space | Natural | Minimum | Outcome | Resolved geometry |
 |---|---|---:|---:|---|---:|
 | `A` | upper counter | 6.3 | 80 | fill the upper triangular sliver | 0 |
+| `@` | nested-frame clearance | 20.0 | 80 | widen with half-thickness local frames | 80.0 |
 | `B` | bowl counters | 110.0 | 80 | preserve | 110.0 |
 | `M` | tapered center notch | 56.7 | 80 | fill the complete notch | 0 |
 | `N` | diagonal windows | 117.7 | 80 | preserve | 117.7 |
@@ -135,7 +136,7 @@ The end-to-end check enforces:
 
 - The exact 95-code-point printable-ASCII map, design-supplied advances, bounds, fixed line metrics, metadata, and valid TTF/WOFF2 files.
 - Valid blueprint fields and declared gap outcomes at every weight, including zero clearance for a triggered fill.
-- Receiver-aligned `Z` and `2` diagonals, a bounded `1` flag, direct filled outlines, and no active stroke expansion.
+- Receiver-aligned `Z`, `2`, `5`, and `7` diagonals, a bounded `1` flag, nominal-thickness punctuation marks, direct filled outlines, and no active stroke expansion.
 - Integer, all-on-curve output with no duplicate or removable collinear points.
 - A resized 600-unit-wide, 850-unit-ascent blueprint whose proportional `A` terminals resolve from named guides and whose ink and cuts remain inside the resized design bounds.
 - Every declarative gap scalar: preserved values remain unchanged, widened values reach their rule's minimum, and the validated `fill` branch resolves to zero. This check does not remeasure final contours.

@@ -94,7 +94,7 @@ git diff --check
 git status --short
 ~~~
 
-The test asserts the exact 95-character printable-ASCII map, declared fill/widen outcomes, receiver-aligned diagonals, design-supplied advances, safe bounds, straight on-curve contours with no redundant points, metadata and line metrics, FontForge validity, and deterministic bytes in both formats. A 600-unit-wide, 850-unit-ascent blueprint check guards the shared proportional guides.
+The test asserts the exact 95-character printable-ASCII map, declared fill/widen outcomes, receiver-aligned diagonals, nominal-thickness punctuation, design-supplied advances, safe bounds, straight on-curve contours with no redundant points, metadata and line metrics, FontForge validity, and deterministic bytes in both formats. A 600-unit-wide, 850-unit-ascent blueprint check guards the shared proportional guides.
 
 `GapRule` validation checks each recipe's declared `natural`, `minimum`, action, and `resolved` values; it does not run a generic post-outline gap detector. One-bit XBM checks preserve the Bold `g` tail aperture and require every non-space ASCII glyph to remain visually distinct at 14, 16, and 24 pixels. The test also rejects any active call to FontForge's stroke expansion.
 
