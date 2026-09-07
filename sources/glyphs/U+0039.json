@@ -1,0 +1,107 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+0039",
+  "name": "digit_nine",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "hbar_1",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "right": {
+        "ref": "metrics.ink_right"
+      },
+      "bottom": {
+        "constant": 640,
+        "terms": {
+          "weight.thickness": -1
+        }
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "vbar_1",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "bottom": {
+        "ref": "guide.y.midline"
+      },
+      "top": {
+        "ref": "metrics.cap_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "hbar_2",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "right": {
+        "ref": "metrics.ink_right"
+      },
+      "bottom": {
+        "constant": 320,
+        "terms": {
+          "weight.thickness": -0.5
+        }
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "vbar_2",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "guide.x.inner_right"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "ref": "metrics.cap_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "hbar_3",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "right": {
+        "ref": "metrics.ink_right"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

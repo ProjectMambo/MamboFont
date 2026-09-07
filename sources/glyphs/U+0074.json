@@ -1,0 +1,56 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+0074",
+  "name": "latin_small_letter_t",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "vbar_1",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "constant": 250,
+        "terms": {
+          "weight.thickness": -0.5
+        }
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "ref": "guide.y.one_flag"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "hbar_1",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "right": {
+        "ref": "metrics.ink_right"
+      },
+      "bottom": {
+        "constant": 400,
+        "terms": {
+          "weight.thickness": -0.5
+        }
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

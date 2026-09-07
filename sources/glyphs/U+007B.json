@@ -1,0 +1,159 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+007B",
+  "name": "left_curly_bracket",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "hbar_1",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "guide.x.center"
+      },
+      "right": {
+        "ref": "guide.x.diagonal_right"
+      },
+      "bottom": {
+        "constant": 640,
+        "terms": {
+          "weight.thickness": -1
+        }
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "vbar_1",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "constant": 250,
+        "terms": {
+          "weight.thickness": -1
+        }
+      },
+      "bottom": {
+        "constant": 320,
+        "terms": {
+          "weight.thickness": 1
+        }
+      },
+      "top": {
+        "ref": "metrics.cap_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "hbar_2",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "guide.x.one_flag"
+      },
+      "right": {
+        "ref": "guide.x.center"
+      },
+      "bottom": {
+        "ref": "guide.y.midline"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "vbar_2",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "guide.x.one_flag"
+      },
+      "bottom": {
+        "constant": 320,
+        "terms": {
+          "weight.thickness": -1
+        }
+      },
+      "top": {
+        "constant": 320,
+        "terms": {
+          "weight.thickness": 1
+        }
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "hbar_3",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "guide.x.one_flag"
+      },
+      "right": {
+        "ref": "guide.x.center"
+      },
+      "bottom": {
+        "constant": 320,
+        "terms": {
+          "weight.thickness": -1
+        }
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "vbar_3",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "constant": 250,
+        "terms": {
+          "weight.thickness": -1
+        }
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "constant": 320,
+        "terms": {
+          "weight.thickness": -1
+        }
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "hbar_4",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "guide.x.center"
+      },
+      "right": {
+        "ref": "guide.x.diagonal_right"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

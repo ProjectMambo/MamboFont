@@ -1,0 +1,39 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+0027",
+  "name": "apostrophe",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "vbar_1",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "constant": 250,
+        "terms": {
+          "weight.thickness": -0.5
+        }
+      },
+      "bottom": {
+        "constant": 640,
+        "terms": {
+          "weight.thickness": -2
+        }
+      },
+      "top": {
+        "ref": "metrics.cap_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

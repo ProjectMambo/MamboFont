@@ -1,0 +1,125 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+005D",
+  "name": "right_square_bracket",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "polygon_1",
+      "operation": "add",
+      "primitive": "polygon",
+      "vertices": [
+        {
+          "x": 360,
+          "y": {
+            "ref": "guide.y.baseline"
+          }
+        },
+        {
+          "x": {
+            "constant": 360,
+            "terms": {
+              "weight.thickness": -1
+            }
+          },
+          "y": {
+            "ref": "guide.y.baseline"
+          }
+        },
+        {
+          "x": {
+            "constant": 360,
+            "terms": {
+              "weight.thickness": -1
+            }
+          },
+          "y": {
+            "ref": "metrics.cap_height"
+          }
+        },
+        {
+          "x": 360,
+          "y": {
+            "ref": "metrics.cap_height"
+          }
+        }
+      ]
+    },
+    {
+      "id": "polygon_2",
+      "operation": "add",
+      "primitive": "polygon",
+      "vertices": [
+        {
+          "x": 360,
+          "y": {
+            "constant": 640,
+            "terms": {
+              "weight.thickness": -1
+            }
+          }
+        },
+        {
+          "x": 110,
+          "y": {
+            "constant": 640,
+            "terms": {
+              "weight.thickness": -1
+            }
+          }
+        },
+        {
+          "x": 110,
+          "y": {
+            "ref": "metrics.cap_height"
+          }
+        },
+        {
+          "x": 360,
+          "y": {
+            "ref": "metrics.cap_height"
+          }
+        }
+      ]
+    },
+    {
+      "id": "polygon_3",
+      "operation": "add",
+      "primitive": "polygon",
+      "vertices": [
+        {
+          "x": 360,
+          "y": {
+            "ref": "guide.y.baseline"
+          }
+        },
+        {
+          "x": 110,
+          "y": {
+            "ref": "guide.y.baseline"
+          }
+        },
+        {
+          "x": 110,
+          "y": {
+            "ref": "weight.thickness"
+          }
+        },
+        {
+          "x": 360,
+          "y": {
+            "ref": "weight.thickness"
+          }
+        }
+      ]
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

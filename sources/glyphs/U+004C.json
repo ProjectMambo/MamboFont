@@ -1,0 +1,50 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+004C",
+  "name": "latin_capital_letter_l",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "vbar_1",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "ref": "metrics.cap_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "hbar_1",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "right": {
+        "ref": "metrics.ink_right"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

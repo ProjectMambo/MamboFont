@@ -1,0 +1,131 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+004B",
+  "name": "latin_capital_letter_k",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "vbar_1",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "ref": "metrics.cap_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "polygon_1",
+      "operation": "add",
+      "primitive": "polygon",
+      "vertices": [
+        {
+          "x": {
+            "ref": "metrics.ink_left"
+          },
+          "y": {
+            "ref": "guide.y.midline"
+          }
+        },
+        {
+          "x": {
+            "by_weight": {
+              "Regular": 137.459224672806,
+              "Medium": 152.621538747616,
+              "SemiBold": 168.747795244026,
+              "Bold": 183.537510287296
+            }
+          },
+          "y": {
+            "ref": "guide.y.midline"
+          }
+        },
+        {
+          "x": {
+            "ref": "metrics.ink_right"
+          },
+          "y": {
+            "ref": "metrics.cap_height"
+          }
+        },
+        {
+          "x": {
+            "by_weight": {
+              "Regular": 352.540775327194,
+              "Medium": 343.878461252384,
+              "SemiBold": 334.752204755974,
+              "Bold": 326.462489712704
+            }
+          },
+          "y": {
+            "ref": "metrics.cap_height"
+          }
+        }
+      ]
+    },
+    {
+      "id": "polygon_2",
+      "operation": "add",
+      "primitive": "polygon",
+      "vertices": [
+        {
+          "x": {
+            "by_weight": {
+              "Regular": 352.540775327194,
+              "Medium": 343.878461252384,
+              "SemiBold": 334.752204755974,
+              "Bold": 326.462489712704
+            }
+          },
+          "y": {
+            "ref": "guide.y.baseline"
+          }
+        },
+        {
+          "x": {
+            "ref": "metrics.ink_right"
+          },
+          "y": {
+            "ref": "guide.y.baseline"
+          }
+        },
+        {
+          "x": {
+            "by_weight": {
+              "Regular": 137.459224672806,
+              "Medium": 152.621538747616,
+              "SemiBold": 168.747795244026,
+              "Bold": 183.537510287296
+            }
+          },
+          "y": {
+            "ref": "guide.y.midline"
+          }
+        },
+        {
+          "x": {
+            "ref": "metrics.ink_left"
+          },
+          "y": {
+            "ref": "guide.y.midline"
+          }
+        }
+      ]
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

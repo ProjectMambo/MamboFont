@@ -1,0 +1,74 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+007A",
+  "name": "latin_small_letter_z",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "hbar_1",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "right": {
+        "ref": "metrics.ink_right"
+      },
+      "bottom": {
+        "constant": 400,
+        "terms": {
+          "weight.thickness": -1
+        }
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "joined_diagonal_1",
+      "operation": "add",
+      "primitive": "joined_diagonal",
+      "lower_y": {
+        "ref": "weight.thickness"
+      },
+      "upper_y": {
+        "constant": 400,
+        "terms": {
+          "weight.thickness": -1
+        }
+      },
+      "lower_left": {
+        "ref": "metrics.ink_left"
+      },
+      "upper_right": {
+        "ref": "metrics.ink_right"
+      },
+      "upper_stem": false
+    },
+    {
+      "id": "hbar_2",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "right": {
+        "ref": "metrics.ink_right"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

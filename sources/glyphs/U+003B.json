@@ -1,0 +1,94 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+003B",
+  "name": "semicolon",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "rectangle_1",
+      "operation": "add",
+      "primitive": "rectangle",
+      "left": {
+        "constant": 250,
+        "terms": {
+          "weight.thickness": -0.5
+        }
+      },
+      "bottom": {
+        "constant": 360,
+        "terms": {
+          "weight.thickness": -0.5
+        }
+      },
+      "right": {
+        "constant": 250,
+        "terms": {
+          "weight.thickness": 0.5
+        }
+      },
+      "top": {
+        "constant": 360,
+        "terms": {
+          "weight.thickness": 0.5
+        }
+      }
+    },
+    {
+      "id": "vbar_1",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "constant": 250,
+        "terms": {
+          "weight.thickness": -0.5
+        }
+      },
+      "bottom": {
+        "constant": 0,
+        "terms": {
+          "weight.thickness": -1
+        }
+      },
+      "top": {
+        "ref": "weight.thickness"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "hbar_1",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "constant": 250,
+        "terms": {
+          "weight.thickness": -1
+        }
+      },
+      "right": {
+        "constant": 250,
+        "terms": {
+          "weight.thickness": 0.5
+        }
+      },
+      "bottom": {
+        "constant": 0,
+        "terms": {
+          "weight.thickness": -1
+        }
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

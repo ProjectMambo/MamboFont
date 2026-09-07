@@ -1,0 +1,113 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+0079",
+  "name": "latin_small_letter_y",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {
+    "tail_thickness": {
+      "ref": "weight.thickness"
+    }
+  },
+  "points": {},
+  "shapes": [
+    {
+      "id": "vbar_1",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "ref": "metrics.x_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "vbar_2",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "guide.x.inner_right"
+      },
+      "bottom": -200,
+      "top": {
+        "ref": "metrics.x_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "hbar_1",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "right": {
+        "ref": "metrics.ink_right"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "hbar_2",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "right": {
+        "ref": "metrics.ink_right"
+      },
+      "bottom": -200,
+      "thickness": {
+        "ref": "value.tail_thickness"
+      }
+    }
+  ],
+  "gaps": [
+    {
+      "id": "tail_aperture",
+      "name": "tail aperture",
+      "minimum": {
+        "ref": "review.minimum_gap"
+      },
+      "probes": [
+        {
+          "axis": "y",
+          "between": [
+            "hbar_2",
+            "hbar_1"
+          ]
+        }
+      ],
+      "if_below": {
+        "action": "widen",
+        "set": {
+          "tail_thickness": {
+            "constant": 0,
+            "terms": {
+              "metrics.descent": 1,
+              "review.minimum_gap": -1
+            }
+          }
+        }
+      }
+    }
+  ],
+  "anchors": {}
+}

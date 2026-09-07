@@ -1,0 +1,39 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+002E",
+  "name": "full_stop",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "rectangle_1",
+      "operation": "add",
+      "primitive": "rectangle",
+      "left": {
+        "constant": 250,
+        "terms": {
+          "weight.thickness": -0.5
+        }
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "right": {
+        "constant": 250,
+        "terms": {
+          "weight.thickness": 0.5
+        }
+      },
+      "top": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

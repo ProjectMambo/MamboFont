@@ -1,0 +1,135 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+006D",
+  "name": "latin_small_letter_m",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {
+    "diagonal_1_from": {
+      "x": {
+        "ref": "guide.x.inner_left"
+      },
+      "y": {
+        "ref": "metrics.x_height"
+      }
+    },
+    "diagonal_1_to": {
+      "x": {
+        "ref": "guide.x.center"
+      },
+      "y": {
+        "ref": "metrics.descent"
+      }
+    },
+    "diagonal_2_from": {
+      "x": {
+        "ref": "guide.x.inner_right"
+      },
+      "y": {
+        "ref": "metrics.x_height"
+      }
+    },
+    "diagonal_2_to": {
+      "x": {
+        "ref": "guide.x.center"
+      },
+      "y": {
+        "ref": "metrics.descent"
+      }
+    },
+    "notch_join": {
+      "x": {
+        "ref": "guide.x.center"
+      },
+      "y": {
+        "ref": "guide.y.x_mid"
+      }
+    }
+  },
+  "shapes": [
+    {
+      "id": "vbar_1",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "ref": "metrics.x_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "diagonal_1",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "diagonal_1_from",
+      "to": "diagonal_1_to",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "diagonal_2",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "diagonal_2_from",
+      "to": "diagonal_2_to",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "vbar_2",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "guide.x.inner_right"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "ref": "metrics.x_height"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [
+    {
+      "id": "center_notch",
+      "name": "center notch",
+      "minimum": {
+        "ref": "review.minimum_gap"
+      },
+      "probes": [
+        {
+          "axis": "x",
+          "at": {
+            "ref": "guide.y.x_height"
+          },
+          "between": [
+            "diagonal_1",
+            "diagonal_2"
+          ]
+        }
+      ],
+      "if_below": {
+        "action": "fill",
+        "to": "notch_join"
+      }
+    }
+  ],
+  "anchors": {}
+}

@@ -1,0 +1,71 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+007E",
+  "name": "tilde",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {
+    "diagonal_1_from": {
+      "x": 100,
+      "y": 220
+    },
+    "diagonal_1_to": {
+      "x": 200,
+      "y": 380
+    },
+    "diagonal_2_from": {
+      "x": 200,
+      "y": 380
+    },
+    "diagonal_2_to": {
+      "x": 300,
+      "y": 220
+    },
+    "diagonal_3_from": {
+      "x": 300,
+      "y": 220
+    },
+    "diagonal_3_to": {
+      "x": 400,
+      "y": 380
+    }
+  },
+  "shapes": [
+    {
+      "id": "diagonal_1",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "diagonal_1_from",
+      "to": "diagonal_1_to",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "diagonal_2",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "diagonal_2_from",
+      "to": "diagonal_2_to",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "diagonal_3",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "diagonal_3_from",
+      "to": "diagonal_3_to",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

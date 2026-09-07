@@ -1,0 +1,43 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+005C",
+  "name": "reverse_solidus",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {
+    "diagonal_1_from": {
+      "x": {
+        "ref": "guide.x.diagonal_left"
+      },
+      "y": {
+        "ref": "metrics.cap_height"
+      }
+    },
+    "diagonal_1_to": {
+      "x": {
+        "ref": "guide.x.diagonal_right"
+      },
+      "y": {
+        "ref": "guide.y.baseline"
+      }
+    }
+  },
+  "shapes": [
+    {
+      "id": "diagonal_1",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "diagonal_1_from",
+      "to": "diagonal_1_to",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

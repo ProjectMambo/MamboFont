@@ -1,0 +1,71 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+002A",
+  "name": "asterisk",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {
+    "diagonal_1_from": {
+      "x": 120,
+      "y": 230
+    },
+    "diagonal_1_to": {
+      "x": 380,
+      "y": 450
+    },
+    "diagonal_2_from": {
+      "x": 380,
+      "y": 230
+    },
+    "diagonal_2_to": {
+      "x": 120,
+      "y": 450
+    }
+  },
+  "shapes": [
+    {
+      "id": "vbar_1",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "constant": 250,
+        "terms": {
+          "weight.thickness": -0.5
+        }
+      },
+      "bottom": 170,
+      "top": {
+        "ref": "guide.y.one_flag"
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "diagonal_1",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "diagonal_1_from",
+      "to": "diagonal_1_to",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "diagonal_2",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "diagonal_2_from",
+      "to": "diagonal_2_to",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

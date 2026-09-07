@@ -1,0 +1,87 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+006A",
+  "name": "latin_small_letter_j",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "vbar_1",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "guide.x.inner_right"
+      },
+      "bottom": -200,
+      "top": {
+        "constant": 320,
+        "terms": {
+          "weight.thickness": -1
+        }
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "hbar_1",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "right": {
+        "ref": "metrics.ink_right"
+      },
+      "bottom": -200,
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "vbar_2",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "bottom": -200,
+      "top": {
+        "constant": -200,
+        "terms": {
+          "weight.thickness": 2
+        }
+      },
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "rectangle_1",
+      "operation": "add",
+      "primitive": "rectangle",
+      "left": {
+        "ref": "guide.x.inner_right"
+      },
+      "bottom": {
+        "constant": 400,
+        "terms": {
+          "weight.thickness": -1
+        }
+      },
+      "right": {
+        "ref": "metrics.ink_right"
+      },
+      "top": {
+        "ref": "metrics.x_height"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

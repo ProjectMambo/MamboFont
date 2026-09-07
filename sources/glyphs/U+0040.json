@@ -1,0 +1,172 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+0040",
+  "name": "commercial_at",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {
+    "detail_thickness": {
+      "ref": "weight.thickness"
+    }
+  },
+  "points": {},
+  "shapes": [
+    {
+      "id": "vbar_1",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "top": {
+        "ref": "metrics.cap_height"
+      },
+      "thickness": {
+        "ref": "value.detail_thickness"
+      }
+    },
+    {
+      "id": "hbar_1",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "right": {
+        "ref": "metrics.ink_right"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "thickness": {
+        "ref": "value.detail_thickness"
+      }
+    },
+    {
+      "id": "hbar_2",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": {
+        "ref": "metrics.ink_left"
+      },
+      "right": {
+        "ref": "metrics.ink_right"
+      },
+      "bottom": {
+        "constant": 0,
+        "terms": {
+          "guide.y.cap_height": 1,
+          "value.detail_thickness": -1
+        }
+      },
+      "thickness": {
+        "ref": "value.detail_thickness"
+      }
+    },
+    {
+      "id": "vbar_2",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": 180,
+      "bottom": 160,
+      "top": 480,
+      "thickness": {
+        "ref": "value.detail_thickness"
+      }
+    },
+    {
+      "id": "vbar_3",
+      "operation": "add",
+      "primitive": "vbar",
+      "left": {
+        "constant": 380,
+        "terms": {
+          "value.detail_thickness": -1
+        }
+      },
+      "bottom": 160,
+      "top": 480,
+      "thickness": {
+        "ref": "value.detail_thickness"
+      }
+    },
+    {
+      "id": "hbar_3",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": 180,
+      "right": 380,
+      "bottom": 160,
+      "thickness": {
+        "ref": "value.detail_thickness"
+      }
+    },
+    {
+      "id": "hbar_4",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": 180,
+      "right": 380,
+      "bottom": {
+        "constant": 480,
+        "terms": {
+          "value.detail_thickness": -1
+        }
+      },
+      "thickness": {
+        "ref": "value.detail_thickness"
+      }
+    },
+    {
+      "id": "hbar_5",
+      "operation": "add",
+      "primitive": "hbar",
+      "left": 320,
+      "right": {
+        "ref": "metrics.ink_right"
+      },
+      "bottom": 160,
+      "thickness": {
+        "ref": "value.detail_thickness"
+      }
+    }
+  ],
+  "gaps": [
+    {
+      "id": "nested_frame_clearance",
+      "name": "nested-frame clearance",
+      "minimum": {
+        "ref": "review.minimum_gap"
+      },
+      "probes": [
+        {
+          "axis": "x",
+          "between": [
+            "vbar_1",
+            "vbar_2"
+          ]
+        }
+      ],
+      "if_below": {
+        "action": "widen",
+        "set": {
+          "detail_thickness": {
+            "by_weight": {
+              "Regular": 40,
+              "Medium": 47,
+              "SemiBold": 54,
+              "Bold": 60
+            }
+          }
+        }
+      }
+    }
+  ],
+  "anchors": {}
+}

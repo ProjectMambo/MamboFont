@@ -52,6 +52,7 @@ SHAPE_FIELDS = {
     "joined_diagonal": {
         "lower_y", "upper_y", "lower_left", "upper_right", "upper_stem",
     },
+    "polygon": {"vertices"},
 }
 COMPONENT_SHAPE_KEYS = {"id", "component", "parameters"}
 POINT_KEYS = {"x", "y"}
@@ -319,7 +320,7 @@ def resolved_guides(project: Project, weight: str):
     return {"x": x, "y": y}
 
 
-def _design(project, weight):
+def design_for(project, weight):
     metrics = project.font["metrics"]
     return Design(
         thickness=project.font["weights"][weight]["thickness"],
@@ -364,6 +365,12 @@ def _build_primitive(shape, resolve, points, design, where):
             upper_right=value("upper_right"),
             upper_stem=shape["upper_stem"],
         )
+    if primitive == "polygon":
+        return polygon(*(
+            (resolve(point["x"], f"{where}.vertices[{index}].x"),
+             resolve(point["y"], f"{where}.vertices[{index}].y"))
+            for index, point in enumerate(shape["vertices"])
+        ))
     raise ConfigError(f"{where}: unsupported primitive {primitive}")
 
 
@@ -400,7 +407,7 @@ def _resolved_glyph(project: Project, key: str, weight: str, overrides=None):
         name: (references[f"point.{name}.x"], references[f"point.{name}.y"])
         for name in glyph_source["points"]
     }
-    design = _design(project, weight)
+    design = design_for(project, weight)
     shapes = []
     for shape in glyph_source["shapes"]:
         if "component" not in shape:
@@ -501,7 +508,7 @@ def blueprint_for(project: Project, key: str, weight: str):
                 patches.append(polygon(first, second, state["points"][fallback["to"]]))
             resolved = 0
         rules.append(gap_rule(
-            _design(project, weight), gap_source["name"], natural,
+            design_for(project, weight), gap_source["name"], natural,
             fallback["action"], resolved, minimum,
         ))
     ink = [shape["contour"] for shape in state["shapes"] if shape["operation"] == "add"]
@@ -549,6 +556,15 @@ def _validate_shape(shape, where, weight_ids, point_ids, components, *, allow_co
         ):
             raise ConfigError(f"{where}: diagonal references an unknown point")
         _scalar(shape["thickness"], f"{where}.thickness", weight_ids)
+        return
+    if primitive == "polygon":
+        vertices = shape["vertices"]
+        if not isinstance(vertices, list) or len(vertices) < 3:
+            raise ConfigError(f"{where}.vertices: expected at least three points")
+        for index, point in enumerate(vertices):
+            _keys(point, POINT_KEYS, f"{where}.vertices[{index}]")
+            for axis, scalar in point.items():
+                _scalar(scalar, f"{where}.vertices[{index}].{axis}", weight_ids)
         return
     if primitive == "joined_diagonal":
         if not isinstance(shape["upper_stem"], bool):
@@ -711,7 +727,10 @@ def load_project(path: Path | str = DEFAULT_CONFIG) -> Project:
     for weight in font["weights"]:
         resolved_guides(project, weight)
         for key in glyphs:
-            blueprint_for(project, key, weight)
+            try:
+                blueprint_for(project, key, weight)
+            except (ConfigError, ValueError) as error:
+                raise ConfigError(f"{key} ({weight}): {error}") from error
     return project
 
 

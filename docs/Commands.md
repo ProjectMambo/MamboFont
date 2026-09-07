@@ -30,10 +30,10 @@ The installer uses $HOME/.local/bin by default. Set MAMBOFONT_BIN_DIR to select 
 ## Compile
 
 ~~~text
-mbfont compile [X.Y.Z] [--out DIR] [--format ttf woff2]
+mbfont compile [X.Y.Z] [--config FILE] [--out DIR] [--format ttf woff2]
 ~~~
 
-The version defaults to the generator's current version and must be exact core SemVer such as 0.4.0. The output directory defaults to build/pilot; both file formats are generated when --format is omitted.
+The version defaults to the generator's current version and must be exact core SemVer such as 0.4.0. The config defaults to `sources/font.json`, the output directory defaults to build/pilot, and both file formats are generated when --format is omitted.
 
 Build all four weights:
 
@@ -52,7 +52,7 @@ The pilot produces Regular, Medium, SemiBold, and Bold under the temporary inter
 ## Check committed candidates
 
 ~~~text
-mbfont check [X.Y.Z] [--out DIR] [--format ttf woff2]
+mbfont check [X.Y.Z] [--config FILE] [--out DIR] [--format ttf woff2]
 ~~~
 
 Check rebuilds into a temporary directory and byte-compares every selected file with the destination. A missing or stale file makes the command fail.
@@ -66,7 +66,7 @@ Generation uses a fixed source epoch and fixed ordering, so identical rules prod
 ## Generate the specimen
 
 ~~~text
-mbfont specimen [X.Y.Z] [--fonts DIR] [--out FILE]
+mbfont specimen [X.Y.Z] [--config FILE] [--fonts DIR] [--out FILE]
 ~~~
 
 The specimen is a local HTML review page containing all four weights and the supported character groups.
@@ -79,7 +79,7 @@ Open specimen.html in a browser after any geometry, weight, or gap-rule change. 
 
 ## Current development workflow
 
-1. Change dimensions, named proportional guides, primitives, or the default 14-pixel/80-unit gap settings in sources/model.py; change glyph geometry and each vulnerable glyph's explicit gap action in sources/glyphs.py.
+1. Change project dimensions, guides, weights, or coverage in `sources/font.json`; reusable geometry in `sources/components.json`; and glyph points, primitives, or gap actions in `sources/glyphs/U+XXXX.json`.
 2. Compile all four weights into build/pilot.
 3. Regenerate and inspect specimen.html at large and small sizes and in the blueprint views.
 4. Run the deterministic end-to-end check.
@@ -94,15 +94,15 @@ git diff --check
 git status --short
 ~~~
 
-The test asserts the exact 95-character printable-ASCII map, declared fill/widen outcomes, receiver-aligned diagonals, nominal-thickness punctuation, design-supplied advances, safe bounds, straight on-curve contours with no redundant points, metadata and line metrics, FontForge validity, and deterministic bytes in both formats. A 600-unit-wide, 850-unit-ascent blueprint check guards the shared proportional guides.
+The tests assert all 95 printable ASCII glyphs, all 67 declared empty controls and spaces, declared fill/widen outcomes, fixed advances, safe bounds, straight on-curve contours with no redundant points, metadata and line metrics, FontForge validity, and deterministic bytes in both formats.
 
 `GapRule` validation checks each recipe's declared `natural`, `minimum`, action, and `resolved` values; it does not run a generic post-outline gap detector. One-bit XBM checks preserve the Bold `g` tail aperture and require every non-space ASCII glyph to remain visually distinct at 14, 16, and 24 pixels. The test also rejects any active call to FontForge's stroke expansion.
 
-## Config and editor migration
+## Config-driven build and editor migration
 
-Phases 1 and 2 are implemented. The strict `sources/config.py` evaluator loads the JSON project, resolves project and glyph references, expands generic filled primitives and the reusable frame component, measures declared gaps, and applies one explicit `fill` or `widen` fallback. The current representative files are `.notdef`, `7`, `A`, `H`, `M`, `O`, and `a`.
+Phases 1 through 3 are implemented. The strict `sources/config.py` evaluator loads the JSON project, resolves project and glyph references, expands generic filled primitives and reusable components, measures declared gaps, and applies one explicit `fill` or `widen` fallback. `.notdef` and every printable ASCII glyph now have JSON recipes, and all font-producing commands use them directly.
 
-JSON does not drive `compile` or `check` yet, and `mbfont edit` does not exist, so use the current Python and specimen commands above until the printable-ASCII migration reaches its parity gate.
+`mbfont edit` does not exist yet, so use the config-driven compile/check/specimen commands above until the editor reaches its parity gate.
 
 Check the JSON source contract without FontForge:
 
@@ -110,7 +110,7 @@ Check the JSON source contract without FontForge:
 /usr/bin/python3 tests/test_config.py
 ~~~
 
-It requires 283 target code points, 67 explicit empty code points, 210 pending drawn glyphs, exact JSON/Python guide parity, and exact source-blueprint parity for the seven configured glyphs in every weight. It also checks duplicate-key and cyclic-reference rejection. The FontForge end-to-end test separately requires identical normalized contours between the JSON and current Python recipes.
+It requires 283 target code points, 67 explicit empty code points, all 94 visible ASCII recipes, 122 pending drawn extended glyphs, valid guide resolution and gap outcomes in every weight, plus duplicate-key and cyclic-reference rejection. The FontForge end-to-end test separately checks the 161-entry current cmap, empty outlines, normalized contours, raster outcomes, and deterministic binaries.
 
 The existing headless interface remains stable for other repositories:
 
@@ -119,7 +119,7 @@ mbfont compile [X.Y.Z] [--config FILE] [--out DIR] [--format ttf woff2]
 mbfont check [X.Y.Z] [--config FILE] [--out DIR] [--format ttf woff2]
 ~~~
 
-`--config` will default to `sources/font.json`; omitting it preserves today's command shape. Both commands will load the same JSON project and call the same Python compiler used by the editor. Downstream builds will not require a browser, JavaScript, Rust, Node.js, or an editor dependency.
+`--config` defaults to `sources/font.json`; omitting it preserves the original command shape. Both commands load the same JSON project and call the same Python compiler that the editor will use. Downstream builds do not require a browser, JavaScript, Rust, Node.js, or an editor dependency.
 
 The only new authoring command is planned as:
 
@@ -143,7 +143,7 @@ It will start a loopback-only local server and open the browser editor. Its Buil
 
 1. **Complete:** establish the strict versioned JSON manifest and resolver, preserve the current source commit as the behavior baseline, and record controls and spaces as explicit empty coverage.
 2. **Complete:** translate `.notdef`, `7`, `A`, `H`, `M`, `O`, and `a`, covering bars, diagonals, cuts, components, joins, and both gap actions; require matching source geometry and normalized contours in all four weights.
-3. Translate all printable ASCII into JSON and keep both paths only long enough to prove parity. Switch `compile` and `check`, then remove glyph-specific Python recipes in the same checkpoint.
+3. **Complete:** translate all printable ASCII into JSON, prove normalized contour parity in every weight, switch `compile`, `check`, and `specimen`, encode the configured empty controls and spaces, then remove glyph-specific Python recipes.
 4. Add the editor first as a read-only geometry and live-font viewer, then add point, guide, primitive, gap-rule, undo, and atomic-save operations.
 5. Match the current specimen's glyph grid, weights, sizes, optimized-point display, gap diagnostics, and ambiguity strings. Only after that gate, remove the tracked `specimen.html` and the `specimen` command; the editor's typable box becomes the review surface.
 6. Expand Latin-1 and the printable Windows-1252 set through new JSON glyph and component files, then use the editor for the human tuning pass.

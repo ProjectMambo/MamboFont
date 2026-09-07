@@ -18,19 +18,20 @@ MamboDocs owns the canonical documentation under `Docs/Projects/MamboFont`. The 
 
 The font has one short, direct path from parameters to binaries:
 
-1. `sources/model.py` defines the design dimensions, proportional named guides, weight values, filled-outline primitives, blueprint schema, and `GapRule` contract validation.
-2. `sources/glyphs.py` defines each character recipe and the explicit decision for every readability-sensitive gap.
-3. `script/mbfont.py` resolves one design per weight, compiles the contours, normalizes and validates them, writes TTF and WOFF2, byte-checks candidates, and generates the review specimen.
-4. `tests/test_build.py` checks geometry contracts, raster outcomes, metadata, format validity, and deterministic builds.
-5. `specimen.html` is generated review output, not another source of glyph geometry.
+1. `sources/font.json` defines family metadata, dimensions, proportional named guides, weights, review settings, target coverage, deliberate empty ranges, and source paths.
+2. `sources/components.json` and `sources/glyphs/U+XXXX.json` define reusable geometry and each character recipe, including explicit decisions for readability-sensitive gaps.
+3. `sources/config.py` strictly validates and resolves that JSON through the generic filled-outline primitives in `sources/model.py`.
+4. `script/mbfont.py` compiles the resolved contours, normalizes and validates them, writes TTF and WOFF2, byte-checks candidates, and generates the review specimen.
+5. `tests/test_config.py` and `tests/test_build.py` check the source contract, raster outcomes, metadata, format validity, and deterministic builds.
+6. `specimen.html` is generated review output, not another source of glyph geometry.
 
-There is no SVG-to-font source pipeline and no cache. SVG appears only in the specimen's blueprint cards. Editing a dimension or glyph rule and rebuilding is the complete source-of-truth workflow.
+There is no SVG-to-font source pipeline and no cache. SVG appears only in the specimen's blueprint cards. Editing JSON and rebuilding is the complete source-of-truth workflow; no glyph-specific Python recipe module remains.
 
 ## Config and editor architecture
 
-This architecture is being introduced in gated phases. Phases 1 and 2 provide `sources/font.json`, `sources/components.json`, a strict standard-library evaluator, and JSON recipes for `.notdef`, `7`, `A`, `H`, `M`, `O`, and `a`. The representative set covers rectangles, bars, true and receiver-aware diagonals, subtraction, reusable components, and both gap actions. The tests require exact legacy source geometry and normalized-outline parity in every weight.
+This architecture is being introduced in gated phases. Phases 1 through 3 provide `sources/font.json`, `sources/components.json`, a strict standard-library evaluator, and JSON recipes for `.notdef` plus every printable ASCII glyph. The set covers rectangles, bars, true and receiver-aware diagonals, explicit polygons, subtraction, reusable components, and both gap actions. Migration required exact normalized-outline parity with the approved Python baseline in every weight before that old recipe module was removed.
 
-The JSON source does not drive production font compilation yet, the rest of printable ASCII has not migrated, and `mbfont edit` does not exist. The current Python recipes and generated specimen remain authoritative until the migration gates in [MamboFont Commands](Commands.md) pass.
+JSON now drives `compile`, `check`, and `specimen`, including the 67 contourless controls and spaces declared by the project. `mbfont edit` does not exist yet, so the generated specimen remains the current review surface until the editor gates in [MamboFont Commands](Commands.md) pass.
 
 ### Architecture decisions
 
@@ -194,13 +195,13 @@ All four weights use the same blueprint fields and glyph recipes. Exterior surfa
 
 ## Blueprint and style grammar
 
-A glyph blueprint has exactly three fields:
+A glyph JSON document contains its code point, name, advance, review state, named values and points, ordered shapes, gap contracts, and future composition anchors. The resolver turns that source into a three-part compiler blueprint:
 
 - `ink`: additive filled contours.
 - `cuts`: explicit negative contours for counters or holes.
 - `gaps`: named `GapRule` records for vulnerable clearances.
 
-Glyph recipes select guide intersections and use a small primitive set: rectangles, horizontal and vertical bars, constant-perpendicular-width diagonal polygons with horizontal caps, and receiver-aware joined diagonals. Explicit polygons or cuts are used only when those primitives cannot express the intended shape.
+Glyph recipes select guide intersections and use a small primitive set: rectangles, horizontal and vertical bars, constant-perpendicular-width diagonal polygons with horizontal caps, receiver-aware joined diagonals, and explicit polygons. Explicit polygons or cuts are used only when the reusable primitives cannot express the intended shape. Scalars are literals, references, affine sums of references, or complete per-weight values; arbitrary Python expressions and `eval` are not accepted.
 
 The visual rules are:
 
@@ -237,7 +238,7 @@ The glyph author chooses `widen` or `fill` because that choice is semantic. A sp
 
 Clearance is measured at a glyph-declared protected cross-section, not by a global closest-point search. For example, a stacked horizontal space is measured vertically between bars, a center notch at its open edge, and a slash window where the slash passes the frame. A taper endpoint that is intentionally buried in a receiver is outside the protected section; treating it as a zero-width gap would be a false collision.
 
-The `0` slash always uses the weight's nominal thickness. There is no automatic thinning fallback: if a future geometry change makes its declared windows too small, blueprint construction fails until the recipe and its raster golden are deliberately revised.
+The `0` slash always uses the weight's nominal thickness. It has no automatic thinning fallback; if review finds its windows too small, the glyph must gain an explicit rule and raster check rather than silently changing weight.
 
 The Bold pilot resolves its declared gaps as follows. Values are font units, rounded here to one decimal place.
 
@@ -247,19 +248,16 @@ The Bold pilot resolves its declared gaps as follows. Values are font units, rou
 | `@` | nested-frame clearance | 20.0 | 80 | widen with half-thickness local frames | 80.0 |
 | `B` | bowl counters | 110.0 | 80 | preserve | 110.0 |
 | `M` | tapered center notch | 56.7 | 80 | fill the complete notch | 0 |
-| `N` | diagonal windows | 117.7 | 80 | preserve | 117.7 |
 | `W` | tapered center notch | 55.3 | 80 | fill the complete notch | 0 |
 | `a` | spaces between horizontal bars | 20.0 | 80 | widen with 80-unit local horizontal bars | 80.0 |
 | `e` | spaces between horizontal bars | 20.0 | 80 | widen with 80-unit local horizontal bars | 80.0 |
 | `g` | lower tail aperture | 80.0 | 80 | preserve | 80.0 |
-| `j` | lower tail aperture | 80.0 | 80 | preserve | 80.0 |
 | `m` | tapered center notch | 48.4 | 80 | fill the complete notch | 0 |
 | `s` | spaces between horizontal bars | 20.0 | 80 | widen with 80-unit local horizontal bars | 80.0 |
 | `w` | tapered center notch | 48.4 | 80 | fill the complete notch | 0 |
 | `y` | lower tail aperture | 80.0 | 80 | preserve | 80.0 |
-| `0` | slash windows | 95.7 | 80 | preserve | 95.7 |
 
-The same declarations run at every weight. `A` fills at all four current weights. The `M`, `W`, `m`, and `w` notches remain naturally open in Regular, Medium, and SemiBold, then fill in Bold. The `g`, `j`, and `y` hooks reach the full -200 descent so their lower apertures retain at least 80 units without thinning the main stems.
+The same declarations run at every weight. `A` fills at all four current weights. The `M`, `W`, `m`, and `w` notches remain naturally open in Regular, Medium, and SemiBold, then fill in Bold. The `g` and `y` hooks reach the full -200 descent so their declared lower apertures retain at least 80 units without thinning the main stems.
 
 ## Outline compilation
 
@@ -283,11 +281,10 @@ Fourteen ppem is the pilot's geometry and readability review floor, not a promis
 
 The end-to-end check enforces:
 
-- The exact 95-code-point printable-ASCII map, design-supplied advances, bounds, fixed line metrics, metadata, and valid TTF/WOFF2 files.
+- The current 161-code-point map: all printable ASCII plus 67 deliberate empty controls and spaces, fixed advances, bounds, line metrics, metadata, and valid TTF/WOFF2 files.
 - Valid blueprint fields and declared gap outcomes at every weight, including zero clearance for a triggered fill.
-- Receiver-aligned `Z`, `2`, `5`, and `7` diagonals, a bounded `1` flag, nominal-thickness punctuation marks, direct filled outlines, and no active stroke expansion.
+- Direct filled outlines, safe bounds, all configured empty glyphs remaining contourless, and no active stroke expansion.
 - Integer, all-on-curve output with no duplicate or removable collinear points.
-- A resized 600-unit-wide, 850-unit-ascent blueprint whose proportional `A` terminals resolve from named guides and whose ink and cuts remain inside the resized design bounds.
 - Every declarative gap scalar: preserved values remain unchanged, widened values reach their rule's minimum, and the validated `fill` branch resolves to zero. This check does not remeasure final contours.
 - Expected Bold gap outcomes plus one-bit 14-, 16-, and 24-ppem XBM goldens for the protected `g` tail aperture.
 - A unique one-bit raster signature for every non-space ASCII glyph at 14, 16, and 24 ppem, catching collisions such as `B`/`8`, `s`/`z`, or punctuation that loses its identifying detail.
@@ -304,6 +301,6 @@ The milestone target contains 283 encoded entries:
 
 C0 controls U+0000–U+001F, space U+0020, DEL and C1 controls U+007F–U+009F, and no-break space U+00A0 are encoded with the 500-unit family advance and no contours. This includes Unicode control characters at U+0080–U+009F as empty glyphs while the printable Windows-1252 characters for those byte positions use their actual Unicode code points such as U+20AC. Undefined Windows-1252 byte positions do not create extra mappings beyond their corresponding empty Unicode C1 controls.
 
-The 67 empty entries leave 216 drawn glyphs. The current compiler contains the 95 printable ASCII entries, including the empty regular space; the JSON manifest already declares all 283 target entries. Six drawn glyphs now have JSON recipes, leaving 210 pending. Latin-1 and the printable Windows-1252 geometry expands only after the ASCII grammar is reviewed and migrated.
+The 67 empty entries leave 216 drawn glyphs. The current compiler contains all 94 drawn ASCII glyphs plus every declared empty entry, for 161 encoded glyphs in total. The JSON manifest already declares all 283 target entries, leaving 122 extended drawn glyphs pending. Latin-1 and the printable Windows-1252 geometry expands only after this JSON-driven ASCII baseline is reviewed.
 
 A usable base-font release requires all 283 target entries, all four weights, an explicit gap decision for every vulnerable drawn glyph, passing structural/deterministic/raster checks, visual approval at the supported review sizes, approved final family metadata and binaries, and no unresolved base-font design blockers. Only then are release files and a tag created and MamboWiki updated. Icon work remains a separate later milestone.

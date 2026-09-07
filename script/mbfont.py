@@ -19,17 +19,26 @@ try:
 except ImportError:
     raise SystemExit("FontForge Python bindings are required (run with /usr/bin/python3).")
 
-from sources.glyphs import ASCII_CHARACTERS, ascii_glyphs
-from sources.model import Design, design_for, glyph, rectangle
+from sources.config import DEFAULT_CONFIG, blueprint_for, design_for, load_project, parse_codepoint
 
 
 VERSION = "0.4.0"
-WEIGHTS = (("Regular", 400), ("Medium", 500), ("SemiBold", 600), ("Bold", 700))
 FORMATS = ("ttf", "woff2")
-REVIEW_SIZES = (10, 12, 14, 16, 24)
 GENERATION_FLAGS = ("opentype", "no-FFTM-table")
 PANOSE_WEIGHT = {400: 5, 500: 6, 600: 7, 700: 8}
-ASCII_CODEPOINTS = set(range(0x20, 0x7F))
+ASCII_CHARACTERS = "".join(map(chr, range(0x21, 0x7F)))
+
+
+def weights(project):
+    return tuple((name, values["css"]) for name, values in project.font["weights"].items())
+
+
+def encoded_codepoints(project):
+    return set(project.empty) | {
+        parse_codepoint(source["codepoint"])
+        for source in project.glyphs.values()
+        if "codepoint" in source
+    }
 
 
 def validate_version(value):
@@ -121,8 +130,10 @@ def _draw_blueprint(target, blueprint, design):
     _normalize(target)
 
 
-def _make_font(style, weight, version):
-    design = design_for(style)
+def _make_font(style, weight, version, project=None):
+    project = load_project() if project is None else project
+    design = design_for(project, style)
+    family = project.font["family"]
     font = fontforge.font()
     font.encoding = "UnicodeFull"
     font.ascent = design.ascent
@@ -141,50 +152,42 @@ def _make_font(style, weight, version):
     font.os2_winascent_add = False
     font.os2_windescent = design.descent
     font.os2_windescent_add = False
-    font.familyname = "Mambo Font Pilot"
-    font.fullname = f"Mambo Font Pilot {style}"
-    font.fontname = f"MamboFontPilot-{style}"
+    font.familyname = family["name"]
+    font.fullname = f"{family['name']} {style}"
+    font.fontname = f"{family['postscript_name']}-{style}"
     font.weight = style
     font.version = version
     font.os2_weight = weight
-    font.os2_vendor = "MAMB"
+    font.os2_vendor = family["vendor"]
     font.os2_use_typo_metrics = True
     font.os2_panose = (2, 11, PANOSE_WEIGHT[weight], 9, 2, 2, 2, 2, 2, 4)
-    font.copyright = "Copyright (c) 2026 ProjectMambo"
-    font.appendSFNTName("English (US)", 13, "MIT License")
-    font.appendSFNTName("English (US)", 14, "https://github.com/ProjectMambo/MamboFont/blob/main/LICENSE")
+    font.copyright = family["copyright"]
+    font.appendSFNTName("English (US)", 13, family["license"])
+    font.appendSFNTName("English (US)", 14, family["license_url"])
     if weight == 700:
         font.macstyle = 1
         font.os2_stylemap = 0x20
 
     missing = font.createChar(-1, ".notdef")
-    _draw_blueprint(
-        missing,
-        glyph(
-            rectangle(design.ink_left, 0, design.ink_right, design.cap_height),
-            cuts=(rectangle(
-                design.ink_left + design.thickness,
-                design.thickness,
-                design.ink_right - design.thickness,
-                design.cap_height - design.thickness,
-            ),),
-        ),
-        design,
-    )
-    space = font.createChar(0x20, "space")
-    space.width = design.advance
-    for char, blueprint in sorted(ascii_glyphs(design).items()):
-        target = font.createChar(ord(char))
-        _draw_blueprint(target, blueprint, design)
+    _draw_blueprint(missing, blueprint_for(project, ".notdef", style), design)
+    for codepoint in sorted(project.empty):
+        font.createChar(codepoint).width = design.advance
+    for key in sorted(project.glyphs):
+        source = project.glyphs[key]
+        if "codepoint" not in source:
+            continue
+        target = font.createChar(parse_codepoint(source["codepoint"]))
+        _draw_blueprint(target, blueprint_for(project, key, style), design)
 
-    _validate_font(font, design)
+    _validate_font(font, design, project)
     return font
 
 
-def _validate_font(font, design):
+def _validate_font(font, design, project):
     actual = {item.unicode for item in font.glyphs() if item.unicode >= 0}
-    if actual != ASCII_CODEPOINTS:
-        raise RuntimeError(f"ASCII cmap mismatch: {sorted(actual ^ ASCII_CODEPOINTS)}")
+    expected = encoded_codepoints(project)
+    if actual != expected:
+        raise RuntimeError(f"configured cmap mismatch: {sorted(actual ^ expected)}")
     for item in font.glyphs():
         is_ours = item.unicode >= 0 or item.glyphname == ".notdef"
         if is_ours and item.width != design.advance:
@@ -200,18 +203,19 @@ def _validate_font(font, design):
         raise RuntimeError(f"font validation flags {problems:#x}")
 
 
-def _output_name(style, version, file_format):
-    return f"MamboFontPilot-{style}_v{version}.{file_format}"
+def _output_name(style, version, file_format, project=None):
+    family = (load_project() if project is None else project).font["family"]["postscript_name"]
+    return f"{family}-{style}_v{version}.{file_format}"
 
 
-def _generate(font, destination, design):
+def _generate(font, destination, design, project):
     destination.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".mambofont-generate.", dir=destination.parent) as temporary:
         candidate = Path(temporary) / destination.name
         font.generate(str(candidate), flags=GENERATION_FLAGS)
         reopened = fontforge.open(str(candidate))
         try:
-            _validate_font(reopened, design)
+            _validate_font(reopened, design, project)
         finally:
             reopened.close()
         candidate.replace(destination)
@@ -221,15 +225,16 @@ def _selected_formats(values):
     return tuple(dict.fromkeys(values or FORMATS))
 
 
-def compile_fonts(version, out_dir, formats):
+def compile_fonts(version, out_dir, formats, config=DEFAULT_CONFIG):
+    project = load_project(config)
     outputs = []
-    for style, weight in WEIGHTS:
-        design = design_for(style)
-        font = _make_font(style, weight, version)
+    for style, weight in weights(project):
+        design = design_for(project, style)
+        font = _make_font(style, weight, version, project)
         try:
             for file_format in formats:
-                destination = out_dir / _output_name(style, version, file_format)
-                _generate(font, destination, design)
+                destination = out_dir / _output_name(style, version, file_format, project)
+                _generate(font, destination, design, project)
                 outputs.append(destination)
         finally:
             font.close()
@@ -237,14 +242,14 @@ def compile_fonts(version, out_dir, formats):
 
 
 def command_compile(args):
-    for output in compile_fonts(args.version, args.out, _selected_formats(args.formats)):
+    for output in compile_fonts(args.version, args.out, _selected_formats(args.formats), args.config):
         print(output)
 
 
 def command_check(args):
     formats = _selected_formats(args.formats)
     with tempfile.TemporaryDirectory(prefix="mambofont-check.") as temporary:
-        generated = compile_fonts(args.version, Path(temporary), formats)
+        generated = compile_fonts(args.version, Path(temporary), formats, args.config)
         stale = [
             args.out / candidate.name
             for candidate in generated
@@ -286,19 +291,25 @@ def _blueprint_card(char, blueprint, design, compiled):
 
 
 def command_specimen(args):
+    project = load_project(args.config)
+    configured_ascii = "".join(
+        char for char in ASCII_CHARACTERS
+        if f"U+{ord(char):04X}" in project.glyphs
+    )
     font_dir = Path(os.path.relpath(args.fonts.resolve(), args.out.resolve().parent))
     faces = []
-    for style, weight in WEIGHTS:
-        filename = _output_name(style, args.version, "woff2")
+    for style, weight in weights(project):
+        filename = _output_name(style, args.version, "woff2", project)
         if not (args.fonts / filename).is_file():
             raise SystemExit(f"missing font: {args.fonts / filename}")
         faces.append(
             f'@font-face {{ font-family:"MamboFontPilot"; src:url("{font_dir / filename}") format("woff2"); font-weight:{weight}; }}'
         )
     review_text = "Il1|! O0Q B8& S5$ Z2 G6 g9q rn m vv w uvw cld pqbd"
+    review_sizes = tuple(project.font["review"]["stress_ppem"] + project.font["review"]["review_ppem"])
     size_samples = "".join(
         f'<span style="font-size:{size}px">{size}px · {html.escape(review_text)}</span>'
-        for size in REVIEW_SIZES
+        for size in review_sizes
     )
     ascii_rows = (
         "!\"#$%&'()*+,-./ 0123456789:;<=>?@",
@@ -309,17 +320,20 @@ def command_specimen(args):
     samples = "".join(
         f'<section><h2>{style} · {weight}</h2><p class="sample" style="font-weight:{weight}">{display}</p>'
         f'<p class="sizes" style="font-weight:{weight}">{size_samples}</p></section>'
-        for style, weight in WEIGHTS
+        for style, weight in weights(project)
     )
     blueprint_sections = []
-    for style, weight in (WEIGHTS[0], WEIGHTS[-1]):
-        design = design_for(style)
-        recipes = ascii_glyphs(design)
-        font = _make_font(style, weight, args.version)
+    configured_weights = weights(project)
+    for style, weight in (configured_weights[0], configured_weights[-1]):
+        design = design_for(project, style)
+        font = _make_font(style, weight, args.version, project)
         try:
             cards = "".join(
-                _blueprint_card(char, recipes[char], design, font[ord(char)])
-                for char in ASCII_CHARACTERS
+                _blueprint_card(
+                    char, blueprint_for(project, f"U+{ord(char):04X}", style),
+                    design, font[ord(char)],
+                )
+                for char in configured_ascii
             )
         finally:
             font.close()
@@ -355,6 +369,7 @@ def _add_build_options(parser):
     parser.add_argument("version", nargs="?", type=validate_version, default=VERSION)
     parser.add_argument("--out", type=Path, default=PROJECT_ROOT / "build" / "pilot")
     parser.add_argument("--format", dest="formats", nargs="+", choices=FORMATS)
+    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
 
 
 def build_parser():
@@ -370,6 +385,7 @@ def build_parser():
     specimen_parser.add_argument("version", nargs="?", type=validate_version, default=VERSION)
     specimen_parser.add_argument("--fonts", type=Path, default=PROJECT_ROOT / "build" / "pilot")
     specimen_parser.add_argument("--out", type=Path, default=PROJECT_ROOT / "specimen.html")
+    specimen_parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     specimen_parser.set_defaults(run=command_specimen)
     return parser
 

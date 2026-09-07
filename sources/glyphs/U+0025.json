@@ -1,0 +1,101 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+0025",
+  "name": "percent_sign",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {
+    "diagonal_1_from": {
+      "x": {
+        "ref": "guide.x.diagonal_left"
+      },
+      "y": {
+        "ref": "guide.y.baseline"
+      }
+    },
+    "diagonal_1_to": {
+      "x": {
+        "ref": "guide.x.diagonal_right"
+      },
+      "y": {
+        "ref": "metrics.cap_height"
+      }
+    }
+  },
+  "shapes": [
+    {
+      "id": "diagonal_1",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "diagonal_1_from",
+      "to": "diagonal_1_to",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "rectangle_1",
+      "operation": "add",
+      "primitive": "rectangle",
+      "left": {
+        "constant": 110,
+        "terms": {
+          "weight.thickness": -0.5
+        }
+      },
+      "bottom": {
+        "constant": 540,
+        "terms": {
+          "weight.thickness": -0.5
+        }
+      },
+      "right": {
+        "constant": 110,
+        "terms": {
+          "weight.thickness": 0.5
+        }
+      },
+      "top": {
+        "constant": 540,
+        "terms": {
+          "weight.thickness": 0.5
+        }
+      }
+    },
+    {
+      "id": "rectangle_2",
+      "operation": "add",
+      "primitive": "rectangle",
+      "left": {
+        "constant": 390,
+        "terms": {
+          "weight.thickness": -0.5
+        }
+      },
+      "bottom": {
+        "constant": 100,
+        "terms": {
+          "weight.thickness": -0.5
+        }
+      },
+      "right": {
+        "constant": 390,
+        "terms": {
+          "weight.thickness": 0.5
+        }
+      },
+      "top": {
+        "constant": 100,
+        "terms": {
+          "weight.thickness": 0.5
+        }
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

@@ -1,0 +1,65 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+005E",
+  "name": "circumflex_accent",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {
+    "diagonal_1_from": {
+      "x": 120,
+      "y": {
+        "ref": "metrics.x_height"
+      }
+    },
+    "diagonal_1_to": {
+      "x": {
+        "ref": "guide.x.center"
+      },
+      "y": {
+        "ref": "metrics.cap_height"
+      }
+    },
+    "diagonal_2_from": {
+      "x": 380,
+      "y": {
+        "ref": "metrics.x_height"
+      }
+    },
+    "diagonal_2_to": {
+      "x": {
+        "ref": "guide.x.center"
+      },
+      "y": {
+        "ref": "metrics.cap_height"
+      }
+    }
+  },
+  "shapes": [
+    {
+      "id": "diagonal_1",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "diagonal_1_from",
+      "to": "diagonal_1_to",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    },
+    {
+      "id": "diagonal_2",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "diagonal_2_from",
+      "to": "diagonal_2_to",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

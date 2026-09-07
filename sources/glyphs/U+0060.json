@@ -1,0 +1,44 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "codepoint": "U+0060",
+  "name": "grave_accent",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "review",
+  "values": {},
+  "points": {
+    "diagonal_1_from": {
+      "x": {
+        "ref": "guide.x.lowercase_stem"
+      },
+      "y": {
+        "ref": "metrics.cap_height"
+      }
+    },
+    "diagonal_1_to": {
+      "x": 270,
+      "y": {
+        "constant": 640,
+        "terms": {
+          "weight.thickness": -2
+        }
+      }
+    }
+  },
+  "shapes": [
+    {
+      "id": "diagonal_1",
+      "operation": "add",
+      "primitive": "diagonal",
+      "from": "diagonal_1_from",
+      "to": "diagonal_1_to",
+      "thickness": {
+        "ref": "weight.thickness"
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}
