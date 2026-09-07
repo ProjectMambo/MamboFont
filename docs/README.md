@@ -23,6 +23,7 @@ MamboFont is Project Mambo's blocky monospace typeface. Its Python blueprint com
 | Read the project overview | [docs/index.md](index.md) |
 | Build, check, or review the fonts | [Commands](Commands.md) |
 | Understand the glyph rules | [Design rules](Design.md) |
+| Read the approved JSON/editor architecture | [Config and editor architecture](Design.md#approved-config-and-editor-architecture-not-implemented) |
 | Edit the generator source | [sources/](../sources/) |
 | Inspect local pilot binaries | `build/pilot/` after compiling |
 | Review every weight | [specimen.html](../specimen.html) |
@@ -51,6 +52,8 @@ See [Commands](Commands.md) for all options and the required verification sequen
 ## Current scope
 
 The current review pilot encodes all 95 printable ASCII characters. It exists to approve the complete ASCII outline and gap grammar across all four weights before Latin-1 and Windows-1252 expansion. The milestone target remains 218 characters.
+
+A config-driven JSON source and local browser editor are approved as the next architecture, but they are not implemented yet. The current Python recipes and generated specimen remain authoritative during migration. Existing `compile` and `check` usage will stay compatible, and `specimen.html` will be removed only after the editor can replace every review function it provides.
 
 Only the base text family is active. All previous Mambo Icons drawings, binaries, and generator work are archived; a separate icon font can be designed after the base family reaches a usable release.
 

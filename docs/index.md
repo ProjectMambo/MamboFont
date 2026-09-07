@@ -32,4 +32,6 @@ The active project covers only the base text family. Previous Mambo Icons assets
 
 ## Current status
 
-Version 0.4.0 is an intentionally incomplete design pilot. The direct-outline generator, gap policy, and local validation exist; no release files, tag, or downstream migration have been made. MamboWiki will be updated only after the full base family becomes a usable release.
+Version 0.4.0 is an intentionally incomplete design pilot. The direct-outline generator, gap policy, and local validation exist; no release files, tag, or downstream migration have been made.
+
+A JSON-owned glyph source and local browser editor are the approved next architecture, but they are not implemented yet. There is no `mbfont edit` command today: the Python recipes and generated `specimen.html` remain the current workflow until the editor reaches review parity. MamboWiki will be updated only after the full base family becomes a usable release.

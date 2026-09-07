@@ -77,7 +77,7 @@ mbfont specimen 0.4.0 --fonts build/pilot --out specimen.html
 
 Open specimen.html in a browser after any geometry, weight, or gap-rule change. It includes all printable ASCII in every weight, ambiguity strings at 10, 12, 14, 16, and 24 pixels, and Regular and Bold geometry cards. Red points on those cards are the final TTF vertices after union, integer rounding, and exact duplicate/collinear cleanup; declared gap decisions appear below vulnerable glyphs. Fourteen pixels per em is the review floor, while 10 and 12 pixels are non-gating stress tests. The command requires the matching WOFF2 pilot files to exist first.
 
-## Development workflow
+## Current development workflow
 
 1. Change dimensions, named proportional guides, primitives, or the default 14-pixel/80-unit gap settings in sources/model.py; change glyph geometry and each vulnerable glyph's explicit gap action in sources/glyphs.py.
 2. Compile all four weights into build/pilot.
@@ -97,6 +97,47 @@ git status --short
 The test asserts the exact 95-character printable-ASCII map, declared fill/widen outcomes, receiver-aligned diagonals, nominal-thickness punctuation, design-supplied advances, safe bounds, straight on-curve contours with no redundant points, metadata and line metrics, FontForge validity, and deterministic bytes in both formats. A 600-unit-wide, 850-unit-ascent blueprint check guards the shared proportional guides.
 
 `GapRule` validation checks each recipe's declared `natural`, `minimum`, action, and `resolved` values; it does not run a generic post-outline gap detector. One-bit XBM checks preserve the Bold `g` tail aperture and require every non-space ASCII glyph to remain visually distinct at 14, 16, and 24 pixels. The test also rejects any active call to FontForge's stroke expansion.
+
+## Approved config and editor workflow (not implemented)
+
+This section defines the migration target. The JSON files and `mbfont edit` command described here do not exist yet, so use the current Python and specimen commands above until the migration reaches its parity gate.
+
+The existing headless interface remains stable for other repositories:
+
+~~~text
+mbfont compile [X.Y.Z] [--config FILE] [--out DIR] [--format ttf woff2]
+mbfont check [X.Y.Z] [--config FILE] [--out DIR] [--format ttf woff2]
+~~~
+
+`--config` will default to `sources/font.json`; omitting it preserves today's command shape. Both commands will load the same JSON project and call the same Python compiler used by the editor. Downstream builds will not require a browser, JavaScript, Rust, Node.js, or an editor dependency.
+
+The only new authoring command is planned as:
+
+~~~text
+mbfont edit [--config FILE]
+~~~
+
+It will start a loopback-only local server and open the browser editor. Its Build action invokes the same compile operation rather than maintaining a second geometry implementation.
+
+### Authoring workflow after migration
+
+1. Codex adds the requested Unicode entries under `sources/glyphs/`, reuses components, and extends the small generic primitive vocabulary only when an existing primitive cannot express the character.
+2. The loader resolves every new glyph in all four weights and rejects incomplete coverage, invalid references, unsupported shapes, broken gaps, or invalid final contours.
+3. Open `mbfont edit`, filter to draft or changed glyphs, and inspect the source geometry, optimized outline, gap outcomes, and 14-, 16-, and 24-pixel previews in every weight.
+4. Drag named points or guides, enter exact values, change allowed primitive parameters, and select the declared `fill` or `widen` fallback for vulnerable gaps. The final generated TrueType vertices are never edited as source.
+5. A valid working edit compiles a temporary WOFF2 preview. The typable specimen switches to that revision without reloading the page; an invalid edit leaves the last valid preview active and displays the error.
+6. Save validates the complete project, then atomically rewrites only the selected stable, two-space-indented JSON file. Preview files remain temporary and ignored.
+7. Build TTF and WOFF2, run the end-to-end test and `check`, inspect the JSON and documentation diff, then commit the source rather than preview output.
+
+### Migration sequence
+
+1. Freeze the current ASCII contours, rasters, metadata, and binary hashes as the behavior baseline.
+2. Add the strict versioned JSON loader and resolver. Translate a representative set covering bars, diagonals, cuts, components, joins, and both gap actions; compare its normalized contours with the current recipes.
+3. Translate all printable ASCII into JSON and keep both paths only long enough to prove parity. Switch `compile` and `check`, then remove glyph-specific Python recipes in the same checkpoint.
+4. Add the editor first as a read-only geometry and live-font viewer, then add point, guide, primitive, gap-rule, undo, and atomic-save operations.
+5. Match the current specimen's glyph grid, weights, sizes, optimized-point display, gap diagnostics, and ambiguity strings. Only after that gate, remove the tracked `specimen.html` and the `specimen` command; the editor's typable box becomes the review surface.
+6. Expand Latin-1 and the printable Windows-1252 set through new JSON glyph and component files, then use the editor for the human tuning pass.
+7. Produce a usable 218-character candidate. Release and MamboWiki work remain separate later decisions.
 
 ## Documentation
 
