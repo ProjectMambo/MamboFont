@@ -1,0 +1,243 @@
+{
+  "format": "mambofont",
+  "schema_version": 1,
+  "family": {
+    "name": "Mambo Font Pilot",
+    "postscript_name": "MamboFontPilot",
+    "vendor": "MAMB",
+    "copyright": "Copyright (c) 2026 ProjectMambo",
+    "license": "MIT License",
+    "license_url": "https://github.com/ProjectMambo/MamboFont/blob/main/LICENSE"
+  },
+  "metrics": {
+    "upm": 1000,
+    "advance": 500,
+    "ascent": 800,
+    "descent": 200,
+    "cap_height": 640,
+    "x_height": 400,
+    "descender": -140,
+    "ink_left": 40,
+    "ink_right": 460
+  },
+  "review": {
+    "minimum_ppem": 14,
+    "minimum_gap": 80,
+    "review_ppem": [
+      14,
+      16,
+      24
+    ],
+    "stress_ppem": [
+      10,
+      12
+    ]
+  },
+  "weights": {
+    "Regular": {
+      "css": 400,
+      "thickness": 80
+    },
+    "Medium": {
+      "css": 500,
+      "thickness": 93
+    },
+    "SemiBold": {
+      "css": 600,
+      "thickness": 107
+    },
+    "Bold": {
+      "css": 700,
+      "thickness": 120
+    }
+  },
+  "guides": {
+    "x": {
+      "cell_left": 0,
+      "ink_left": {
+        "ref": "metrics.ink_left"
+      },
+      "inner_left": {
+        "constant": 0,
+        "terms": {
+          "metrics.ink_left": 1,
+          "weight.thickness": 1
+        }
+      },
+      "one_flag": {
+        "constant": 0,
+        "terms": {
+          "metrics.ink_left": 0.7619047619047619,
+          "metrics.ink_right": 0.23809523809523808
+        }
+      },
+      "lowercase_stem": {
+        "constant": 0,
+        "terms": {
+          "metrics.ink_left": 0.7380952380952381,
+          "metrics.ink_right": 0.2619047619047619
+        }
+      },
+      "diagonal_left": {
+        "constant": 0,
+        "terms": {
+          "metrics.ink_left": 0.8809523809523809,
+          "metrics.ink_right": 0.11904761904761904
+        }
+      },
+      "center": {
+        "constant": 0,
+        "terms": {
+          "metrics.advance": 0.5
+        }
+      },
+      "shoulder_right": {
+        "constant": 0,
+        "terms": {
+          "metrics.ink_left": 0.2619047619047619,
+          "metrics.ink_right": 0.7380952380952381
+        }
+      },
+      "lowercase_foot": {
+        "constant": 0,
+        "terms": {
+          "metrics.ink_left": 0.16666666666666666,
+          "metrics.ink_right": 0.8333333333333334
+        }
+      },
+      "inner_right": {
+        "constant": 0,
+        "terms": {
+          "metrics.ink_right": 1,
+          "weight.thickness": -1
+        }
+      },
+      "upper_bowl_right": {
+        "constant": 0,
+        "terms": {
+          "guide.x.center": 0.3333333333333333,
+          "metrics.ink_right": 0.6666666666666666
+        }
+      },
+      "diagonal_right": {
+        "constant": 0,
+        "terms": {
+          "metrics.ink_left": 0.11904761904761904,
+          "metrics.ink_right": 0.8809523809523809
+        }
+      },
+      "ink_right": {
+        "ref": "metrics.ink_right"
+      },
+      "cell_right": {
+        "ref": "metrics.advance"
+      }
+    },
+    "y": {
+      "descender": {
+        "ref": "metrics.descender"
+      },
+      "baseline": 0,
+      "x_mid": {
+        "constant": 0,
+        "terms": {
+          "metrics.x_height": 0.5
+        }
+      },
+      "r_join": {
+        "constant": 0,
+        "terms": {
+          "metrics.x_height": 0.6
+        }
+      },
+      "m_join": {
+        "constant": 0,
+        "terms": {
+          "metrics.cap_height": 0.40625
+        }
+      },
+      "midline": {
+        "constant": 0,
+        "terms": {
+          "metrics.cap_height": 0.5
+        }
+      },
+      "x_height": {
+        "ref": "metrics.x_height"
+      },
+      "one_flag": {
+        "constant": 0,
+        "terms": {
+          "metrics.cap_height": 0.78125
+        }
+      },
+      "cap_height": {
+        "ref": "metrics.cap_height"
+      },
+      "accent_height": {
+        "constant": 0,
+        "terms": {
+          "metrics.cap_height": 0.25,
+          "metrics.ascent": 0.75
+        }
+      },
+      "ascender": {
+        "ref": "metrics.ascent"
+      }
+    }
+  },
+  "coverage": {
+    "ranges": [
+      [
+        "U+0000",
+        "U+00FF"
+      ]
+    ],
+    "codepoints": [
+      "U+0152",
+      "U+0153",
+      "U+0160",
+      "U+0161",
+      "U+0178",
+      "U+017D",
+      "U+017E",
+      "U+0192",
+      "U+02C6",
+      "U+02DC",
+      "U+2013",
+      "U+2014",
+      "U+2018",
+      "U+2019",
+      "U+201A",
+      "U+201C",
+      "U+201D",
+      "U+201E",
+      "U+2020",
+      "U+2021",
+      "U+2022",
+      "U+2026",
+      "U+2030",
+      "U+2039",
+      "U+203A",
+      "U+20AC",
+      "U+2122"
+    ]
+  },
+  "empty": {
+    "ranges": [
+      [
+        "U+0000",
+        "U+0020"
+      ],
+      [
+        "U+007F",
+        "U+00A0"
+      ]
+    ],
+    "codepoints": []
+  },
+  "files": {
+    "components": "components.json",
+    "glyphs": "glyphs"
+  }
+}

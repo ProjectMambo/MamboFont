@@ -1,0 +1,53 @@
+{
+  "format": "mambofont-glyph",
+  "schema_version": 1,
+  "name": ".notdef",
+  "advance": {
+    "ref": "metrics.advance"
+  },
+  "review": "approved",
+  "values": {},
+  "points": {},
+  "shapes": [
+    {
+      "id": "outer",
+      "operation": "add",
+      "primitive": "rectangle",
+      "left": {
+        "ref": "guide.x.ink_left"
+      },
+      "bottom": {
+        "ref": "guide.y.baseline"
+      },
+      "right": {
+        "ref": "guide.x.ink_right"
+      },
+      "top": {
+        "ref": "guide.y.cap_height"
+      }
+    },
+    {
+      "id": "counter",
+      "operation": "subtract",
+      "primitive": "rectangle",
+      "left": {
+        "ref": "guide.x.inner_left"
+      },
+      "bottom": {
+        "ref": "weight.thickness"
+      },
+      "right": {
+        "ref": "guide.x.inner_right"
+      },
+      "top": {
+        "constant": 0,
+        "terms": {
+          "guide.y.cap_height": 1,
+          "weight.thickness": -1
+        }
+      }
+    }
+  ],
+  "gaps": [],
+  "anchors": {}
+}

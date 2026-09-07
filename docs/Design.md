@@ -26,16 +26,16 @@ The font has one short, direct path from parameters to binaries:
 
 There is no SVG-to-font source pipeline and no cache. SVG appears only in the specimen's blueprint cards. Editing a dimension or glyph rule and rebuilding is the complete source-of-truth workflow.
 
-## Approved config and editor architecture (not implemented)
+## Config and editor architecture
 
-This is the accepted implementation target, not a description of the current repository. `sources/font.json`, per-glyph JSON files, and `mbfont edit` do not exist yet. The current Python recipes and generated specimen remain authoritative until the migration gates in [MamboFont Commands](Commands.md) pass.
+This architecture is being introduced in gated phases. Phase 1 provides `sources/font.json`, `sources/components.json`, a strict standard-library loader/resolver, and the first `.notdef` JSON recipe. The JSON source does not drive font compilation yet, visible glyph files have not been migrated, and `mbfont edit` does not exist. The current Python recipes and generated specimen remain authoritative until the migration gates in [MamboFont Commands](Commands.md) pass.
 
 ### Architecture decisions
 
 - Strict JSON becomes the complete editable font source. JSON is native to Python and browsers, produces deterministic text diffs, and needs no YAML, TOML, or GUI serialization dependency.
-- The source is split by ownership rather than stored as one large document. `font.json` owns project-wide values, `components.json` owns reusable geometry, and one `glyphs/U+XXXX.json` file owns each encoded glyph. This lets the GUI save one glyph without rewriting the whole family and keeps Codex-generated additions reviewable.
+- The source is split by ownership rather than stored as one large document. `font.json` owns project-wide values and deliberate empty ranges, `components.json` owns reusable geometry, and one `glyphs/U+XXXX.json` file owns each drawn glyph. This lets the GUI save one glyph without rewriting the whole family and keeps Codex-generated additions reviewable. Identical empty controls are expanded from ranges instead of duplicated across 67 files.
 - Python remains the only configuration resolver, geometry engine, validator, and TTF/WOFF2 compiler. The browser never reimplements font rules and other repositories keep a headless command-line build.
-- The editor is a local browser application made from native HTML, CSS, JavaScript, and SVG, served by Python's standard library. A Rust GUI is deferred: while the compiler remains Python/FontForge, Rust would add a second runtime and an IPC boundary or duplicate the resolver without improving this 218-glyph workload.
+- The editor is a local browser application made from native HTML, CSS, JavaScript, and SVG, served by Python's standard library. A Rust GUI is deferred: while the compiler remains Python/FontForge, Rust would add a second runtime and an IPC boundary or duplicate the resolver without improving this 283-entry workload.
 - SVG is a precise interactive view, not an intermediate font format. The compiler writes normalized filled contours directly to the font backend.
 - Preview and final vertices are derived data. Only semantic guides, points, primitives, components, and rules are saved.
 
@@ -59,7 +59,8 @@ editor/
   app.js
   style.css
 script/mbfont.py        compile, check, and edit commands
-tests/test_build.py     one end-to-end config, outline, font, and determinism check
+tests/test_config.py    dependency-free JSON contract and guide-parity check
+tests/test_build.py     end-to-end outline, font, raster, and determinism check
 ~~~
 
 The loader treats the directory containing `font.json` as the project root. `font.json` names the component file and glyph directory, so `--config` can point at another project without relying on the repository's working directory.
@@ -72,12 +73,12 @@ Every JSON document carries `format` and `schema_version` fields. The first form
 
 - family metadata, units per em, advance, ascent, descent, and vertical metrics;
 - the four weights and their nominal thicknesses;
-- the grid, supported review sizes, and default minimum gap;
+- the supported review sizes and default minimum gap;
 - named global horizontal and vertical guides;
 - the required Unicode coverage and deterministic glyph order;
 - paths to the components document and glyph directory.
 
-Glyph filenames and map keys use uppercase `U+XXXX` code points so whitespace, escaping, and names cannot make the source ambiguous. A glyph document owns:
+Glyph filenames and map keys use uppercase `U+XXXX` code points so whitespace, escaping, and names cannot make the source ambiguous. Deliberately empty ranges create encoded, contourless glyphs with the family advance and appear in the future editor like other entries; an individual file is needed only if an empty entry later needs special metrics or metadata. A drawn glyph document owns:
 
 - its code point, production name, advance, and review state;
 - named local values and semantic points;
@@ -96,7 +97,7 @@ The scalar language stays data-only. A value is one of:
 
 References may address project metrics, review settings, global guides, the current weight, glyph-local values and points, or component parameters. The resolver evaluates them as an acyclic dependency graph. There are no expression strings, scripts, loops, arbitrary conditionals, Python calls, or `eval`. Geometry-specific mathematics stays inside the small tested primitive implementation.
 
-The primitive vocabulary remains deliberately narrow:
+Phase 1 resolves rectangle geometry for `.notdef`. Later migration phases add the rest of the deliberately narrow primitive vocabulary as real converted glyphs require it:
 
 - rectangle, horizontal bar, and vertical bar;
 - true level-capped diagonal and receiver-aware joined diagonal;
@@ -294,12 +295,13 @@ FontForge validation is mandatory during generation and after reopening each fil
 
 ## Coverage and release gates
 
-The milestone target contains 218 characters:
+The milestone target contains 283 encoded entries:
 
-- Printable ASCII U+0020–U+007E.
-- Latin-1 U+00A0–U+00FF.
+- The complete U+0000–U+00FF range.
 - The 27 defined printable Windows-1252 additions.
 
-C0 and C1 controls and undefined Windows-1252 holes remain absent. The current pilot contains all 95 printable ASCII characters. Latin-1 and the printable Windows-1252 additions expand only after this ASCII geometry is reviewed.
+C0 controls U+0000–U+001F, space U+0020, DEL and C1 controls U+007F–U+009F, and no-break space U+00A0 are encoded with the 500-unit family advance and no contours. This includes Unicode control characters at U+0080–U+009F as empty glyphs while the printable Windows-1252 characters for those byte positions use their actual Unicode code points such as U+20AC. Undefined Windows-1252 byte positions do not create extra mappings beyond their corresponding empty Unicode C1 controls.
 
-A usable base-font release requires all 218 target characters, all four weights, an explicit gap decision for every vulnerable glyph, passing structural/deterministic/raster checks, visual approval at the supported review sizes, approved final family metadata and binaries, and no unresolved base-font design blockers. Only then are release files and a tag created and MamboWiki updated. Icon work remains a separate later milestone.
+The 67 empty entries leave 216 drawn glyphs. The current compiler contains the 95 printable ASCII entries, including the empty regular space; the JSON manifest already declares all 283 target entries and reports the 216 drawn glyphs as pending until they receive JSON recipes. Latin-1 and the printable Windows-1252 geometry expands only after the ASCII grammar is reviewed and migrated.
+
+A usable base-font release requires all 283 target entries, all four weights, an explicit gap decision for every vulnerable drawn glyph, passing structural/deterministic/raster checks, visual approval at the supported review sizes, approved final family metadata and binaries, and no unresolved base-font design blockers. Only then are release files and a tag created and MamboWiki updated. Icon work remains a separate later milestone.

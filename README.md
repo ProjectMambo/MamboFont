@@ -23,7 +23,7 @@ MamboFont is Project Mambo's blocky monospace typeface. Its Python blueprint com
 | Read the project overview | [docs/index.md](docs/index.md) |
 | Build, check, or review the fonts | [Commands](docs/Commands.md) |
 | Understand the glyph rules | [Design rules](docs/Design.md) |
-| Read the approved JSON/editor architecture | [Config and editor architecture](docs/Design.md#approved-config-and-editor-architecture-not-implemented) |
+| Read the JSON/editor architecture | [Config and editor architecture](docs/Design.md#config-and-editor-architecture) |
 | Edit the generator source | [sources/](sources/) |
 | Inspect local pilot binaries | `build/pilot/` after compiling |
 | Review every weight | [specimen.html](specimen.html) |
@@ -51,18 +51,18 @@ See [Commands](docs/Commands.md) for all options and the required verification s
 
 ## Current scope
 
-The current review pilot encodes all 95 printable ASCII characters. It exists to approve the complete ASCII outline and gap grammar across all four weights before Latin-1 and Windows-1252 expansion. The milestone target remains 218 characters.
+The current compiler encodes all 95 printable ASCII characters. It exists to approve the complete ASCII outline and gap grammar across all four weights before Latin-1 and Windows-1252 expansion. The JSON manifest expands the milestone target to 283 encoded entries: U+0000–U+00FF plus the 27 defined printable Windows-1252 additions. Sixty-seven controls and spaces are explicitly empty, leaving 216 characters with drawn glyphs.
 
-A config-driven JSON source and local browser editor are approved as the next architecture, but they are not implemented yet. The current Python recipes and generated specimen remain authoritative during migration. Existing `compile` and `check` usage will stay compatible, and `specimen.html` will be removed only after the editor can replace every review function it provides.
+Phase 1 of the config-driven architecture is implemented: `sources/font.json` owns the family dimensions, guides, weights, target coverage, and empty ranges; `sources/config.py` strictly validates and resolves them; and `.notdef` has the first JSON rectangle recipe. The current Python recipes and generated specimen remain authoritative for compiled ASCII during migration. Existing `compile` and `check` usage will stay compatible, and `specimen.html` will be removed only after the editor can replace every review function it provides.
 
 Only the base text family is active. All previous Mambo Icons drawings, binaries, and generator work are archived; a separate icon font can be designed after the base family reaches a usable release.
 
 ## Repository layout
 
 ~~~text
-sources/        dimensions, primitive rules, and printable-ASCII blueprints
+sources/        current Python blueprints plus the versioned JSON migration source
 script/         direct-outline compile, check, specimen, and installer commands
-tests/          one deterministic end-to-end build check
+tests/          dependency-free JSON contract and deterministic font build checks
 build/pilot/    ignored local TTF and WOFF2 review files
 docs/           synchronized MamboDocs snapshot
 archive/v0.2/   frozen drawings, exports, binaries, icons, docs, and old tooling
@@ -74,6 +74,7 @@ The former SVG/export pipeline and the rejected centerline-stroke generator rema
 ## Verification
 
 ~~~bash
+/usr/bin/python3 tests/test_config.py
 /usr/bin/python3 tests/test_build.py
 ./script/mbfont.py check 0.4.0 --format ttf woff2 --out build/pilot
 git diff --check

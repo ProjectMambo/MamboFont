@@ -98,9 +98,17 @@ The test asserts the exact 95-character printable-ASCII map, declared fill/widen
 
 `GapRule` validation checks each recipe's declared `natural`, `minimum`, action, and `resolved` values; it does not run a generic post-outline gap detector. One-bit XBM checks preserve the Bold `g` tail aperture and require every non-space ASCII glyph to remain visually distinct at 14, 16, and 24 pixels. The test also rejects any active call to FontForge's stroke expansion.
 
-## Approved config and editor workflow (not implemented)
+## Config and editor migration
 
-This section defines the migration target. The JSON files and `mbfont edit` command described here do not exist yet, so use the current Python and specimen commands above until the migration reaches its parity gate.
+Phase 1 is implemented. `sources/font.json`, `sources/components.json`, the first `.notdef` glyph document, and the strict `sources/config.py` loader now exist. They establish dimensions, weights, guides, target coverage, empty controls/spaces, safe project paths, and the bounded scalar grammar. They do not drive `compile` or `check` yet, and `mbfont edit` does not exist, so use the current Python and specimen commands above until the migration reaches its parity gate.
+
+Check the phase-1 contract without FontForge:
+
+~~~bash
+/usr/bin/python3 tests/test_config.py
+~~~
+
+It requires 283 target code points, 67 explicit empty code points, 216 pending drawn glyphs, exact parity between JSON and Python guides at every weight, a resolved `.notdef` rectangle, and rejection of duplicate JSON keys.
 
 The existing headless interface remains stable for other repositories:
 
@@ -131,13 +139,13 @@ It will start a loopback-only local server and open the browser editor. Its Buil
 
 ### Migration sequence
 
-1. Freeze the current ASCII contours, rasters, metadata, and binary hashes as the behavior baseline.
-2. Add the strict versioned JSON loader and resolver. Translate a representative set covering bars, diagonals, cuts, components, joins, and both gap actions; compare its normalized contours with the current recipes.
+1. **Complete:** establish the strict versioned JSON manifest and resolver, preserve the current source commit as the behavior baseline, and record controls and spaces as explicit empty coverage.
+2. Translate a representative set covering bars, diagonals, cuts, components, joins, and both gap actions; compare its normalized contours with the current recipes.
 3. Translate all printable ASCII into JSON and keep both paths only long enough to prove parity. Switch `compile` and `check`, then remove glyph-specific Python recipes in the same checkpoint.
 4. Add the editor first as a read-only geometry and live-font viewer, then add point, guide, primitive, gap-rule, undo, and atomic-save operations.
 5. Match the current specimen's glyph grid, weights, sizes, optimized-point display, gap diagnostics, and ambiguity strings. Only after that gate, remove the tracked `specimen.html` and the `specimen` command; the editor's typable box becomes the review surface.
 6. Expand Latin-1 and the printable Windows-1252 set through new JSON glyph and component files, then use the editor for the human tuning pass.
-7. Produce a usable 218-character candidate. Release and MamboWiki work remain separate later decisions.
+7. Produce a usable 283-entry candidate, including 216 drawn glyphs and 67 deliberate empty glyphs. Release and MamboWiki work remain separate later decisions.
 
 ## Documentation
 
