@@ -29,6 +29,7 @@ BOLD_G_RASTERS = {
 }
 BOLD_GAP_OUTCOMES = {
     "0": "preserve",
+    "@": "widen",
     "A": "fill",
     "B": "preserve",
     "M": "fill",
@@ -137,6 +138,11 @@ def main():
     for style, _ in WEIGHTS:
         design = design_for(style)
         recipes = ascii_glyphs(design)
+
+        def size(contour):
+            xs, ys = zip(*contour)
+            return max(xs) - min(xs), max(ys) - min(ys)
+
         assert all(blueprint["ink"] for blueprint in recipes.values())
         assert all(
             rule.resolved == 0 or rule.resolved >= rule.minimum
@@ -151,6 +157,14 @@ def main():
         )
         stem_right = design.advance / 2 + design.thickness / 2
         assert max(x for x, _ in recipes["1"]["ink"][0]) <= stem_right
+        for char, index in (("!", 1), ("%", 1), ("%", 2), (".", 0), (":", 0),
+                            (":", 1), (";", 0), ("?", 4), ("i", 1), ("j", 3)):
+            assert size(recipes[char]["ink"][index]) == (design.thickness,) * 2
+        for char, index in (("-", 0), ("_", 0), (",", 1)):
+            assert size(recipes[char]["ink"][index])[1] == design.thickness
+        for char, index in (("[", 0), ("]", 0), (",", 0)):
+            assert size(recipes[char]["ink"][index])[0] == design.thickness
+
         z_diagonal = recipes["Z"]["ink"][1]
         two_diagonal = recipes["2"]["ink"][2]
         assert (z_diagonal[0], z_diagonal[2]) == (
@@ -161,6 +175,12 @@ def main():
             (design.ink_left, design.thickness),
             (design.ink_right, design.x_height),
         )
+        five_diagonal = recipes["5"]["ink"][3]
+        seven_diagonal = recipes["7"]["ink"][1]
+        assert five_diagonal[1][0] == recipes["5"]["ink"][4][1][0]
+        assert five_diagonal[2] == (design.ink_right, design.cap_height / 2 - design.thickness / 2)
+        assert seven_diagonal[2] == (design.ink_right, design.cap_height - design.thickness)
+        assert len(recipes["("]["ink"][0]) == 8 and len(recipes["~"]["ink"]) == 3
 
     active_python = [*(ROOT / "sources").glob("*.py"), *(ROOT / "script").glob("*.py")]
     assert all(".stroke(" not in path.read_text() for path in active_python)

@@ -229,12 +229,18 @@ def joined_descending_diagonal(
     lower_y: Number,
     upper_y: Number,
     *,
+    lower_left: Number | None = None,
+    upper_right: Number | None = None,
     upper_stem: bool = False,
 ) -> Contour:
     """Join left/bottom and right/top receivers without exposed shelves."""
     if not lower_y < upper_y:
         raise ValueError("diagonal guides are out of order")
-    width = design.ink_right - design.ink_left
+    left = design.ink_left if lower_left is None else lower_left
+    right = design.ink_right if upper_right is None else upper_right
+    if not design.ink_left <= left < right <= design.ink_right:
+        raise ValueError("diagonal receivers are outside the ink bounds")
+    width = right - left
     height = upper_y - lower_y
     thickness = design.thickness
     if height <= thickness:
@@ -244,16 +250,16 @@ def joined_descending_diagonal(
     c = -thickness * thickness * (width * width + height * height)
     cap = (-b + sqrt(b * b - 4 * a * c)) / (2 * a)
     points = [
-        (design.ink_left, lower_y),
-        (design.ink_left + cap, lower_y),
-        (design.ink_right, upper_y),
+        (left, lower_y),
+        (left + cap, lower_y),
+        (right, upper_y),
     ]
     if upper_stem:
         run = width - cap
         join_top = upper_y + (cap - thickness) * height / run
-        points.extend(((design.ink_right, join_top), (design.ink_right - thickness, join_top)))
+        points.extend(((right, join_top), (right - thickness, join_top)))
     else:
-        points.append((design.ink_right - cap, upper_y))
+        points.append((right - cap, upper_y))
     return polygon(*points)
 
 

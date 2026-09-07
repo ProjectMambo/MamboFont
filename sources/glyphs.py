@@ -94,9 +94,15 @@ def ascii_glyphs(design: Design):
     mid, x_height, cap = design.y("midline"), design.y("x_height"), design.y("cap_height")
     upper_bowl_right = design.x("upper_bowl_right")
     center_stem = center - t / 2
-    detail = (2 * t + 1) // 3
-    grid_detail = min(t, 90)
+    detail = t
     at_detail = (t + 1) // 2
+    at_gap = gap_rule(
+        design,
+        "nested-frame clearance",
+        180 - (left + t),
+        "widen",
+        180 - (left + at_detail),
+    )
 
     cap_frame = _frame(design, left, baseline, right, cap)
     x_frame = _frame(design, left, baseline, right, x_height)
@@ -169,6 +175,21 @@ def ascii_glyphs(design: Design):
     flag[2] = (center_stem + t, flag[2][1])
     flag[3] = (center_stem, flag[3][1])
     flag = tuple(flag)
+
+    five_diagonal = joined_descending_diagonal(
+        design,
+        baseline + t,
+        mid_bottom,
+        lower_left=center_stem,
+        upper_right=right,
+    )
+    seven_diagonal = joined_descending_diagonal(
+        design,
+        baseline,
+        cap - t,
+        lower_left=center_stem,
+        upper_right=right,
+    )
 
     s_parts = (
         hbar(design, left, right, cap - t),
@@ -429,8 +450,8 @@ def ascii_glyphs(design: Design):
             hbar(design, left, right, cap - t),
             vbar(design, left, mid, cap),
             _midbar(design, left, right, mid),
-            _clamp_x(diagonal(design, (center, baseline + t), (diagonal_right, mid)), left, right),
-            hbar(design, left, center + t / 2, baseline),
+            five_diagonal,
+            hbar(design, left, five_diagonal[1][0], baseline),
         ),
         "6": glyph(
             vbar(design, left, baseline, cap),
@@ -441,11 +462,7 @@ def ascii_glyphs(design: Design):
         ),
         "7": glyph(
             hbar(design, left, right, cap - t),
-            _clamp_x(
-                diagonal(design, (center - t / 2, baseline), (diagonal_right, cap - t / 2)),
-                left,
-                right,
-            ),
+            seven_diagonal,
         ),
         "8": glyph(*cap_frame, _midbar(design, left, right, mid)),
         "9": glyph(
@@ -457,15 +474,18 @@ def ascii_glyphs(design: Design):
         ),
     }
 
-    paren = (
-        hbar(design, center, right - 60, cap - detail, detail),
-        vbar(design, center - detail, cap - 2 * detail, cap, detail),
-        hbar(design, left + 90, center, cap - 2 * detail, detail),
-        vbar(design, left + 90, 2 * detail, cap - detail, detail),
-        hbar(design, left + 90, center, detail, detail),
-        vbar(design, center - detail, baseline, 2 * detail, detail),
-        hbar(design, center, right - 60, baseline, detail),
-    )
+    paren_left = left + 80
+    paren_right = center + 60
+    paren = (polygon(
+        (paren_right - t / 2, baseline),
+        (paren_right + t / 2, baseline),
+        (paren_left + t, mid - 80),
+        (paren_left + t, mid + 80),
+        (paren_right + t / 2, cap),
+        (paren_right - t / 2, cap),
+        (paren_left, mid + 80),
+        (paren_left, mid - 80),
+    ),)
     bracket = (
         vbar(design, left + 100, baseline, cap, detail),
         hbar(design, left + 100, right - 70, cap - detail, detail),
@@ -481,13 +501,9 @@ def ascii_glyphs(design: Design):
         hbar(design, center, right - 50, baseline, detail),
     )
     quote_y = cap - 2 * detail
-    comma = polygon(
-        (center - detail, -detail),
-        (center - detail / 2, baseline),
-        (center - detail / 2, detail),
-        (center + detail / 2, detail),
-        (center + detail / 2, baseline),
-        (center, -detail),
+    comma = (
+        vbar(design, center - t / 2, -t, t, t),
+        hbar(design, center - t, center + t / 2, -t, t),
     )
     question_diagonal = list(
         diagonal(design, (center, mid), (right - detail / 2, 450), detail)
@@ -507,15 +523,15 @@ def ascii_glyphs(design: Design):
             vbar(design, right - 90 - detail, quote_y, cap, detail),
         ),
         "#": glyph(
-            vbar(design, left + 80, baseline, cap, grid_detail),
-            vbar(design, right - 80 - grid_detail, baseline, cap, grid_detail),
-            hbar(design, left, right, 180, grid_detail),
-            hbar(design, left, right, 370, grid_detail),
+            vbar(design, left + 40, baseline, cap, t),
+            vbar(design, right - 40 - t, baseline, cap, t),
+            hbar(design, left, right, 180, t),
+            hbar(design, left, right, 370, t),
         ),
         "$": glyph(
             *s_parts,
-            vbar(design, center - detail / 2, cap, cap + detail, detail),
-            vbar(design, center - detail / 2, -detail, baseline, detail),
+            vbar(design, center_stem, mid_top + design.minimum_gap / 2, cap + t / 2),
+            vbar(design, center_stem, -t / 2, mid_bottom - design.minimum_gap / 2),
         ),
         "%": glyph(
             diagonal(design, (diagonal_left, baseline), (diagonal_right, cap), detail),
@@ -523,9 +539,14 @@ def ascii_glyphs(design: Design):
             _square(right - 70, 100, detail),
         ),
         "&": glyph(
-            *_frame(design, left + 50, baseline, right - 50, cap, detail),
-            _midbar(design, left + 50, right - 50, mid, detail),
-            diagonal(design, (center - 40, mid), (diagonal_right, baseline), detail),
+            hbar(design, left, right, cap - t),
+            vbar(design, left, x_height + 20, cap),
+            diagonal(design, (diagonal_left, x_height + 20), (diagonal_right, baseline)),
+            hbar(design, left, right, baseline),
+            vbar(design, left, baseline, 170),
+            diagonal(design, (diagonal_left, 170), (diagonal_right, 500)),
+            diagonal(design, (center + 10, 260), (diagonal_right, 80)),
+            _midbar(design, center, right, mid),
         ),
         "'": glyph(vbar(design, center - detail / 2, quote_y, cap, detail)),
         "(": glyph(*paren),
@@ -536,14 +557,14 @@ def ascii_glyphs(design: Design):
             diagonal(design, (right - 80, 230), (left + 80, 450), detail),
         ),
         "+": glyph(vbar(design, center_stem, 120, 520), _midbar(design, left, right, mid)),
-        ",": glyph(comma),
+        ",": glyph(*comma),
         "-": glyph(_midbar(design, left + 80, right - 80, mid, detail)),
         ".": glyph(_square(center, detail / 2, detail)),
         "/": glyph(diagonal(design, (diagonal_left, baseline), (diagonal_right, cap))),
         ":": glyph(_square(center, 80, detail), _square(center, x_height - 40, detail)),
         ";": glyph(
             _square(center, x_height - 40, detail),
-            comma,
+            *comma,
         ),
         "<": glyph(
             diagonal(design, (left + 70, mid), (right - 70, 560)),
@@ -574,6 +595,7 @@ def ascii_glyphs(design: Design):
             *_c_frame(design, left, baseline, right, cap, at_detail),
             *_frame(design, 180, 160, 380, 480, at_detail),
             hbar(design, 320, right, 160, at_detail),
+            gaps=(at_gap,),
         ),
         "[": glyph(*bracket),
         "\\": glyph(diagonal(design, (diagonal_left, cap), (diagonal_right, baseline))),
@@ -587,12 +609,11 @@ def ascii_glyphs(design: Design):
         "{": glyph(*brace),
         "|": glyph(vbar(design, center - detail / 2, -80, design.y("accent_height"), detail)),
         "}": glyph(*_mirror(design, brace)),
-        "~": glyph(polygon(
-            (left + 50, 340), (center - 40, 340), (center - 40, 300),
-            (center + 40, 300), (center + 40, 340), (right - 50, 340),
-            (right - 50, 260), (center + 40, 260), (center + 40, 220),
-            (center - 40, 220), (center - 40, 260), (left + 50, 260),
-        )),
+        "~": glyph(
+            diagonal(design, (left + 60, 220), (center - 50, 380)),
+            diagonal(design, (center - 50, 380), (center + 50, 220)),
+            diagonal(design, (center + 50, 220), (right - 60, 380)),
+        ),
     }
     recipes.update(punctuation)
 
