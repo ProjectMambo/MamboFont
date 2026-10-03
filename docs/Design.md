@@ -1,12 +1,12 @@
 ---
 description: Geometry, weight, coverage, and compatibility rules for MamboFont.
-title: MamboFont Design Rules
+title: Design rules
 order: 20
 ---
 
 ::page{layout="docs" width="normal" sidebar=true}
 
-# MamboFont Design Rules
+# Design rules
 
 ## Scope and ownership
 
@@ -31,7 +31,7 @@ There is no SVG-to-font source pipeline and no cache. SVG appears only in the sp
 
 This architecture is being introduced in gated phases. Phases 1 through 3 provide `sources/font.json`, `sources/components.json`, a strict standard-library evaluator, and JSON recipes for `.notdef` plus every printable ASCII glyph. The set covers rectangles, bars, true and receiver-aware diagonals, explicit polygons, subtraction, reusable components, and both gap actions. Migration required exact normalized-outline parity with the approved Python baseline in every weight before that old recipe module was removed.
 
-JSON now drives `compile`, `check`, and `specimen`, including the 67 contourless controls and spaces declared by the project. `mbfont edit` does not exist yet, so the generated specimen remains the current review surface until the editor gates in [MamboFont Commands](Commands.md) pass.
+JSON now drives `compile`, `check`, and `specimen`, including the 67 contourless controls and spaces declared by the project. `mbfont edit` does not exist yet, so the generated specimen remains the current review surface until the editor gates in [Command reference](Commands.md) pass.
 
 ### Architecture decisions
 

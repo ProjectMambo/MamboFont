@@ -55,14 +55,14 @@ To expose the unreleased pilot command for local development:
 ./script/install.sh
 ~~~
 
-The installer creates a symlink under `$HOME/.local/bin` by default. Set `MAMBOFONT_BIN_DIR` to choose a different command directory. It does not install font files into the operating system and does not replace MamboSite's pinned `0.2.4` provider. See [Commands](Commands.md) for update, removal, exit statuses, all options, and the required verification sequence.
+The installer creates a symlink under `$HOME/.local/bin` by default. Set `MAMBOFONT_BIN_DIR` to choose a different command directory. It does not install font files into the operating system and does not replace MamboSite's pinned `0.2.4` provider. See [Command reference](Commands.md) for update, removal, exit statuses, all options, and the required verification sequence.
 
 ## Documentation
 
 | Goal | Document or path |
 |---|---|
 | Read the project overview | [docs/index.md](index.md) |
-| Build, check, install, update, or remove the pilot command | [Commands](Commands.md) |
+| Build, check, install, update, or remove the pilot command | [Command reference](Commands.md) |
 | Understand the glyph rules | [Design rules](Design.md) |
 | Read the JSON/editor architecture | [Config and editor architecture](Design.md#config-and-editor-architecture) |
 | Edit the generator source | [sources/](../sources/) |

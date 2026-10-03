@@ -1,12 +1,12 @@
 ---
 description: Generate, compare, and visually review MamboFont.
-title: MamboFont Commands
+title: Command reference
 order: 10
 ---
 
 ::page{layout="docs" width="normal" sidebar=true}
 
-# MamboFont Commands
+# Command reference
 
 ## Requirements
 
