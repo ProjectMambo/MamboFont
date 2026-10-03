@@ -12,7 +12,7 @@ order: 20
 
 Mambo Font keeps the character of the archived v0.2 drawings while making its outlines, weights, and coverage systematic. The active generator owns only the base text family. Previous Mambo Icons drawings, binaries, and generator code live under `archive/`; icon design and a separate icon font are deferred until the base family reaches a usable release.
 
-MamboDocs owns the canonical documentation under `Docs/Projects/MamboFont`. The MamboFont repository receives a synchronized snapshot. MamboWiki is deliberately left unchanged during pilot work and will be updated only for a usable release.
+The notes vault owns the canonical documentation under `notes/Docs/Projects/MamboFont/`. The MamboFont repository and MamboWiki receive synchronized documentation snapshots. Publishing pilot status or standards documentation does not publish font artifacts or change downstream provider pins.
 
 ## Current source architecture
 
@@ -303,4 +303,4 @@ C0 controls U+0000–U+001F, space U+0020, DEL and C1 controls U+007F–U+009F, 
 
 The 67 empty entries leave 216 drawn glyphs. The current compiler contains all 94 drawn ASCII glyphs plus every declared empty entry, for 161 encoded glyphs in total. The JSON manifest already declares all 283 target entries, leaving 122 extended drawn glyphs pending. Latin-1 and the printable Windows-1252 geometry expands only after this JSON-driven ASCII baseline is reviewed.
 
-A usable base-font release requires all 283 target entries, all four weights, an explicit gap decision for every vulnerable drawn glyph, passing structural/deterministic/raster checks, visual approval at the supported review sizes, approved final family metadata and binaries, and no unresolved base-font design blockers. Only then are release files and a tag created and MamboWiki updated. Icon work remains a separate later milestone.
+A usable base-font release requires all 283 target entries, all four weights, an explicit gap decision for every vulnerable drawn glyph, passing structural/deterministic/raster checks, visual approval at the supported review sizes, approved final family metadata and binaries, and no unresolved base-font design blockers. Only then are release files and a tag created and downstream artifact consumers migrated. Documentation may publish before that gate. Icon work remains a separate later milestone.

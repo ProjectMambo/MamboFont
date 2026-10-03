@@ -374,6 +374,7 @@ def _add_build_options(parser):
 
 def build_parser():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--version", action="version", version=f"%(prog)s {VERSION}")
     commands = parser.add_subparsers(dest="command", required=True)
     compile_parser = commands.add_parser("compile", help="generate pilot font files")
     _add_build_options(compile_parser)

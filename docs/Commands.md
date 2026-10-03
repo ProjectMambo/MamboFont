@@ -16,6 +16,7 @@ Every command can be run directly:
 
 ~~~bash
 ./script/mbfont.py --help
+./script/mbfont.py --version
 ~~~
 
 Or install a local mbfont symlink:
@@ -26,6 +27,30 @@ mbfont --help
 ~~~
 
 The installer uses $HOME/.local/bin by default. Set MAMBOFONT_BIN_DIR to select another command directory. It refuses to replace a non-symlink and does not install compiled fonts into the operating system.
+
+This installed command is the unreleased `0.4.0` pilot. It is not the provider for MamboSite's pinned `0.2.4` `MamboFont-*.woff2` assets.
+
+### Update or remove the pilot command
+
+The installed command is a symlink to this checkout, so updating the checkout updates the command without copying another executable. Rerun `./script/install.sh` only after moving the checkout or changing `MAMBOFONT_BIN_DIR`.
+
+To remove the command from the repository root, delete only a symlink that resolves to this checkout:
+
+~~~bash
+command_path="${MAMBOFONT_BIN_DIR:-$HOME/.local/bin}/mbfont"
+expected_path="$(readlink -f ./script/mbfont.py)"
+if [ -L "$command_path" ] && [ "$(readlink -f "$command_path")" = "$expected_path" ]; then
+    rm -- "$command_path"
+else
+    printf 'refusing to remove unowned path: %s\n' "$command_path" >&2
+fi
+~~~
+
+Removing the link leaves the checkout, generated pilot files, and any separately installed released fonts unchanged.
+
+## Exit status
+
+`mbfont` returns `0` for successful help, version, compile, check, or specimen work; `1` for a build, validation, missing-file, or stale-output failure; and `2` for invalid command syntax or option values. A failing FontForge operation may include its diagnostic on standard error before the command returns non-zero.
 
 ## Compile
 
@@ -112,14 +137,16 @@ Check the JSON source contract without FontForge:
 
 It requires 283 target code points, 67 explicit empty code points, all 94 visible ASCII recipes, 122 pending drawn extended glyphs, valid guide resolution and gap outcomes in every weight, plus duplicate-key and cyclic-reference rejection. The FontForge end-to-end test separately checks the 161-entry current cmap, empty outlines, normalized contours, raster outcomes, and deterministic binaries.
 
-The existing headless interface remains stable for other repositories:
+The pilot keeps one headless command grammar for local builds:
 
 ~~~text
 mbfont compile [X.Y.Z] [--config FILE] [--out DIR] [--format ttf woff2]
 mbfont check [X.Y.Z] [--config FILE] [--out DIR] [--format ttf woff2]
 ~~~
 
-`--config` defaults to `sources/font.json`; omitting it preserves the original command shape. Both commands load the same JSON project and call the same Python compiler that the editor will use. Downstream builds do not require a browser, JavaScript, Rust, Node.js, or an editor dependency.
+`--config` defaults to `sources/font.json`; omitting it uses the pilot project. Both commands load the same JSON project and call the same Python compiler that the editor will use. Downstream builds do not require a browser, JavaScript, Rust, Node.js, or an editor dependency.
+
+This grammar does not make the generated artifacts backward-compatible. The pilot emits the temporary `MamboFontPilot-*` family, while MamboSite deliberately remains pinned to the older provider revision that emits `MamboFont-*` version `0.2.4` files. Coordinate provider and consumer changes only when the pilot graduates to a usable release.
 
 The only new authoring command is planned as:
 
@@ -151,15 +178,15 @@ It will start a loopback-only local server and open the browser editor. Its Buil
 
 ## Documentation
 
-The canonical source is the MamboDocs vault at `Docs/Projects/MamboFont`. After updating those pages, export only MamboFont:
+The canonical source is the notes vault at `notes/Docs/Projects/MamboFont/`. After updating those pages, export MamboFont and its published Wiki mount:
 
 ~~~bash
 cd ~/ProjectMambo/notes
-node Scripts/sync_docs.js --sync MamboFont
+node Scripts/sync_docs.js --sync MamboFont MamboWiki
 ~~~
 
-Do not sync or edit MamboWiki during pilot iterations. Update the Wiki only after the complete base family is approved as a usable release.
+Standards, status, and development pages may publish while the pilot is in progress. Publishing documentation does not publish font artifacts or move MamboSite from its pinned `0.2.4` inputs.
 
 ## Publishing
 
-The generator intentionally has no release command. The current printable-ASCII pilot is not a usable full font and never writes release files to dist. Publishing remains a separate maintainer decision after Latin-1 and Windows-1252 coverage, the design, and committed candidates are approved.
+The generator intentionally has no release command. The current printable-ASCII `0.4.0` pilot is not a usable full font and never writes release files to dist. Publishing font artifacts and migrating consumers remain separate maintainer decisions after Latin-1 and Windows-1252 coverage, the design, and committed candidates are approved.

@@ -2,6 +2,7 @@
 """One end-to-end check for the config-driven direct-outline ASCII pilot."""
 
 import re
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -14,6 +15,7 @@ import fontforge
 
 from script.mbfont import (
     ASCII_CHARACTERS,
+    VERSION,
     _without_redundant_points,
     compile_fonts,
     encoded_codepoints,
@@ -94,6 +96,14 @@ def inspect(path, project):
 
 
 def main():
+    version = subprocess.run(
+        [sys.executable, ROOT / "script" / "mbfont.py", "--version"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert version.stdout.strip() == f"mbfont.py {VERSION}"
+
     assert _without_redundant_points(
         [(0, 0), (0, 0), (1, 0), (2, 0), (2, 2), (0, 2)]
     ) == [(0, 0), (2, 0), (2, 2), (0, 2)]

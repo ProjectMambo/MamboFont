@@ -16,19 +16,29 @@ MamboFont is Project Mambo's blocky monospace typeface. Its Python blueprint com
 
 - **Mambo Font** — Regular, Medium, SemiBold, and Bold, with a fixed 500-unit advance.
 
-## Start here
+## Motivation
 
-| Goal | Document or path |
-|---|---|
-| Read the project overview | [docs/index.md](docs/index.md) |
-| Build, check, or review the fonts | [Commands](docs/Commands.md) |
-| Understand the glyph rules | [Design rules](docs/Design.md) |
-| Read the JSON/editor architecture | [Config and editor architecture](docs/Design.md#config-and-editor-architecture) |
-| Edit the generator source | [sources/](sources/) |
-| Inspect local pilot binaries | `build/pilot/` after compiling |
-| Review every weight | [specimen.html](specimen.html) |
+MamboFont provides Project Mambo with a deliberately blocky, readable monospace family whose geometry can be reviewed as data and reproduced deterministically. The generator keeps weight, spacing, gap, and coverage decisions in one strict source instead of relying on manually edited binary fonts.
 
-## Build
+## Status
+
+Version `0.4.0` is an unreleased design pilot, not a published font release or a downstream replacement. It uses the temporary family name **Mambo Font Pilot** and emits `MamboFontPilot-<Style>_v0.4.0.*` review files. MamboSite remains pinned to MamboFont `0.2.4` and its `MamboFont-<Style>_v0.2.4.woff2` artifacts; the pilot is not compatible with that consumer contract.
+
+The current compiler encodes 161 entries: all 95 printable ASCII characters plus the remaining C0, DEL, and C1 controls as deliberate empty glyphs. It exists to approve the complete ASCII outline and gap grammar across all four weights before Latin-1 and Windows-1252 expansion. The JSON manifest expands the milestone target to 283 encoded entries: U+0000–U+00FF plus the 27 defined printable Windows-1252 additions. Sixty-seven controls and spaces are explicitly empty, leaving 216 characters with drawn glyphs.
+
+The first three config-driven migration phases are implemented. `sources/font.json` owns the family dimensions, guides, weights, target coverage, and empty ranges; `sources/components.json` owns reusable geometry; and `sources/glyphs/` owns one JSON recipe per drawn glyph. The strict evaluator resolves `.notdef` and every printable ASCII glyph, including receiver-aware diagonals, explicit polygons, subtraction, and threshold-driven fill/widen rules. `compile`, `check`, and `specimen` consume this same pilot JSON project.
+
+JSON is now the sole active glyph source. The generated specimen remains the review surface until the editor can replace every function it provides; `specimen.html` and its command will be removed only after that parity gate.
+
+Only the base text family is active. All previous Mambo Icons drawings, binaries, and generator work are archived; a separate icon font can be designed after the base family reaches a usable release.
+
+## User stories
+
+- As a glyph author, I can describe one character with reviewed JSON geometry and regenerate every weight deterministically.
+- As a reviewer, I can compare structural checks and the specimen before any font becomes a release artifact.
+- As a downstream maintainer, I can keep using the pinned `0.2.4` artifacts until a separately coordinated pilot graduation changes that contract.
+
+## Getting started
 
 Install Python 3 with FontForge's Python bindings, then run:
 
@@ -39,27 +49,27 @@ Install Python 3 with FontForge's Python bindings, then run:
 
 The generated files are deterministic. There is no glyph cache to invalidate: edit JSON, rebuild, and review the config and specimen diffs. Pilot binaries stay in the ignored build directory and are not release assets.
 
-To install the same mbfont command used by downstream repositories:
+To expose the unreleased pilot command for local development:
 
 ~~~bash
 ./script/install.sh
 ~~~
 
-The installer creates a symlink under $HOME/.local/bin by default. Set MAMBOFONT_BIN_DIR to choose a different existing command directory. It does not install font files into the operating system.
+The installer creates a symlink under `$HOME/.local/bin` by default. Set `MAMBOFONT_BIN_DIR` to choose a different command directory. It does not install font files into the operating system and does not replace MamboSite's pinned `0.2.4` provider. See [Commands](docs/Commands.md) for update, removal, exit statuses, all options, and the required verification sequence.
 
-See [Commands](docs/Commands.md) for all options and the required verification sequence.
+## Documentation
 
-## Current scope
+| Goal | Document or path |
+|---|---|
+| Read the project overview | [docs/index.md](docs/index.md) |
+| Build, check, install, update, or remove the pilot command | [Commands](docs/Commands.md) |
+| Understand the glyph rules | [Design rules](docs/Design.md) |
+| Read the JSON/editor architecture | [Config and editor architecture](docs/Design.md#config-and-editor-architecture) |
+| Edit the generator source | [sources/](sources/) |
+| Inspect local pilot binaries | `build/pilot/` after compiling |
+| Review every weight | [specimen.html](specimen.html) |
 
-The current compiler encodes 161 entries: all 95 printable ASCII characters plus the remaining C0, DEL, and C1 controls as deliberate empty glyphs. It exists to approve the complete ASCII outline and gap grammar across all four weights before Latin-1 and Windows-1252 expansion. The JSON manifest expands the milestone target to 283 encoded entries: U+0000–U+00FF plus the 27 defined printable Windows-1252 additions. Sixty-seven controls and spaces are explicitly empty, leaving 216 characters with drawn glyphs.
-
-The first three config-driven migration phases are implemented. `sources/font.json` owns the family dimensions, guides, weights, target coverage, and empty ranges; `sources/components.json` owns reusable geometry; and `sources/glyphs/` owns one JSON recipe per drawn glyph. The strict evaluator resolves `.notdef` and every printable ASCII glyph, including receiver-aware diagonals, explicit polygons, subtraction, and threshold-driven fill/widen rules. `compile`, `check`, and `specimen` all consume this same JSON project, and `--config FILE` provides the same headless interface to other repositories.
-
-JSON is now the sole active glyph source. The generated specimen remains the review surface until the editor can replace every function it provides; `specimen.html` and its command will be removed only after that parity gate.
-
-Only the base text family is active. All previous Mambo Icons drawings, binaries, and generator work are archived; a separate icon font can be designed after the base family reaches a usable release.
-
-## Repository layout
+## Project structure
 
 ~~~text
 sources/        JSON font project plus the generic Python resolver and geometry engine
@@ -73,7 +83,7 @@ archive/v0.3-stroke-prototype/  rejected stroke generator and deferred icon work
 
 The former SVG/export pipeline and the rejected centerline-stroke generator remain available only in the archive for comparison. The 0.4.0 pilot is deliberately incomplete and has not been released.
 
-## Verification
+## Validation
 
 ~~~bash
 /usr/bin/python3 tests/test_config.py
@@ -84,9 +94,16 @@ git diff --check
 
 The check covers the 161 currently encoded entries, all 67 deliberate empty glyphs, fixed advances, bounds, all-on-curve contours without duplicate or removable collinear points, font validation, metadata, declarative gap contracts, the protected Bold `g` aperture, visually distinct non-space glyphs at 14, 16, and 24 pixels, the absence of stroke expansion, and byte-for-byte deterministic output. Fourteen pixels per em is the review floor; 10- and 12-pixel rows are non-gating stress tests.
 
-MamboDocs owns the canonical pages under `Docs/Projects/MamboFont`. Sync only that project into this repository with `node Scripts/sync_docs.js --sync MamboFont` from the MamboDocs vault. MamboWiki stays unchanged until the base family is complete enough for a usable release.
+## Development
 
-## Issues and feedback
+Canonical documentation lives in the notes vault under `notes/Docs/Projects/MamboFont/`. Edit that source, update the changed page's `updated` field, then synchronize the project and its published mount from the notes repository:
+
+~~~bash
+cd ~/ProjectMambo/notes
+node Scripts/sync_docs.js --sync MamboFont MamboWiki
+~~~
+
+Standards, status, and development documentation may publish while `0.4.0` remains a pilot. Font artifacts, family names, and downstream consumer pins change only after the complete base family is approved and the MamboSite migration is coordinated separately.
 
 This font is maintained for Project Mambo, so external pull requests are not currently requested. Glyph legibility and generator bug reports are welcome as repository issues.
 
